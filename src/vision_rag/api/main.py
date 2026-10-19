@@ -46,7 +46,7 @@ async def serve_spa(full_path: str):
 
 def start():
     """Entry point for the application."""
-    uvicorn.run("vision_rag.api.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("vision_rag.api.main:app", host="0.0.0.0", port=8000, reload=False)
 
 if __name__ == "__main__":
     start()
