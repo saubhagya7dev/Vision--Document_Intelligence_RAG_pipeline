@@ -17,9 +17,12 @@
 
 </div>
 
----
+<div align="center">
+  <img src="Screenshots/Screenshot 2026-10-20 061731.png" alt="Dashboard" width="49%" />
+  <img src="Screenshots/Screenshot 2026-10-20 062234.png" alt="Query and Results" width="49%" />
+</div>
 
-##  The Problem
+## The Problem
 
 Traditional RAG (Retrieval-Augmented Generation) pipelines convert PDFs to text using OCR before feeding them into a language model. This approach **completely breaks down** when dealing with:
 
@@ -36,30 +39,32 @@ Traditional RAG (Retrieval-Augmented Generation) pipelines convert PDFs to text 
 ## Architecture
 
 ```mermaid
-flowchart TD
-    subgraph CLIENT["Client Layer"]
-        UI["Modern Web UI / REST Client"]
+flowchart LR
+    UI["Web UI / REST Client"]
+
+    subgraph INGEST["1. Document Ingestion"]
+        direction LR
+        PDF["PDF Documents"] --> LOADER["PDF Loader"]
+        LOADER --> IMG["Page Images"]
+        IMG --> COLPALI["ColPali Vision Embedder"]
+        COLPALI --> DB[("Qdrant Vector DB")]
+        LOADER -.-> CACHE[("Local Image Cache")]
     end
 
-    subgraph INGEST["1. Document Ingestion Pipeline"]
-        PDF["PDF Documents"] --> LOADER["DocumentLoader<br/>(pdf2image)"]
-        LOADER -->|"Page Images"| EMBED_IMG["ColPali Vision Embedder"]
-        EMBED_IMG -->|"Multi-Vector Representations"| QDRANT_STORE[("Qdrant Vector DB")]
-        LOADER -.->|"Save High-Res Pages"| DISK_STORE[("Local Image Cache")]
+    subgraph RETRIEVAL["2. Retrieval & Generation"]
+        direction LR
+        QUERY["User Question"] --> QEMB["ColPali Query Embedder"]
+        QEMB --> SEARCH["MaxSim Search"]
+        SEARCH --> TOPK["Top-k Pages"]
+        TOPK --> RAG["RAG Synthesizer"]
+        RAG --> GEMINI["Gemini Vision Model"]
+        GEMINI --> ANSWER["Grounded Answer + Citations"]
     end
 
-    subgraph RETRIEVAL["2. Visual Retrieval & Generation Pipeline"]
-        QUERY["User Question"] --> EMBED_TXT["ColPali Query Embedder"]
-        EMBED_TXT -->|"Token Embeddings"| SEARCH["Late-Interaction Search<br/>(MaxSim)"]
-        SEARCH <-->|"Similarity Search"| QDRANT_STORE
-        SEARCH -->|"Top-k Page Matches"| SYNTH["RAG Synthesizer"]
-        DISK_STORE -.->|"Load Page Images"| SYNTH
-        SYNTH -->|"Visual Pages + Prompt"| GEMINI["Gemini Vision-Language Model"]
-        GEMINI --> ANSWER["Grounded Answer<br/>(with Page Citations)"]
-    end
-
-    UI -->|"Upload PDF /api/v1/ingest"| PDF
-    UI -->|"Submit Query /api/v1/query"| QUERY
+    UI --> PDF
+    UI --> QUERY
+    DB <--> SEARCH
+    CACHE -.-> RAG
     ANSWER --> UI
 ```
 ### How It Works
