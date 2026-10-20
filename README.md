@@ -1,14 +1,17 @@
 <div align="center">
 
-# 🔬 Vision-Native Document Intelligence
+#  Vision - A Native Document Intelligence
 
 ### OCR-Free RAG Pipeline using Vision-Language Models
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![ColPali](https://img.shields.io/badge/ColPali-v1.3-orange.svg)](https://huggingface.co/vidore/colpali-v1.3)
+[![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C.svg)](https://qdrant.tech/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com)
 [![Gemini](https://img.shields.io/badge/Gemini-3.6--flash-4285F4.svg)](https://ai.google.dev/)
-[![ColPali](https://img.shields.io/badge/ColPali-v1.3-orange.svg)](https://huggingface.co/vidore/colpali-v1.3)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/badge/uv-Package%20Manager-DE5FE9?logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
+[![Tests](https://img.shields.io/badge/Tests-10%20passed-brightgreen?logo=pytest&logoColor=white)](#-running-tests)
+
 
 *A next-generation document retrieval system that bypasses OCR entirely — treating every page as an image and using Vision-Language Models to understand layout, tables, charts, and diagrams perfectly.*
 
@@ -16,7 +19,7 @@
 
 ---
 
-## 🧠 The Problem
+##  The Problem
 
 Traditional RAG (Retrieval-Augmented Generation) pipelines convert PDFs to text using OCR before feeding them into a language model. This approach **completely breaks down** when dealing with:
 
@@ -30,41 +33,35 @@ Traditional RAG (Retrieval-Augmented Generation) pipelines convert PDFs to text 
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    FastAPI Server                        │
-│                  /api/v1/ingest                          │
-│                  /api/v1/query                           │
-└───────────┬─────────────────────────────┬───────────────┘
-            │                             │
-     ┌──────▼──────┐              ┌───────▼───────┐
-     │   INGEST    │              │     QUERY     │
-     └──────┬──────┘              └───────┬───────┘
-            │                             │
-   ┌────────▼────────┐           ┌────────▼────────┐
-   │ DocumentLoader  │           │    Retriever    │
-   │ (pdf2image)     │           │ (ColPali text   │
-   │ PDF → Images    │           │  embedding)     │
-   └────────┬────────┘           └────────┬────────┘
-            │                             │
-   ┌────────▼────────┐           ┌────────▼────────┐
-   │ ColPali Embedder│           │   Qdrant VDB    │
-   │ Image → Vectors │           │ Vector Search   │
-   └────────┬────────┘           └────────┬────────┘
-            │                             │
-   ┌────────▼────────┐           ┌────────▼────────┐
-   │   Qdrant VDB   │           │ RAG Synthesizer │
-   │  Store Vectors  │           │ Load Page Images│
-   └─────────────────┘           └────────┬────────┘
-                                          │
-                                 ┌────────▼────────┐
-                                 │ Gemini VLM      │
-                                 │ Images → Answer │
-                                 └─────────────────┘
-```
+```mermaid
+flowchart TD
+    subgraph CLIENT["Client Layer"]
+        UI["Modern Web UI / REST Client"]
+    end
 
+    subgraph INGEST["1. Document Ingestion Pipeline"]
+        PDF["PDF Documents"] --> LOADER["DocumentLoader<br/>(pdf2image)"]
+        LOADER -->|"Page Images"| EMBED_IMG["ColPali Vision Embedder"]
+        EMBED_IMG -->|"Multi-Vector Representations"| QDRANT_STORE[("Qdrant Vector DB")]
+        LOADER -.->|"Save High-Res Pages"| DISK_STORE[("Local Image Cache")]
+    end
+
+    subgraph RETRIEVAL["2. Visual Retrieval & Generation Pipeline"]
+        QUERY["User Question"] --> EMBED_TXT["ColPali Query Embedder"]
+        EMBED_TXT -->|"Token Embeddings"| SEARCH["Late-Interaction Search<br/>(MaxSim)"]
+        SEARCH <-->|"Similarity Search"| QDRANT_STORE
+        SEARCH -->|"Top-k Page Matches"| SYNTH["RAG Synthesizer"]
+        DISK_STORE -.->|"Load Page Images"| SYNTH
+        SYNTH -->|"Visual Pages + Prompt"| GEMINI["Gemini Vision-Language Model"]
+        GEMINI --> ANSWER["Grounded Answer<br/>(with Page Citations)"]
+    end
+
+    UI -->|"Upload PDF /api/v1/ingest"| PDF
+    UI -->|"Submit Query /api/v1/query"| QUERY
+    ANSWER --> UI
+```
 ### How It Works
 
 1. **Ingest** → Upload a PDF. Each page is converted to a high-res image using `pdf2image`. ColPali generates a 128-dimensional embedding vector for each page. These vectors are stored in Qdrant.
@@ -75,7 +72,7 @@ Traditional RAG (Retrieval-Augmented Generation) pipelines convert PDFs to text 
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Vision-Native-RAG-Pipeline/
@@ -128,7 +125,7 @@ Vision-Native-RAG-Pipeline/
 
 ---
 
-## 🚀 Quick Start
+##  🚀 Quick Start
 
 ### Prerequisites
 
@@ -197,7 +194,7 @@ curl -X POST "http://localhost:8000/api/v1/query" \
 
 ---
 
-## ⚙️ Configuration
+##  Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -224,7 +221,7 @@ uv run python -m vision_rag.api.main
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ```bash
 # Run all tests
@@ -236,7 +233,7 @@ pytest tests/
 
 ---
 
-## 🔧 Development
+##  Development
 
 ```bash
 # Format code
@@ -251,7 +248,7 @@ make setup
 
 ---
 
-## 🧩 Extensibility
+##  Extensibility
 
 The project uses **Abstract Base Classes** in the `core/` directory, making it easy to swap components:
 
@@ -265,7 +262,7 @@ To add a new implementation, simply create a class that inherits from the base a
 
 ---
 
-## 📖 API Reference
+##  API Reference
 
 ### `GET /health`
 Health check endpoint.
@@ -327,7 +324,7 @@ Query the ingested documents.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
@@ -340,25 +337,19 @@ Query the ingested documents.
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
 ---
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
+<BR>
 
 <div align="center">
 
-**Built with ❤️ using Vision-Language Models**
+**Built using Vision-Language Models**
 
 *If legacy OCR-based RAG is a bicycle, Vision-Native RAG is a Tesla.*
 
