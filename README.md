@@ -8,7 +8,7 @@
 [![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C.svg)](https://qdrant.tech/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com)
 [![Gemini](https://img.shields.io/badge/Gemini-3.6--flash-4285F4.svg)](https://ai.google.dev/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10 - 3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-Package%20Manager-DE5FE9?logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
 [![Tests](https://img.shields.io/badge/Tests-10%20passed-brightgreen?logo=pytest&logoColor=white)](#-running-tests)
 
@@ -134,7 +134,7 @@ Vision-Native-RAG-Pipeline/
 
 ### Prerequisites
 
-- **Python 3.10+**
+- **Python 3.10 – 3.14** (PyTorch does not support Python 3.15 yet)
 - **Google API Key** for Gemini ([Get one here](https://aistudio.google.com/apikey))
 
 ### 1. Clone & Install
