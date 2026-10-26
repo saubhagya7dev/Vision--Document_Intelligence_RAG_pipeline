@@ -1,8 +1,7 @@
-import os
 from pathlib import Path
 from typing import List
 from PIL import Image
-from pdf2image import convert_from_path
+import pypdfium2 as pdfium
 
 
 class DocumentLoader:
@@ -13,7 +12,7 @@ class DocumentLoader:
 
         Args:
             dpi: Resolution for PDF to image conversion. Higher is better for VLMs.
-            fmt: Output image format.
+            fmt: Output image format (retained for API compatibility).
         """
         self.dpi = dpi
         self.fmt = fmt
@@ -21,11 +20,14 @@ class DocumentLoader:
     def load_pdf(self, file_path: str | Path) -> List[Image.Image]:
         """Convert a PDF document into a list of PIL Images (one per page).
 
+        Uses pypdfium2 which bundles PDFium binaries, eliminating external
+        system dependencies like Poppler.
+
         Args:
             file_path: Path to the PDF file.
 
         Returns:
-            List of PIL Image objects.
+            List of PIL Image objects in RGB mode.
 
         Raises:
             FileNotFoundError: If the PDF file does not exist.
@@ -34,13 +36,13 @@ class DocumentLoader:
         if not path.exists():
             raise FileNotFoundError(f"PDF not found at: {path}")
 
-        # Convert PDF pages to images
-        # Note: poppler must be installed on the system for pdf2image to work
-        images = convert_from_path(
-            pdf_path=str(path),
-            dpi=self.dpi,
-            fmt=self.fmt,
-            thread_count=4,  # Speed up conversion using multiple threads
-        )
+        # PDF point size is 1/72 inch; calculate scale factor for requested DPI
+        scale = self.dpi / 72.0
+        with pdfium.PdfDocument(str(path)) as pdf:
+            images = [
+                page.render(scale=scale).to_pil().convert("RGB")
+                for page in pdf
+            ]
 
         return images
+
