@@ -1,39 +1,37 @@
 import pytest
-from unittest.mock import patch, MagicMock
 from pathlib import Path
 from PIL import Image
+import pypdfium2 as pdfium
 
 from vision_rag.ingest.document_loader import DocumentLoader
 
+
 @pytest.fixture
-def mock_pdf_path(tmp_path):
-    """Fixture to create a temporary dummy PDF file."""
-    pdf_file = tmp_path / "dummy.pdf"
-    pdf_file.write_text("dummy pdf content")
+def real_pdf_path(tmp_path: Path) -> Path:
+    """Fixture to create a real 2-page PDF file using pypdfium2."""
+    pdf_file = tmp_path / "test_doc.pdf"
+    doc = pdfium.PdfDocument.new()
+    doc.new_page(width=100, height=100)
+    doc.new_page(width=100, height=100)
+    doc.save(str(pdf_file))
+    doc.close()
     return pdf_file
 
-@patch("vision_rag.ingest.document_loader.convert_from_path")
-def test_document_loader_success(mock_convert, mock_pdf_path):
-    # Setup mock to return two dummy PIL Images
-    mock_image1 = MagicMock(spec=Image.Image)
-    mock_image2 = MagicMock(spec=Image.Image)
-    mock_convert.return_value = [mock_image1, mock_image2]
-    
-    loader = DocumentLoader(dpi=200, fmt="png")
-    images = loader.load_pdf(mock_pdf_path)
-    
-    # Verify conversion
-    mock_convert.assert_called_once_with(
-        pdf_path=str(mock_pdf_path),
-        dpi=200,
-        fmt="png",
-        thread_count=4
-    )
+
+def test_document_loader_success(real_pdf_path: Path):
+    loader = DocumentLoader(dpi=144)
+    images = loader.load_pdf(real_pdf_path)
+
     assert len(images) == 2
-    assert images[0] == mock_image1
-    assert images[1] == mock_image2
+    for img in images:
+        assert isinstance(img, Image.Image)
+        assert img.mode == "RGB"
+        # 100 pt at 144 dpi -> 100 * (144 / 72) = 200 px
+        assert img.size == (200, 200)
+
 
 def test_document_loader_file_not_found():
     loader = DocumentLoader()
     with pytest.raises(FileNotFoundError):
         loader.load_pdf("non_existent_file.pdf")
+
