@@ -69,7 +69,7 @@ flowchart LR
 ```
 ### How It Works
 
-1. **Ingest** → Upload a PDF. Each page is converted to a high-res image using `pdf2image`. ColPali generates a 128-dimensional embedding vector for each page. These vectors are stored in Qdrant.
+1. **Ingest** → Upload a PDF. Each page is converted to a high-res image using `pypdfium2` (zero external dependencies). ColPali generates a 128-dimensional embedding vector for each page. These vectors are stored in Qdrant.
 
 2. **Query** → Your question is embedded by ColPali into the same vector space. Qdrant finds the most visually relevant pages. Those page images (not text!) are sent directly to Gemini, which reads and reasons over them to produce an answer.
 
@@ -135,10 +135,6 @@ Vision-Native-RAG-Pipeline/
 ### Prerequisites
 
 - **Python 3.10+**
-- **Poppler** (required by `pdf2image` for PDF rendering)
-  - Windows: Download from [poppler releases](https://github.com/oschwartz10612/poppler-windows/releases) and add to PATH
-  - macOS: `brew install poppler`
-  - Linux: `sudo apt-get install poppler-utils`
 - **Google API Key** for Gemini ([Get one here](https://aistudio.google.com/apikey))
 
 ### 1. Clone & Install
@@ -337,7 +333,7 @@ Query the ingested documents.
 | **Embedding Model** | ColPali v1.3 | Vision-native document embeddings |
 | **Vector Database** | Qdrant | Similarity search and storage |
 | **Generation Model** | Gemini 3.6 Flash | Multimodal reasoning over images |
-| **PDF Processing** | pdf2image + Poppler | PDF page → high-res image conversion |
+| **PDF Processing** | pypdfium2 | Fast, zero-dependency PDF page → image conversion |
 | **Config Management** | Pydantic Settings | Type-safe environment configuration |
 
 ---
