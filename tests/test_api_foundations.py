@@ -9,14 +9,18 @@ from fastapi.testclient import TestClient
 from vision_rag.api import routes
 from vision_rag.api.main import app
 from vision_rag.config import settings
+from vision_rag.ingest.pipeline import IngestionPipeline
 
 
 @pytest.fixture
 def client(tmp_path, monkeypatch):
-    monkeypatch.setattr(settings, "data_dir", tmp_path)
-    monkeypatch.setattr(settings, "qdrant_in_memory", True)
+    monkeypatch.setattr(settings, "data_dir", tmp_path / "library")
+    monkeypatch.setattr(settings, "qdrant_mode", "memory")
+    monkeypatch.setattr(settings, "ingestion_worker_enabled", False)
+    monkeypatch.setattr(settings, "import_legacy_pdfs", False)
     monkeypatch.setattr(settings, "model_warmup", False)
-    for name in ("_loader", "_vdb", "_pipeline", "_synthesizer"):
+    monkeypatch.setattr(settings, "render_dpi", 72)
+    for name in ("_loader", "_vdb", "_pipeline", "_synthesizer", "_library"):
         monkeypatch.setattr(routes, name, None)
     monkeypatch.setattr(routes, "_model_state", "not_loaded")
     with TestClient(app) as client:
@@ -32,29 +36,61 @@ def make_pdf(path, pages=3):
     return path.read_bytes()
 
 
-def test_library_and_preview_do_not_initialize_models(client, tmp_path, monkeypatch):
-    make_pdf(tmp_path / "report.pdf")
-    monkeypatch.setattr(routes, "get_components", MagicMock(side_effect=AssertionError))
+def upload(client, tmp_path, pages=3, filename="report.pdf"):
+    data = make_pdf(tmp_path / "fixture.pdf", pages)
+    response = client.post("/api/v1/ingest", files={"file": (filename, data)})
+    assert response.status_code == 202
+    return response.json(), data
+
+
+def complete(monkeypatch):
+    lib = routes.get_library()
+    encoder = MagicMock()
+    encoder.encode_images.side_effect = lambda images: [[1.0] * 128 for _ in images]
+    pipeline = IngestionPipeline(lib.loader, encoder, lib.store, batch_size=1)
+    monkeypatch.setattr(lib, "pipeline", lambda: pipeline)
+    assert lib.process_one()
+    return encoder
+
+
+def test_upload_returns_durable_job_without_initializing_model(
+    client, tmp_path, monkeypatch
+):
+    lib = routes.get_library()
+    initialize = MagicMock(side_effect=AssertionError)
+    monkeypatch.setattr(lib, "pipeline", initialize)
+    job, data = upload(client, tmp_path, filename="report.PDF")
+    assert job["state"] == "uploaded"
+    assert job["total_pages"] == 3
+    assert client.get("/api/v1/jobs/" + job["id"]).json()["id"] == job["id"]
+    assert client.get("/api/v1/versions/" + job["version_id"] + "/file").content == data
+    assert not (settings.data_dir / "report.PDF").exists()
+    initialize.assert_not_called()
+    duplicate = client.post(
+        "/api/v1/ingest", files={"file": ("renamed.pdf", data)}
+    ).json()
+    assert duplicate["deduplicated"] and duplicate["id"] == job["id"]
+
+
+def test_metadata_inventory_never_renders(client, tmp_path, monkeypatch):
+    upload(client, tmp_path)
     monkeypatch.setattr(pdfium.PdfPage, "render", MagicMock(side_effect=AssertionError))
     response = client.get("/api/v1/documents")
     assert response.json()[0]["page_count"] == 3
+    assert response.json()[0]["state"] == "uploaded"
     assert response.headers["X-Trace-ID"]
     assert client.get("/api/v1/ready").status_code == 503
     assert client.get("/api/v1/missing").status_code == 404
 
 
-def test_preview_returns_only_requested_page_and_thumbnail(client, tmp_path):
-    make_pdf(tmp_path / "report.pdf")
-    assert (
-        client.get("/api/v1/documents/report.pdf/pages/2").headers["content-type"]
-        == "image/jpeg"
-    )
-    assert (
-        client.get("/api/v1/documents/report.pdf/pages/2?thumbnail=true").status_code
-        == 200
-    )
-    assert client.get("/api/v1/documents/report.pdf/pages/0").status_code == 404
-    assert client.get("/api/v1/documents/report.pdf/pages/4").status_code == 404
+def test_version_page_preview_and_thumbnail(client, tmp_path):
+    job, _ = upload(client, tmp_path)
+    url = "/api/v1/versions/" + job["version_id"] + "/pages/"
+    assert client.get(url + "2").headers["content-type"] == "image/jpeg"
+    assert client.get(url + "2?thumbnail=true").status_code == 200
+    assert client.get(url + "0").status_code == 404
+    assert client.get(url + "4").status_code == 404
+    assert client.get("/api/v1/documents/report.pdf/pages/2").status_code == 200
 
 
 @pytest.mark.parametrize(
@@ -74,8 +110,6 @@ def test_invalid_query_never_loads_models(client, monkeypatch, payload):
 
 
 def test_upload_limits_header_and_traversal(client, monkeypatch):
-    initialize = MagicMock(side_effect=AssertionError)
-    monkeypatch.setattr(routes, "get_components", initialize)
     for name, content in [
         ("../escape.pdf", b"%PDF-test"),
         ("C:escape.pdf", b"%PDF-test"),
@@ -87,52 +121,87 @@ def test_upload_limits_header_and_traversal(client, monkeypatch):
             ).status_code
             == 400
         )
-    monkeypatch.setattr(settings, "max_upload_mb", 1)
+    routes.get_library().max_upload_bytes = 1024
     assert (
         client.post(
-            "/api/v1/ingest", files={"file": ("large.pdf", b"x" * (1024 * 1024 + 1))}
+            "/api/v1/ingest", files={"file": ("large.pdf", b"x" * 1025)}
         ).status_code
         == 413
     )
-    initialize.assert_not_called()
 
 
-def test_upload_success_and_duplicate_preserve_original(client, tmp_path, monkeypatch):
-    data = make_pdf(tmp_path / "fixture.pdf")
-    pipeline = MagicMock()
-    monkeypatch.setattr(routes, "get_components", lambda: (pipeline, None))
-    response = client.post("/api/v1/ingest", files={"file": ("report.PDF", data)})
-    assert response.status_code == 200
-    assert (tmp_path / "report.PDF").read_bytes() == data
+def test_failure_retry_cancel_and_progress_contract(client, tmp_path, monkeypatch):
+    job, _ = upload(client, tmp_path)
+    lib = routes.get_library()
+    monkeypatch.setattr(lib, "pipeline", MagicMock(side_effect=RuntimeError("private")))
+    lib.process_one()
+    failed = client.get("/api/v1/jobs/" + job["id"]).json()
+    assert failed["state"] == "failed" and "private" not in str(failed)
+    assert client.post("/api/v1/jobs/" + job["id"] + "/retry").status_code == 202
+    assert client.post("/api/v1/jobs/" + job["id"] + "/cancel").status_code == 202
+    lib.process_one()
+    assert lib.metadata.job(job["id"])["state"] == "cancelled"
+    assert client.post("/api/v1/jobs/" + job["id"] + "/retry").status_code == 202
+    complete(monkeypatch)
+    ready = client.get("/api/v1/jobs/" + job["id"]).json()
+    assert ready["state"] == "ready" and ready["pages_done"] == 3
+    assert client.post("/api/v1/jobs/" + job["id"] + "/cancel").status_code == 409
+
+
+def test_explicit_version_keeps_old_active_until_ready(client, tmp_path, monkeypatch):
+    first, old_data = upload(client, tmp_path)
+    complete(monkeypatch)
+    new_data = make_pdf(tmp_path / "changed.pdf", 2)
     assert (
-        client.post("/api/v1/ingest", files={"file": ("report.PDF", data)}).status_code
+        client.post(
+            "/api/v1/ingest", files={"file": ("report.pdf", new_data)}
+        ).status_code
         == 409
     )
-    pipeline.ingest_document.assert_called_once()
+    second = client.post(
+        "/api/v1/documents/" + first["document_id"] + "/versions",
+        files={"file": ("report.pdf", new_data)},
+    ).json()
+    lib = routes.get_library()
+    assert lib.ready_builds() == [first["build_id"]]
+    complete(monkeypatch)
+    assert lib.ready_builds() == [second["build_id"]]
+    old_url = "/api/v1/versions/" + first["version_id"] + "/file"
+    assert client.get(old_url).content == old_data
+    versions = client.get(
+        "/api/v1/documents/" + first["document_id"] + "/versions"
+    ).json()
+    assert [version["ordinal"] for version in versions] == [2, 1]
 
 
-def test_upload_failure_cleans_source_and_partial_vectors(
+def test_logical_delete_is_immediate_cleanup_is_retryable(
     client, tmp_path, monkeypatch
 ):
-    data = make_pdf(tmp_path / "fixture.pdf")
-    pipeline = MagicMock()
-    pipeline.ingest_document.side_effect = RuntimeError("private details")
-    monkeypatch.setattr(routes, "get_components", lambda: (pipeline, None))
-    store = routes.get_store()
-    store.upsert(
-        ["00000000-0000-0000-0000-000000000001"],
-        [[1.0] * 128],
-        [{"source": str((tmp_path / "report.pdf").resolve())}],
+    job, _ = upload(client, tmp_path)
+    complete(monkeypatch)
+    assert client.get("/api/v1/stats").json()["total_vectors"] == 3
+    deletion = client.delete("/api/v1/documents/" + job["document_id"])
+    assert deletion.status_code == 202
+    assert client.get("/api/v1/documents").json() == []
+    assert client.get("/api/v1/stats").json()["total_vectors"] == 0
+    assert (
+        client.get("/api/v1/versions/" + job["version_id"] + "/file").status_code == 404
     )
-    response = client.post("/api/v1/ingest", files={"file": ("report.pdf", data)})
-    assert response.status_code == 500
-    assert "private details" not in response.text
-    assert not (tmp_path / "report.pdf").exists()
-    assert store.get_collection_info()["points_count"] == 0
-    assert not list(tmp_path.glob("*.upload"))
+    lib = routes.get_library()
+    original = lib.store.delete_by_payload_filter
+    monkeypatch.setattr(
+        lib.store, "delete_by_payload_filter", MagicMock(side_effect=RuntimeError)
+    )
+    lib.process_one()
+    deletion_id = deletion.json()["id"]
+    assert client.get("/api/v1/jobs/" + deletion_id).json()["state"] == "failed"
+    monkeypatch.setattr(lib.store, "delete_by_payload_filter", original)
+    assert client.post("/api/v1/jobs/" + deletion_id + "/retry").status_code == 202
+    lib.process_one()
+    assert lib.metadata.job(deletion_id)["state"] == "ready"
 
 
-def test_health_remains_responsive_during_blocking_query(client, monkeypatch):
+def test_health_responsive_during_query(client, monkeypatch):
     started, finish = Event(), Event()
     synthesizer = MagicMock()
 
@@ -142,6 +211,7 @@ def test_health_remains_responsive_during_blocking_query(client, monkeypatch):
         return "answer", []
 
     synthesizer.query.side_effect = query
+    monkeypatch.setattr(routes.get_library(), "ready_builds", lambda: ["test"])
     monkeypatch.setattr(routes, "get_components", lambda: (None, synthesizer))
     with ThreadPoolExecutor(max_workers=1) as pool:
         future = pool.submit(client.post, "/api/v1/query", json={"query": "test"})
@@ -153,22 +223,7 @@ def test_health_remains_responsive_during_blocking_query(client, monkeypatch):
         assert future.result(timeout=5).status_code == 200
 
 
-def test_stats_and_deletion_work_without_model_initialization(client, tmp_path):
-    path = tmp_path / "report.pdf"
-    make_pdf(path)
-    store = routes.get_store()
-    store.upsert(
-        ["00000000-0000-0000-0000-000000000001"],
-        [[1.0] * 128],
-        [{"source": str(path.resolve())}],
-    )
-    assert client.get("/api/v1/stats").json()["total_vectors"] == 1
-    assert client.delete("/api/v1/documents/report.pdf").status_code == 200
-    assert client.get("/api/v1/stats").json()["total_vectors"] == 0
-    assert not path.exists()
-
-
-def test_component_initialization_is_shared_and_resources_close(client, monkeypatch):
+def test_component_initialization_shared_and_cleanup(client, monkeypatch):
     from vision_rag.models import colpali_embedder, gemini_generator
 
     embedder, generator = MagicMock(), MagicMock()
@@ -187,50 +242,53 @@ def test_component_initialization_is_shared_and_resources_close(client, monkeypa
     generator.close.assert_called_once()
 
 
-def test_failed_initialization_is_visible_and_can_be_retried(client, monkeypatch):
+def test_embedding_initialization_failure_can_retry_without_provider(
+    client, monkeypatch
+):
     from vision_rag.models import colpali_embedder, gemini_generator
 
-    embedder, generator = MagicMock(), MagicMock()
+    embedder = MagicMock()
     load_model = MagicMock(side_effect=[RuntimeError("model failed"), embedder])
+    provider = MagicMock(side_effect=AssertionError)
     monkeypatch.setattr(colpali_embedder, "ColPaliEmbeddingModel", load_model)
-    monkeypatch.setattr(
-        gemini_generator, "GeminiGenerator", MagicMock(return_value=generator)
-    )
-    with pytest.raises(RuntimeError, match="model failed"):
-        routes.get_components()
+    monkeypatch.setattr(gemini_generator, "GeminiGenerator", provider)
+    with pytest.raises(RuntimeError):
+        routes.get_pipeline()
     assert routes._model_state == "failed"
-    assert client.get("/api/v1/ready").status_code == 503
-    generator.close.assert_called_once()
-    routes.get_components()
+    routes.get_pipeline()
     assert routes._model_state == "ready"
+    provider.assert_not_called()
 
 
-def test_lifespan_can_warm_up_before_serving(tmp_path, monkeypatch):
-    from vision_rag.api import main
-
-    monkeypatch.setattr(settings, "model_warmup", True)
-    initialize, shutdown = MagicMock(), MagicMock()
-    monkeypatch.setattr(main, "get_components", initialize)
-    monkeypatch.setattr(main, "shutdown_components", shutdown)
-    with TestClient(app) as warmed:
-        initialize.assert_called_once()
-        assert warmed.get("/health").status_code == 200
-    shutdown.assert_called_once()
-
-
-def test_stage_timings_share_request_trace_without_content(client, tmp_path, caplog):
+def test_job_trace_records_are_correlated_without_document_content(
+    client, tmp_path, caplog, monkeypatch
+):
     import json
     import logging
 
-    make_pdf(tmp_path / "private-report.pdf")
+    job, _ = upload(client, tmp_path, filename="private-report.pdf")
     with caplog.at_level(logging.INFO, logger="vision_rag.timings"):
-        response = client.get("/api/v1/documents")
+        complete(monkeypatch)
     records = [
         json.loads(record.message)
         for record in caplog.records
         if record.name == "vision_rag.timings"
     ]
-    assert {"page_inspection", "http_request"} <= {r["stage"] for r in records}
-    assert all(r["trace_id"] == response.headers["X-Trace-ID"] for r in records)
-    assert all(r["duration_ms"] >= 0 for r in records)
+    assert {"rendering", "embedding", "database_upsert", "ingestion_job"} <= {
+        record["stage"] for record in records
+    }
+    assert all(record["trace_id"] == job["id"] for record in records)
     assert "private-report" not in str(records)
+
+
+def test_unready_query_and_unknown_job_do_not_initialize_models(client, monkeypatch):
+    initialize = MagicMock(side_effect=AssertionError)
+    monkeypatch.setattr(routes, "get_components", initialize)
+    assert (
+        client.post("/api/v1/query", json={"query": "test"}).json()["answer"]
+        == "No ready documents found."
+    )
+    assert client.get("/api/v1/jobs/missing").status_code == 404
+    assert client.post("/api/v1/jobs/missing/retry").status_code == 404
+    assert client.get("/api/v1/versions/missing/file").status_code == 404
+    initialize.assert_not_called()

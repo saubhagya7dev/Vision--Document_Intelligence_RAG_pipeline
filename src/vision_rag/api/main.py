@@ -12,7 +12,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.requests import Request
 from starlette.responses import Response
 
-from vision_rag.api.routes import get_components, router, shutdown_components
+from vision_rag.api.routes import get_library, get_pipeline, router, shutdown_components
 from vision_rag.config import settings
 from vision_rag.telemetry import stage, trace
 
@@ -20,8 +20,9 @@ from vision_rag.telemetry import stage, trace
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
+        await run_in_threadpool(get_library)
         if settings.model_warmup:
-            await run_in_threadpool(get_components)
+            await run_in_threadpool(get_pipeline)
         yield
     finally:
         await run_in_threadpool(shutdown_components)

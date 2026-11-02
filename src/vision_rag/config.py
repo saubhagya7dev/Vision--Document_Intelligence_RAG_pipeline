@@ -1,3 +1,5 @@
+import hashlib
+import json
 from pathlib import Path
 from typing import Literal, Optional
 
@@ -12,6 +14,7 @@ class Settings(BaseSettings):
     qdrant_host: str = "localhost"
     qdrant_port: int = 6333
     qdrant_collection_name: str = "vision_rag_docs"
+    qdrant_mode: Literal["local", "memory", "server"] = "local"
     qdrant_in_memory: bool = (
         True  # Set to False when using a real Qdrant server (e.g. Docker)
     )
@@ -31,6 +34,21 @@ class Settings(BaseSettings):
     max_upload_mb: int = Field(default=100, ge=1)
     max_document_pages: int = Field(default=1000, ge=1)
     max_render_pixels: int = Field(default=40_000_000, ge=1)
+    workspace_id: str = Field(default="local", min_length=1, max_length=100)
+    ingestion_worker_enabled: bool = True
+    import_legacy_pdfs: bool = True
+
+    @property
+    def index_profile(self) -> str:
+        specification = {
+            "model": self.embedding_model_name,
+            "pooling": "mean-v1",
+            "dimensions": 128,
+            "dpi": self.render_dpi,
+        }
+        return hashlib.sha256(
+            json.dumps(specification, sort_keys=True).encode()
+        ).hexdigest()
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
