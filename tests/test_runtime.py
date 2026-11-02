@@ -71,3 +71,20 @@ def test_inference_is_serialized_and_pooling_is_unchanged():
         results = list(pool.map(lambda _: encoder.encode_queries(["test"]), range(4)))
     assert results == [[[0.5, 0.5]]] * 4
     assert maximum == 1
+
+
+@pytest.mark.parametrize("device", ["cuda", "cpu"])
+def test_loading_releases_cuda_staging_cache_only_on_cuda(monkeypatch, device):
+    from colpali_engine import models
+
+    from vision_rag.models import colpali_embedder
+
+    monkeypatch.setattr(
+        colpali_embedder, "select_device", lambda *_: (device, torch.float32)
+    )
+    monkeypatch.setattr(models.ColPali, "from_pretrained", MagicMock())
+    monkeypatch.setattr(models.ColPaliProcessor, "from_pretrained", MagicMock())
+    release = MagicMock()
+    monkeypatch.setattr(torch.cuda, "empty_cache", release)
+    ColPaliEmbeddingModel(device=device)
+    assert release.call_count == (1 if device == "cuda" else 0)

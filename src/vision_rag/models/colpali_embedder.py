@@ -32,6 +32,11 @@ class ColPaliEmbeddingModel(BaseEmbeddingModel):
                 model_name, torch_dtype=dtype, device_map=self.device
             ).eval()
             self.processor: Any = ColPaliProcessor.from_pretrained(model_name)
+            if self.device == "cuda":
+                import torch
+
+                # Release unused loading buffers before the first inference.
+                torch.cuda.empty_cache()
 
     def _encode_batch(self, items: list[Any], images: bool) -> list[Any]:
         import torch

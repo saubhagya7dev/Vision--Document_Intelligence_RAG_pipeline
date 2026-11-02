@@ -1,0 +1,5 @@
+# Verified target: Windows x86-64, Python 3.14, CUDA 13.0-capable NVIDIA driver.
+# Install after uv sync; use uv run --no-sync or the .venv Python afterward.
+--index-url https://download.pytorch.org/whl/cu130
+torch==2.13.0+cu130
+torchvision==0.28.0+cu130

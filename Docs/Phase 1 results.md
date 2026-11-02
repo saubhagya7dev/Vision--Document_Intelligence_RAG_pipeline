@@ -2,6 +2,8 @@
 
 Completed implementation: 2 November 2026. Work stops at Phase 1; Phases 2–7 remain unstarted.
 
+Follow-up: the user subsequently requested CUDA installation. CUDA computation and real ColPali image/query embedding smoke checks now pass on the RTX 4050. See [GPU setup](GPU%20setup.md) and gpu-smoke.json. The CPU-only environment and unverified GPU statements below describe the original Phase 1 baseline, preserved as historical measurement context.
+
 ## Delivered behavior
 
 The existing visual pipeline remains in place, with bounded work and observable performance:

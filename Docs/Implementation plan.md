@@ -22,7 +22,7 @@ Implemented and covered by local regression checks:
 
 External validation still required:
 
-- [ ] Install and verify a compatible CUDA build in the intended runtime.
+- [x] Follow-up: install a compatible CUDA build and verify actual CUDA image/query embeddings on the local RTX 4050. See GPU setup.md.
 - [ ] Measure actual model cold start, warm inference and provider response.
 - [ ] Check small text/chart/table fidelity on representative real documents.
 - [ ] Measure RTX 3050-class and stronger hardware using the same workloads.

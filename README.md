@@ -63,7 +63,18 @@ The first ingestion/query loads the embedding model unless MODEL_WARMUP=true. Lo
 
 Or open [diagnostics](http://localhost:8000/api/v1/diagnostics) while the app is running.
 
-The inspected machine has an RTX 4050 Laptop GPU with 6141 MiB VRAM, but its installed PyTorch 2.13.0 has no CUDA support. Auto mode therefore uses CPU. Use the [official PyTorch installer selector](https://pytorch.org/get-started/locally/) for a build compatible with your Python, operating system, driver, and GPU. No CUDA package installation or GPU inference was performed in Phase 1. A subsequent environment sync can replace a manually installed Torch build; recheck diagnostics after changing dependencies.
+The local RTX 4050 Laptop GPU now runs PyTorch 2.13.0+cu130 and matching TorchVision 0.28.0+cu130. CUDA computation and real ColPali image/query embeddings have been verified. The local configuration uses automatic device selection and batches of one. The model creates significant memory pressure on this 6 GB GPU; this is not proof that it fits entirely in physical VRAM. See [GPU setup and verification](Docs/GPU%20setup.md).
+
+To reproduce this Windows/Python 3.14 CUDA profile after environment sync:
+
+```powershell
+uv pip install --python .venv/Scripts/python.exe -r requirements/cuda-windows-py314.txt
+.\.venv\Scripts\python.exe scripts/check_gpu.py
+# Optional real-model check; allows missing model/processor files to download.
+.\.venv\Scripts\python.exe scripts/check_gpu.py --model --allow-downloads
+```
+
+Stop Vision before replacing Torch on Windows; loaded DLLs cannot be replaced. Run the app through its .venv Python, or use uv run --no-sync. A normal uv sync/run can restore the default Torch build from uv.lock; reinstall this profile afterward and recheck diagnostics. Other machines should use the [official PyTorch installer selector](https://pytorch.org/get-started/locally/) rather than assuming this profile is appropriate.
 
 Suggested starting settings, **not hardware performance guarantees**:
 
@@ -152,6 +163,6 @@ In the restricted Codex Windows sandbox, asyncio's socket-pair setup stalled bef
 
 ## Current limits
 
-This remains a local prototype. Real GPU inference, end-to-end model/provider latency, retrieval quality, and visual label fidelity across real documents remain unverified. There is no backend conversation persistence, hybrid index, claim-level citation validator, durable ingestion queue, or shared-deployment access boundary. Ingestion uses random page IDs and best-effort cleanup; crash consistency and cross-store transactions are not guaranteed. The document list inventories files, not authoritative index readiness.
+This remains a local prototype. A synthetic single-page GPU inference smoke check passes; end-to-end model/provider latency, retrieval quality, and visual label fidelity across real documents remain unverified. There is no backend conversation persistence, hybrid index, claim-level citation validator, durable ingestion queue, or shared-deployment access boundary. Ingestion uses random page IDs and best-effort cleanup; crash consistency and cross-store transactions are not guaranteed. The document list inventories files, not authoritative index readiness.
 
 The original generation-model default has not been validated against the provider. Configure a currently available model in .env. The frontend still contains illustrative analytics and browser-only conversation state; their replacement is planned for Phase 5. Shared deployment, full security hardening, packaging verification, and release evaluation remain Phase 7 work.

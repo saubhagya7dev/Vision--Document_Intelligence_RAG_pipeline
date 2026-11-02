@@ -1,0 +1,63 @@
+{
+  "diagnostics": {
+    "torch_version": "2.13.0+cu130",
+    "cuda_build": "13.0",
+    "cuda_available": true,
+    "mps_available": false,
+    "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+    "accelerator": {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "total_memory_bytes": 6438846464,
+      "free_memory_bytes": 5329911808,
+      "compute_capability": [
+        8,
+        9
+      ],
+      "bfloat16_supported": true,
+      "compiled_architectures": [
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_90",
+        "sm_100",
+        "sm_120"
+      ]
+    },
+    "recommended_device": "cuda",
+    "action": null
+  },
+  "checks": {
+    "cuda_matrix_multiplication": "passed",
+    "first_image": {
+      "status": "passed",
+      "dimensions": 128,
+      "seconds": 9.74
+    },
+    "warm_image": {
+      "status": "passed",
+      "dimensions": 128,
+      "seconds": 9.669
+    },
+    "first_query": {
+      "status": "passed",
+      "dimensions": 128,
+      "seconds": 0.151
+    },
+    "warm_query": {
+      "status": "passed",
+      "dimensions": 128,
+      "seconds": 0.041
+    }
+  },
+  "model": "vidore/colpali-v1.3",
+  "model_load_seconds": 21.553,
+  "parameter_devices": [
+    "cuda:0",
+    "meta"
+  ],
+  "precision": "torch.float16",
+  "peak_allocated_bytes": 8707440640,
+  "peak_reserved_bytes": 8969519104,
+  "batch_size": 1,
+  "status": "passed"
+}
