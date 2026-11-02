@@ -6,24 +6,31 @@ Work directly in the existing repository. Deliver working software through incre
 
 ## CURRENT STATUS (read first)
 
-**Phases 1 and 2 are reported as implemented by the repository owner.** Do not redo them. Do verify them quickly against the checkout before building on them, and report any mismatch instead of assuming.
+**Phases 1 and 2 are implemented** (see the existing implementation checklist, `Phase 1 results.md`, `GPU setup.md`, and `Phase 2 guide.md` in `Docs/`). Do not redo them. **Phase 3 is now authorized**: the earlier "stop before Phase 3" instruction no longer applies. Verify the claims below against the checkout before building on them, and report any mismatch instead of assuming.
 
-Claimed as done:
+Confirmed as done in the checklist:
 
-- **Phase 1:** structured stage timings with trace IDs, CUDA/PyTorch diagnostics, bounded render/embed batches, single-page rendering, direct page counting, cached page artifacts/thumbnails, explicit model lifecycle and readiness, controlled inference concurrency.
-- **Phase 2:** metadata records for documents, immutable versions, content hashes, page artifacts, index builds, and ingestion jobs; generated storage keys; upload validation and limits; safe path handling; scoped dedup; deterministic page/index IDs; persistent vector storage; durable background ingestion with stage progress, retry, cancel, restart recovery; retryable deletion cleanup; only ready index builds exposed to retrieval.
+- **Phase 1:** structured timings with trace propagation; direct page counting; single-page rendering; content-addressed page/thumbnail artifacts; bounded page/embedding batches with serialized inference; configurable device, precision, model, and batch settings with CPU fallback; multi-item OOM retry without dropping pages; model readiness, optional startup load, and shutdown cleanup; thread-pool execution for blocking handlers; CUDA build verified with real image/query embeddings on the developer's **RTX 4050**.
+- **Phase 2:** SQLite metadata (documents, immutable versions, page artifacts, builds, durable jobs); generated storage keys, validation, hashing, scoped dedup; replacement semantics where a failed replacement keeps the old evidence active; persistent local Qdrant with deterministic point IDs; background worker with stage progress, retry, cancel, restart recovery; ready-only retrieval filtered by workspace, active version, and index profile; deletion tombstones with retryable cleanup; legacy import and reconciliation; version-specific sources, previews, and downloads; 57 tests plus lint, strict type checks, and JS syntax checks.
+- **Verified profile:** one local application process, SQLite, persistent local Qdrant. Shared deployment is not validated.
+
+**Still unmeasured from Phase 1 (do these in Step 0, they gate the later evaluation):**
+
+- Real model cold start, warm inference, and provider (Gemini) response times, recorded separately.
+- Small-text, chart, and table fidelity at the current render resolution, on representative real documents.
+- Same workloads on RTX 3050-class and stronger hardware. The developer's GPU is an RTX 4050, so it is **not** a 3050-class measurement; label results with the exact GPU, VRAM, and power mode. If a 3050-class system is unavailable, constrain VRAM through configuration to approximate it and mark the result as simulated, not measured.
 
 **Step 0 (before any new work):**
 
-1. Read `README.md`, `Docs/Project understanding.md`, `Docs/Deep upgrade research.md`, `Docs/Upgrade research.md`, and any `AGENTS.md`.
+1. Read `README.md`, the `Docs/` guides listed above, `Docs/Project understanding.md`, `Docs/Deep upgrade research.md`, `Docs/Upgrade research.md`, and any `AGENTS.md`.
 2. Inspect Git state, environment, tests, and runtime. Preserve unrelated changes.
-3. Run the existing test suite and a Phase 1-2 smoke check: upload, ingest, restart, re-upload (no duplicates), delete (no retrieval). Record results. Fix regressions before continuing.
-4. Record a measured baseline on this machine (named hardware, configuration, workload) for ingestion throughput and retrieval latency. Do not invent numbers.
+3. Run the existing 57-test suite and a Phase 1-2 smoke check: upload, ingest, restart, re-upload (no duplicates), delete (no retrieval). Record results. Fix regressions before continuing.
+4. Complete the unmeasured Phase 1 items above (skip the provider measurement and say so if no API key is available). Do not invent numbers.
 5. Write a short checklist for Phases 3 to 7 with exit criteria, and record major decisions briefly in `Docs/Decisions.md`.
 
 ## PRINCIPLES (unchanged)
 
-**Hardware:** RTX 3050-class laptops and stronger are the baseline. Do not assume identical VRAM or power limits. Keep hardware-adaptive execution: detect accelerators, distinguish CPU-only PyTorch from unavailable hardware, choose supported precision and bounded batch sizes, offer performance profiles, provide explicit CPU fallback, avoid loading unnecessary models at once, handle memory pressure without silently dropping pages. Separate cold start, ingestion throughput, queueing delay, retrieval latency, time to first token, and total completion time. Never invent speedups. Label measured versus estimated results.
+**Hardware:** RTX 3050-class laptops and stronger are the intended baseline; development happens on an RTX 4050. Do not assume identical VRAM or power limits, and do not present 4050 results as 3050-class results. Keep hardware-adaptive execution: detect accelerators, distinguish CPU-only PyTorch from unavailable hardware, choose supported precision and bounded batch sizes, offer performance profiles, provide explicit CPU fallback, avoid loading unnecessary models at once, handle memory pressure without silently dropping pages. Separate cold start, ingestion throughput, queueing delay, retrieval latency, time to first token, and total completion time. Never invent speedups. Label measured versus estimated results.
 
 **Hybrid design:** selective text-and-vision processing, not a rigid "text OR visual" classification. Extract native text from every page where available. Add visual processing only where meaningful or uncertain. A logo should not trigger expensive visual processing; absence of bitmaps does not prove absence of visual content (vector tables and diagrams). Use a staged strategy: cheap native extraction and inspection, quality and layout heuristics, selective layout/OCR/visual encoding, fallback when confidence is low. Never run an expensive VLM on every page just to decide whether one is needed.
 
