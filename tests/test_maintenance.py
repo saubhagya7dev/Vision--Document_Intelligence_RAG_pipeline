@@ -141,3 +141,24 @@ def test_reset_rejects_other_workspaces_before_changes(tmp_path):
         lib.store.clear_collection.assert_not_called()
     finally:
         close(lib, store)
+
+
+def test_old_upload_cannot_repopulate_a_reset_library(tmp_path):
+    source = create_pdf(tmp_path / "fixture.pdf", ("text",))
+    lib, store, _, _ = open_hybrid(tmp_path / "library")
+    try:
+        admitted = lib.generation
+        lib.reset()
+        with pytest.raises(Conflict, match="reset"):
+            lib.upload(
+                io.BytesIO(source.read_bytes()),
+                "stale.pdf",
+                expected_generation=admitted,
+            )
+        assert lib.documents() == []
+        assert (
+            lib.upload(io.BytesIO(source.read_bytes()), "new.pdf")["state"]
+            == "uploaded"
+        )
+    finally:
+        close(lib, store)

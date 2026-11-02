@@ -60,6 +60,7 @@ class DocumentLibrary:
         self.operation = RLock()
         self.maintenance_lock = Lock()
         self.maintenance_requested = Event()
+        self.generation = 0
         self.processing = ProcessingMetadata(self.metadata)
         self.hybrid = (
             HybridProcessor(
@@ -100,8 +101,14 @@ class DocumentLibrary:
         filename: str,
         replace_document: str | None = None,
         legacy_path: str | None = None,
+        expected_generation: int | None = None,
     ) -> dict[str, Any]:
+        admitted = (
+            self.generation if expected_generation is None else expected_generation
+        )
         with self.operation:
+            if admitted != self.generation:
+                raise Conflict("Library was reset; upload the file again")
             self.check_available()
             return self._upload(stream, filename, replace_document, legacy_path)
 
@@ -607,6 +614,7 @@ class DocumentLibrary:
                 if others:
                     raise Conflict("Start fresh requires a library with one workspace")
                 self.check_cache_path()
+                self.generation += 1
                 self.metadata.set_setting("reset_pending", "true")
             with self.operation, self.access:
                 self.store.clear_collection()

@@ -23,6 +23,7 @@
     let activeUploadJobId = null;
     let activeUploadToken = null;
     let clearingData = false;
+    const uploadRequests = new Set();
     const terminalJobs = new Set(['ready', 'failed', 'cancelled']);
 
     // =========================
@@ -63,6 +64,8 @@
         uploadFile(file, onProgress, documentId = null) {
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
+                uploadRequests.add(xhr);
+                xhr.addEventListener('loadend', () => uploadRequests.delete(xhr));
                 const formData = new FormData();
                 formData.append('file', file);
 
@@ -1036,6 +1039,7 @@
             if (action === 'reset' && confirmation.value !== 'DELETE') return;
             pending = true;
             clearingData = action !== 'cache';
+            if (action === 'reset') for (const upload of uploadRequests) upload.abort();
             submit.disabled = close.disabled = true;
             document.getElementById('data-options').disabled = true;
             status.textContent = 'Clearing data… Please wait for the server to finish.';

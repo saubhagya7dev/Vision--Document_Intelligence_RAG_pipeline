@@ -53,6 +53,11 @@ async def request_trace(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> Response:
     with trace() as identifier, stage("http_request", method=request.method):
+        if request.method == "POST" and (
+            request.url.path == "/api/v1/ingest"
+            or request.url.path.endswith("/versions")
+        ):
+            request.state.library_generation = get_library().generation
         response = await call_next(request)
         response.headers["X-Trace-ID"] = identifier
         if request.url.path.startswith("/api/"):

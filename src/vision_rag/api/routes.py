@@ -381,10 +381,15 @@ class JobResponse(BaseModel):
     document_deleted: bool = False
 
 
-def upload_job(file: UploadFile, document_id: str | None = None) -> JobResponse:
+def upload_job(
+    file: UploadFile, document_id: str | None = None, generation: int | None = None
+) -> JobResponse:
     try:
         job = get_library().upload(
-            file.file, file.filename or "", replace_document=document_id
+            file.file,
+            file.filename or "",
+            replace_document=document_id,
+            expected_generation=generation,
         )
         return JobResponse(**job)
     except ResourceLimit as error:
@@ -400,15 +405,17 @@ def upload_job(file: UploadFile, document_id: str | None = None) -> JobResponse:
 
 
 @router.post("/ingest", response_model=JobResponse, status_code=202)
-def ingest_document(file: UploadFile = File(...)) -> JobResponse:
-    return upload_job(file)
+def ingest_document(request: Request, file: UploadFile = File(...)) -> JobResponse:
+    return upload_job(file, generation=request.state.library_generation)
 
 
 @router.post(
     "/documents/{document_id}/versions", response_model=JobResponse, status_code=202
 )
-def upload_version(document_id: str, file: UploadFile = File(...)) -> JobResponse:
-    return upload_job(file, document_id)
+def upload_version(
+    document_id: str, request: Request, file: UploadFile = File(...)
+) -> JobResponse:
+    return upload_job(file, document_id, request.state.library_generation)
 
 
 @router.get("/jobs", response_model=list[JobResponse])
