@@ -5,7 +5,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from threading import Event, RLock, Thread
+from threading import Event, Lock, RLock, Thread
 from typing import Any, BinaryIO, Callable
 from uuid import UUID, uuid4
 
@@ -57,6 +57,9 @@ class DocumentLibrary:
         self.profile, self.workspace = profile, workspace
         self.max_upload_bytes, self.max_pages = max_upload_bytes, max_pages
         self.access = RLock()
+        self.operation = RLock()
+        self.maintenance_lock = Lock()
+        self.maintenance_requested = Event()
         self.processing = ProcessingMetadata(self.metadata)
         self.hybrid = (
             HybridProcessor(
@@ -97,6 +100,24 @@ class DocumentLibrary:
         filename: str,
         replace_document: str | None = None,
         legacy_path: str | None = None,
+    ) -> dict[str, Any]:
+        with self.operation:
+            self.check_available()
+            return self._upload(stream, filename, replace_document, legacy_path)
+
+    def check_available(self) -> None:
+        if self.maintenance_requested.is_set() or self.reset_pending():
+            raise Conflict("Library maintenance is in progress; retry when it finishes")
+
+    def reset_pending(self) -> bool:
+        return self.metadata.setting("reset_pending") == "true"
+
+    def _upload(
+        self,
+        stream: BinaryIO,
+        filename: str,
+        replace_document: str | None,
+        legacy_path: str | None,
     ) -> dict[str, Any]:
         self.validate_filename(filename)
         version_id = str(uuid4())
@@ -150,9 +171,13 @@ class DocumentLibrary:
             temporary.unlink(missing_ok=True)
 
     def ready_builds(self) -> list[str]:
+        if self.reset_pending():
+            return []
         return self.metadata.ready_builds(self.profile)
 
     def source(self, version_id: str) -> tuple[dict[str, Any], Path]:
+        if self.reset_pending():
+            raise Conflict("Library reset is incomplete; retry Start fresh")
         version = self.metadata.version(version_id)
         if version["deleted_at"]:
             raise KeyError(version_id)
@@ -167,6 +192,8 @@ class DocumentLibrary:
         return version, path
 
     def documents(self) -> list[dict[str, Any]]:
+        if self.reset_pending():
+            return []
         result = []
         for doc in self.metadata.rows(
             "SELECT * FROM documents WHERE workspace=? AND deleted_at IS NULL "
@@ -220,6 +247,12 @@ class DocumentLibrary:
         return job
 
     def start(self, worker_enabled: bool = True, import_legacy: bool = True) -> None:
+        if self.reset_pending():
+            try:
+                self.reset()
+            except Exception:
+                logger.exception("Library reset recovery failed; retry Start fresh")
+                return
         self.metadata.recover()
         self.processing.recover()
         self.reconcile()
@@ -285,7 +318,7 @@ class DocumentLibrary:
                 self.metadata.finish(job["id"], "failed", str(error))
 
     def _control(self, job_id: str) -> None:
-        if self.stop_event.is_set():
+        if self.stop_event.is_set() or self.maintenance_requested.is_set():
             raise WorkerInterrupted()
         job = self.metadata.job(job_id)
         version = self.metadata.version(job["version_id"])
@@ -428,6 +461,12 @@ class DocumentLibrary:
             self.metadata.finish(job["id"], "ready")
 
     def process_one(self) -> bool:
+        with self.operation:
+            if self.maintenance_requested.is_set() or self.reset_pending():
+                return False
+            return self._process_one()
+
+    def _process_one(self) -> bool:
         job = self.metadata.claim()
         if job is None:
             return self._process_page_task()
@@ -472,7 +511,7 @@ class DocumentLibrary:
             version, path = self.source(task["version_id"])
 
             def control() -> None:
-                if self.stop_event.is_set():
+                if self.stop_event.is_set() or self.maintenance_requested.is_set():
                     raise WorkerInterrupted()
                 if self.metadata.version(version["id"])["deleted_at"]:
                     raise IngestionCancelled()
@@ -519,6 +558,96 @@ class DocumentLibrary:
                 task["id"], "failed", "Page processing failed; retry the override"
             )
         return True
+
+    def clear_history(self) -> None:
+        # Keep durable jobs needed for retry/publication; hide completed history.
+        self.metadata.set_setting("history_cleared_at", now())
+
+    def clear_page_cache(self) -> None:
+        if not self.maintenance_lock.acquire(blocking=False):
+            raise Conflict("Library maintenance is already running")
+        self.maintenance_requested.set()
+        try:
+            with self.operation, self.access:
+                if self.reset_pending():
+                    raise Conflict("Retry Start fresh to finish the interrupted reset")
+                self.check_cache_path()
+                cache = self.path("artifacts")
+                if cache.is_dir():
+                    shutil.rmtree(cache)
+                with self.loader._cache_lock:
+                    self.loader._hashes.clear()
+        finally:
+            self.maintenance_requested.clear()
+            self.wake_event.set()
+            self.maintenance_lock.release()
+
+    def check_cache_path(self) -> None:
+        if self.loader.cache_dir != self.path("artifacts"):
+            raise Conflict(
+                "Cache clearing requires the managed library artifacts directory"
+            )
+
+    def reset(self) -> None:
+        """Replayable local-library reset; never deletes the library root itself."""
+        if not self.maintenance_lock.acquire(blocking=False):
+            raise Conflict("Library maintenance is already running")
+        self.maintenance_requested.set()
+        try:
+            # A request arriving after a worker boundary cannot start another job.
+            with self.access:
+                if not self.store.local:
+                    raise Conflict(
+                        "Start fresh is supported only for local vector storage"
+                    )
+                others = self.metadata.rows(
+                    "SELECT 1 FROM documents WHERE workspace!=? LIMIT 1",
+                    (self.workspace,),
+                )
+                if others:
+                    raise Conflict("Start fresh requires a library with one workspace")
+                self.check_cache_path()
+                self.metadata.set_setting("reset_pending", "true")
+            with self.operation, self.access:
+                self.store.clear_collection()
+                for folder in ("artifacts", "originals", "incoming"):
+                    target = self.path(folder)
+                    if target.is_dir():
+                        shutil.rmtree(target)
+                # Remove pre-upgrade PDFs/staging files so legacy import cannot
+                # repopulate an intentionally reset library on the next restart.
+                for file in self.root.iterdir():
+                    if file.is_file() and file.suffix.lower() in (".pdf", ".upload"):
+                        self.path(file.name).unlink()
+                with self.metadata.connection(True) as db:
+                    db.execute("PRAGMA secure_delete=ON")
+                    for table in (
+                        "chunk_search",
+                        "text_chunks",
+                        "page_tasks",
+                        "page_processing",
+                        "pages",
+                        "jobs",
+                        "legacy_imports",
+                        "builds",
+                        "versions",
+                        "documents",
+                    ):
+                        db.execute("DELETE FROM " + table)
+                    db.execute(
+                        "DELETE FROM app_state WHERE workspace=? "
+                        "AND key!='reset_pending'",
+                        (self.workspace,),
+                    )
+                with self.metadata.connection() as db:
+                    db.execute("VACUUM")
+                with self.loader._cache_lock:
+                    self.loader._hashes.clear()
+                self.metadata.set_setting("reset_pending", "false")
+        finally:
+            self.maintenance_requested.clear()
+            self.wake_event.set()
+            self.maintenance_lock.release()
 
     def _loop(self) -> None:
         while not self.stop_event.is_set():

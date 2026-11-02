@@ -69,6 +69,9 @@ CREATE TABLE IF NOT EXISTS page_tasks (
  updated_at TEXT NOT NULL);
 CREATE UNIQUE INDEX IF NOT EXISTS pending_page_task
  ON page_tasks(build_id,page_number) WHERE state IN ('uploaded','running');
+CREATE TABLE IF NOT EXISTS app_state (
+ workspace TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL,
+ PRIMARY KEY(workspace,key));
 """
 
 
@@ -90,13 +93,13 @@ class Metadata:
         path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1, 2):
+            if version not in (0, 1, 2, 3):
                 raise RuntimeError(
                     "Unsupported metadata schema; restore compatible code"
                 )
             db.execute("PRAGMA journal_mode=WAL")
             db.executescript(
-                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=2; COMMIT;"
+                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=3; COMMIT;"
             )
 
     @contextmanager
@@ -120,6 +123,21 @@ class Metadata:
     def rows(self, sql: str, values: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
         with self.connection() as db:
             return [dict(row) for row in db.execute(sql, values)]
+
+    def setting(self, key: str) -> str | None:
+        rows = self.rows(
+            "SELECT value FROM app_state WHERE workspace=? AND key=?",
+            (self.workspace, key),
+        )
+        return str(rows[0]["value"]) if rows else None
+
+    def set_setting(self, key: str, value: str) -> None:
+        with self.connection(True) as db:
+            db.execute(
+                "INSERT INTO app_state VALUES (?,?,?) ON CONFLICT(workspace,key) "
+                "DO UPDATE SET value=excluded.value",
+                (self.workspace, key, value),
+            )
 
     def document(self, reference: str, include_deleted: bool = False) -> dict[str, Any]:
         rows = self.rows(

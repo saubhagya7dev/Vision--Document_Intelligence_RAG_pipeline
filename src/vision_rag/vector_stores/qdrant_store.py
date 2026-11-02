@@ -44,6 +44,8 @@ class QdrantVectorStore(BaseVectorStore):
                        Data is lost on restart. Ideal for development and testing.
         """
         self.collection_name = collection_name
+        self.vector_size = vector_size
+        self.local = path is not None or in_memory
         self.lock = RLock()
 
         if path is not None:
@@ -166,6 +168,23 @@ class QdrantVectorStore(BaseVectorStore):
                 points_selector=PointIdsList(points=list(ids)),
                 wait=True,
             )
+
+    def clear_collection(self) -> None:
+        if not self.local:
+            raise ValueError("Start fresh is supported only for local vector storage")
+        with self.lock:
+            self._ensure_collection(self.vector_size)
+            # Keep the open local collection: deleting/recreating its directory
+            # can retain old SQLite files under Windows file locks.
+            self.client.delete(
+                collection_name=self.collection_name,
+                points_selector=Filter(),
+                wait=True,
+            )
+            if self.client.count(
+                collection_name=self.collection_name, exact=True
+            ).count:
+                raise RuntimeError("Vector cleanup is incomplete; retry reset")
 
     def get_collection_info(self) -> Dict[str, Any]:
         """Get collection statistics from Qdrant."""
