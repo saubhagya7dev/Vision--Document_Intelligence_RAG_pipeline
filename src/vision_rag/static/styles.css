@@ -1403,7 +1403,7 @@ h3 {
 .doc-card-actions {
     display: flex;
     justify-content: flex-end;
-    opacity: 0;
+    opacity: 1;
     transition: opacity var(--transition-fast);
 }
 
@@ -1433,15 +1433,27 @@ h3 {
 }
 
 .job-action {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
     padding: 7px 12px;
     border: 1px solid var(--border-subtle);
     border-radius: 16px;
-    color: var(--text-body);
+    color: var(--text-body, #e5e5e5);
     background: var(--bg-card);
     cursor: pointer;
     font: inherit;
     font-size: 0.8rem;
 }
+
+.job-action:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+}
+
+[data-job-buttons] { display: inline-flex; gap: 8px; }
 
 .job-action:disabled { opacity: 0.5; cursor: wait; }
 .job-action:focus-visible, .doc-delete-btn:focus-visible {
@@ -1714,3 +1726,15 @@ h3 {
 .processing-controls input { width: 90px; }
 #processing-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 42vh; overflow: auto; padding: 16px; background: #0c1018; font-size: 13px; }
 .processing-dialog :focus-visible { outline: 2px solid #34d399; outline-offset: 3px; }
+.data-dialog { max-width: 640px; background: var(--bg-card); }
+.data-dialog fieldset { border: 1px solid var(--border-medium); border-radius: 12px; padding: 12px; margin: 16px 0; }
+.data-dialog legend { padding: 0 8px; color: var(--text-body); }
+.data-option { display: flex; align-items: flex-start; gap: 12px; padding: 12px 4px; cursor: pointer; }
+.data-option input { margin-top: 5px; accent-color: var(--accent); flex-shrink: 0; }
+.data-option strong { display: block; color: var(--text-primary); }
+.data-option small { display: block; color: #a3a3a3; line-height: 1.6; margin-top: 4px; }
+#data-confirm { display: block; background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-active); padding: 10px; border-radius: 8px; width: 100%; margin-top: 8px; }
+#data-confirm-label[hidden] { display: none; }
+#data-status { color: var(--text-primary); }
+.data-dialog .btn-danger { min-height: 42px; }
+@media (max-width: 600px) { .header-inner { gap: 8px; } #data-controls-btn { font-size: 0.72rem; padding: 8px 10px; } }
