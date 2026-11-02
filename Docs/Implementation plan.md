@@ -60,10 +60,11 @@ See [Phase 2 guide](Phase%202%20guide.md) for setup, migration, contracts and li
 - [x] Real GPU comparison against all-visual and native-only generated-PDF baselines.
 - [x] Browser verification of a successful page override with native text retained.
 - [x] 79 tests, lint, strict types, compilation, JavaScript syntax and whitespace checks.
-- [ ] Real Tesseract recognition/language quality and representative held-out quality.
+- [x] Follow-up: project-local Tesseract and real English scan recognition, CUDA ingestion, and OCR text search.
+- [ ] Broad OCR/language quality and representative held-out quality.
 
 See [Phase 3 guide](Phase%203%20guide.md) for setup, measurements, and limits.
-The optional OCR adapter and fallback are implemented; recognition quality and
+The optional OCR adapter and fallback are implemented and a real scan smoke check passed; broad recognition quality and
 held-out product quality are not claimed as validated.
 
 ## Later phases — not started

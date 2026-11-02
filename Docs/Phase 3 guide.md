@@ -48,8 +48,8 @@ Stop the existing server with Ctrl+C, then run:
 .\.venv\Scripts\python.exe -m vision_rag.api.main
 ```
 
-Defaults enable hybrid ingestion. No changes to the private `.env` were needed;
-credentials, GPU settings, and user documents were preserved. The Phase 2 local
+Defaults enable hybrid ingestion. The OCR follow-up sets only the executable path
+in the private `.env`; credentials, GPU settings, and user documents were preserved. The Phase 2 local
 single-process ownership and persistent Qdrant rules still apply.
 
 New optional settings are documented in `.env.example`:
@@ -69,8 +69,45 @@ PATH or an absolute executable path; install the desired language data separatel
 See the [official Tesseract installation guide](https://tesseract-ocr.github.io/tessdoc/Installation.html)
 and [TSV command interface](https://tesseract-ocr.github.io/tessdoc/Command-Line-Usage.html).
 `/api/v1/diagnostics` reports whether the executable is available. Availability is
-not proof that language data or recognition quality is correct. Tesseract was not
-installed during this phase; real OCR recognition remains unverified on this PC.
+not proof that language data or recognition quality is correct.
+
+### Verified local OCR follow-up
+
+Tesseract **5.4.0.20240606** is now available under
+`.tools/tesseract/tesseract.exe`, with English (`eng`) and orientation (`osd`)
+data. Its pinned Windows package comes from the UB Mannheim release referenced by
+the [Microsoft winget manifest](https://github.com/microsoft/winget-pkgs/blob/master/manifests/u/UB-Mannheim/TesseractOCR/5.4.0.20240606/UB-Mannheim.TesseractOCR.installer.yaml).
+The downloaded package's SHA-256 was checked before extracting the runtime with
+the existing 7-Zip installation. The installer was not executed and system PATH
+and registry were not changed. `.tools` is ignored by Git.
+
+Recreate this project-local runtime with 7-Zip installed:
+
+```powershell
+.\scripts\setup_tesseract.ps1
+```
+
+Set `TESSERACT_EXECUTABLE` in the local `.env` to the absolute path printed by the
+script. This machine is already configured. Restart the running application to
+load the new setting.
+
+Real verification is saved in [ocr-smoke.json](ocr-smoke.json): an image-only
+generated PDF produced the expected `SCAN42` and `revenue 120 units` text.
+Recognition took 0.61 seconds at 150 DPI. Full ingestion with real ColPali CUDA
+embeddings, SQLite, Qdrant, and OCR text search passed with one chunk and no OCR
+warnings; ingestion took 10.04 seconds after 25.91 seconds of model loading.
+There were no generation-provider calls and no user documents were opened.
+
+Reproduce recognition alone, or include the real visual model:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/check_ocr.py --output Docs/ocr-smoke.json
+.\.venv\Scripts\python.exe scripts/check_ocr.py --model --allow-downloads --output Docs/ocr-smoke.json
+```
+
+This verifies installation and one clean English scan. It does not establish
+recognition quality on difficult scans, handwriting, other languages, or a
+representative document corpus. OCR remains CPU-based; ColPali uses CUDA.
 
 ## Existing libraries and page overrides
 
@@ -177,7 +214,7 @@ to vision, and visibly reached revision 2 while preserving its text. The server
 and temporary browser tab were closed after verification.
 
 Layout detection can miss or overselect visuals; native text can be readable but
-semantically wrong. Overrides are the recovery path. OCR recognition/language
+semantically wrong. Overrides are the recovery path. Broad OCR/language
 quality, faithful table reconstruction, complex reading order, real-document
 quality, and held-out answer quality remain unverified. There is no Docling model,
 dense text encoder, trained query router, or MaxSim implementation in this phase.

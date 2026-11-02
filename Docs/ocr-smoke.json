@@ -1,0 +1,19 @@
+{
+  "language": "eng",
+  "dpi": 150,
+  "fixture": "generated image-only PDF, SCAN42 and revenue 120 units",
+  "provider_calls": 0,
+  "checks": {
+    "real_ocr_recognition": "passed",
+    "real_ocr_visual_ingestion": "passed",
+    "ocr_text_search": "passed"
+  },
+  "recognition_seconds": 0.6066900000441819,
+  "recognized_text": "Scanned evidence SCAN42 row 0: revenue 120 units\nScanned evidence SCAN42 row 1: revenue 120 units\nScanned evidence SCAN42 row 2: revenue 120 units\nScanned evidence SCAN42 row 3: revenue 120 units\nScanned evidence SCAN42 row 4: revenue 120 units\nScanned evidence SCAN42 row 5: revenue 120 units\nScanned evidence SCAN42 row 6: revenue 120 units\nScanned evidence SCAN42 row 7: revenue 120 units\nScanned evidence SCAN42 row 8: revenue 120 units\nScanned evidence SCAN42 row 9: revenue 120 units\nScanned evidence SCAN42 row 10: revenue 120 units\nScanned evidence SCAN42 row 11: revenue 120 units",
+  "model_load_seconds": 25.908316900022328,
+  "model": "vidore/colpali-v1.3",
+  "device": "cuda",
+  "ingestion_seconds": 10.040049800009001,
+  "chunks": 1,
+  "status": "passed"
+}
