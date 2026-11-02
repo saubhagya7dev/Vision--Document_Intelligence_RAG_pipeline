@@ -380,7 +380,7 @@ class Metadata:
     ) -> None:
         with self.connection(True) as db:
             db.execute(
-                "INSERT OR REPLACE INTO pages VALUES (?,?,?,?,?,?,?,?,?)",
+                "INSERT OR REPLACE INTO pages VALUES (?,?,?,?,?,?,?,?)",
                 (
                     identity(version + ":page:" + str(number)),
                     version,
