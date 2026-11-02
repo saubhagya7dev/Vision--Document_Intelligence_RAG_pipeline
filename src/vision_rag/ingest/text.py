@@ -84,12 +84,14 @@ def inspect_page(path: Path, number: int) -> Inspection:
                 large_paths = 0
                 rules = 0
                 invisible = False
+                forms = False
                 area = max(width * height, 1)
                 for count, obj in enumerate(page.get_objects(textpage=textpage)):
                     if count >= 20_000:
                         raise ValueError("Page exceeds object inspection limit")
                     left, bottom, right, top = obj.get_bounds()
                     fraction = max(0, right - left) * max(0, top - bottom) / area
+                    forms |= obj.level > 0
                     if obj.type == raw.FPDF_PAGEOBJ_TEXT:
                         value = obj.extract().strip()
                         if value:
@@ -130,16 +132,28 @@ def inspect_page(path: Path, number: int) -> Inspection:
         reasons.append("rotated_page")
     if invisible:
         reasons.append("invisible_text_layer_requires_verification")
+    dense_footnotes = sum(b.size < 8 for b in blocks) >= 5
+    if dense_footnotes:
+        reasons.append("dense_small_text")
+    if forms:
+        reasons.append("nested_form_geometry_uncertain")
     empty = not text.strip() and not images and not paths
+    decorative = (
+        not text.strip() and len(images) == 1 and max(images) < 0.005 and not paths
+    )
     if empty:
         reasons = ["empty_page"]
-    visual = not empty and (
+    if decorative:
+        reasons = ["small_decoration_only"]
+    visual = not (empty or decorative) and (
         state != "usable"
         or significant_image
         or vector_content
         or columns
         or bool(rotation)
         or invisible
+        or dense_footnotes
+        or forms
     )
     # Preserve extraction order for ambiguous columns and flag it; never promise
     # correct table cells or reading order. Ordinary blocks use top-to-bottom order.
@@ -170,7 +184,7 @@ def inspect_page(path: Path, number: int) -> Inspection:
         state,
         reasons,
         visual,
-        not empty and state in ("missing", "poor"),
+        not (empty or decorative) and state in ("missing", "poor"),
         ["reading_order_uncertain"] if columns or rotation else [],
     )
 

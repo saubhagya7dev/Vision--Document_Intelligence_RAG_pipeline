@@ -12,12 +12,23 @@ class ProcessingMetadata:
     def __init__(self, metadata: Metadata) -> None:
         self.meta = metadata
 
-    def pages(self, build: str) -> list[dict[str, Any]]:
+    def pages(
+        self,
+        build: str,
+        *,
+        number: int | None = None,
+        limit: int = 1000,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
         return [
             {**row, "data": json.loads(row["data"])}
             for row in self.meta.rows(
-                "SELECT * FROM page_processing WHERE build_id=? ORDER BY page_number",
-                (build,),
+                "SELECT * FROM page_processing WHERE build_id=? "
+                + ("AND page_number=? " if number is not None else "")
+                + "ORDER BY page_number LIMIT ? OFFSET ?",
+                (build, number, limit, offset)
+                if number is not None
+                else (build, limit, offset),
             )
         ]
 
@@ -31,7 +42,8 @@ class ProcessingMetadata:
     ) -> None:
         with self.meta.connection(True) as db:
             revision = db.execute(
-                "SELECT revision FROM page_processing WHERE build_id=? AND page_number=?",
+                "SELECT revision FROM page_processing WHERE build_id=? AND "
+                "page_number=?",
                 (build, number),
             ).fetchone()
             revision = revision[0] + 1 if revision else 1
@@ -82,8 +94,13 @@ class ProcessingMetadata:
             db.execute("DELETE FROM page_processing WHERE build_id=?", (build,))
 
     def expected_vectors(self, build: str, fallback: int) -> int:
-        pages = self.pages(build)
-        return sum(row["visual"] for row in pages) if pages else fallback
+        # Phase 2 pages without extraction records still own one visual vector.
+        row = self.meta.rows(
+            "SELECT COUNT(*) AS n,COALESCE(SUM(visual),0) AS visual "
+            "FROM page_processing WHERE build_id=?",
+            (build,),
+        )[0]
+        return int(fallback - row["n"] + row["visual"])
 
     def hidden_points(self, profile: str) -> list[str]:
         rows = self.meta.rows(
@@ -105,7 +122,8 @@ class ProcessingMetadata:
             "SELECT c.id,c.build_id,c.page_number,c.text,c.data,v.id AS version_id,"
             "v.document_id,v.filename,chunk_search.rank AS lexical_rank "
             "FROM chunk_search JOIN text_chunks c ON c.id=chunk_search.id "
-            "JOIN page_processing p ON p.build_id=c.build_id AND p.page_number=c.page_number "
+            "JOIN page_processing p ON p.build_id=c.build_id AND "
+            "p.page_number=c.page_number "
             "JOIN builds b ON b.id=c.build_id JOIN versions v ON v.id=b.version_id "
             "JOIN documents d ON d.active_version_id=v.id WHERE chunk_search MATCH ? "
             "AND d.workspace=? AND d.deleted_at IS NULL AND b.profile=? "
@@ -157,7 +175,8 @@ class ProcessingMetadata:
         with self.meta.connection(True) as db:
             row = db.execute(
                 "SELECT b.state,v.page_count,d.deleted_at FROM builds b "
-                "JOIN versions v ON v.id=b.version_id JOIN documents d ON d.id=v.document_id "
+                "JOIN versions v ON v.id=b.version_id JOIN documents d ON "
+                "d.id=v.document_id "
                 "WHERE b.id=? AND d.workspace=?",
                 (build, self.meta.workspace),
             ).fetchone()
@@ -186,19 +205,22 @@ class ProcessingMetadata:
             )
         return self.task(key)
 
-    def claim(self) -> dict[str, Any] | None:
+    def claim(self, profile: str) -> dict[str, Any] | None:
         with self.meta.connection(True) as db:
             row = db.execute(
                 "SELECT t.id FROM page_tasks t JOIN builds b ON b.id=t.build_id "
-                "JOIN versions v ON v.id=b.version_id JOIN documents d ON d.id=v.document_id "
+                "JOIN versions v ON v.id=b.version_id JOIN documents d ON "
+                "d.id=v.document_id "
                 "WHERE t.state='uploaded' AND d.deleted_at IS NULL AND d.workspace=? "
+                "AND b.profile=? "
                 "ORDER BY t.created_at LIMIT 1",
-                (self.meta.workspace,),
+                (self.meta.workspace, profile),
             ).fetchone()
             if row is None:
                 return None
             db.execute(
-                "UPDATE page_tasks SET state='running',attempts=attempts+1,updated_at=? "
+                "UPDATE page_tasks SET "
+                "state='running',attempts=attempts+1,updated_at=? "
                 "WHERE id=?",
                 (now(), row["id"]),
             )
@@ -216,7 +238,8 @@ class ProcessingMetadata:
             db.execute(
                 "UPDATE page_tasks SET state='uploaded',updated_at=? "
                 "WHERE state='running' AND build_id IN (SELECT b.id FROM builds b "
-                "JOIN versions v ON v.id=b.version_id JOIN documents d ON d.id=v.document_id "
+                "JOIN versions v ON v.id=b.version_id JOIN documents d ON "
+                "d.id=v.document_id "
                 "WHERE d.workspace=?)",
                 (now(), self.meta.workspace),
             )

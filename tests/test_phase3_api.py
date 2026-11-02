@@ -23,9 +23,12 @@ def hybrid_client(tmp_path, monkeypatch):
 
 
 def test_processing_api_and_text_only_query_do_not_load_visual_model(
-    hybrid_client, tmp_path, monkeypatch,
+    hybrid_client,
+    tmp_path,
+    monkeypatch,
 ):
     from unittest.mock import MagicMock
+
     from vision_rag.models import colpali_embedder, gemini_generator
 
     model = MagicMock(side_effect=AssertionError("Unnecessary visual model load"))
@@ -34,7 +37,9 @@ def test_processing_api_and_text_only_query_do_not_load_visual_model(
     generator.generate.return_value = "Revenue is 120 units."
     monkeypatch.setattr(gemini_generator, "GeminiGenerator", lambda **kw: generator)
     source = create_pdf(tmp_path / "source.pdf", ("text", "text"))
-    response = hybrid_client.post("/api/v1/ingest", files={"file": ("report.pdf", source.read_bytes())})
+    response = hybrid_client.post(
+        "/api/v1/ingest", files={"file": ("report.pdf", source.read_bytes())}
+    )
     assert response.status_code == 202
     job = response.json()
     lib = routes.get_library()
@@ -44,26 +49,48 @@ def test_processing_api_and_text_only_query_do_not_load_visual_model(
     record = hybrid_client.get(base + "/pages/1/text").json()
     assert record["data"]["quality"] == "usable" and record["chunks"]
     result = hybrid_client.post("/api/v1/query", json={"query": "ALPHA42 revenue"})
-    assert result.status_code == 200 and result.json()["sources"][0]["version_id"] == version
+    assert (
+        result.status_code == 200
+        and result.json()["sources"][0]["version_id"] == version
+    )
     assert result.json()["sources"][0]["channel"] == "lexical"
     model.assert_not_called()
-    assert hybrid_client.post(base + "/pages/1/processing", json={"mode": "invalid"}).status_code == 422
-    assert hybrid_client.post(base + "/pages/99/processing", json={"mode": "auto"}).status_code == 404
+    assert (
+        hybrid_client.post(
+            base + "/pages/1/processing", json={"mode": "invalid"}
+        ).status_code
+        == 422
+    )
+    assert (
+        hybrid_client.post(
+            base + "/pages/99/processing", json={"mode": "auto"}
+        ).status_code
+        == 404
+    )
     task = hybrid_client.post(base + "/pages/1/processing", json={"mode": "skip"})
     assert task.status_code == 202
     task_id = task.json()["id"]
-    assert hybrid_client.post(base + "/pages/1/processing", json={"mode": "auto"}).status_code == 409
+    assert (
+        hybrid_client.post(
+            base + "/pages/1/processing", json={"mode": "auto"}
+        ).status_code
+        == 409
+    )
     lib.process_one()
     assert hybrid_client.get("/api/v1/page-tasks/" + task_id).json()["state"] == "ready"
     assert hybrid_client.get(base + "/pages/1/text").json()["chunks"] == []
     assert len(hybrid_client.get(base + "/processing").json()["pages"]) == 2
-    assert hybrid_client.delete("/api/v1/documents/" + job["document_id"]).status_code == 202
+    assert (
+        hybrid_client.delete("/api/v1/documents/" + job["document_id"]).status_code
+        == 202
+    )
     assert hybrid_client.get(base + "/pages/1/text").status_code == 404
     assert hybrid_client.get("/api/v1/page-tasks/" + task_id).status_code == 404
 
 
 def test_chunk_settings_reject_invalid_overlap():
     from pydantic import ValidationError
+
     from vision_rag.config import Settings
 
     with pytest.raises(ValidationError):

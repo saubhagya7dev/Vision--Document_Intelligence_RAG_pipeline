@@ -59,7 +59,8 @@ def create_pdf(
         image_id = add(
             stream(
                 zlib.compress(image.tobytes()),
-                b"/Type /XObject /Subtype /Image /Width 900 /Height 1100 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode",
+                b"/Type /XObject /Subtype /Image /Width 900 /Height 1100 "
+                b"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode",
             )
         )
     pages = []
@@ -68,7 +69,10 @@ def create_pdf(
         if kind not in ("scan", "empty"):
             commands.append("BT /F1 20 Tf 40 740 Td (Quarterly report) Tj ET")
             for row in range(15):
-                value = f"Evidence row {row}: ALPHA42 revenue 120 units and stable observations."
+                value = (
+                    f"Evidence row {row}: ALPHA42 revenue 120 units "
+                    "and stable observations."
+                )
                 if kind == "columns":
                     value = "Left column observations."
                 if kind == "broken":
@@ -93,7 +97,8 @@ def create_pdf(
         page = add(
             (
                 f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] "
-                f"/Resources << /Font << /F1 3 0 R >> /XObject << /I1 {image_id} 0 R >> >> "
+                f"/Resources << /Font << /F1 3 0 R >> "
+                f"/XObject << /I1 {image_id} 0 R >> >> "
                 f"/Contents {content} 0 R{rotation} >>"
             ).encode()
         )
@@ -114,7 +119,9 @@ def create_pdf(
     for offset in offsets[1:]:
         data.extend(f"{offset:010d} 00000 n \n".encode())
     data.extend(
-        f"trailer\n<< /Size {len(offsets)} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF".encode()
+        (
+            f"trailer\n<< /Size {len(offsets)} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF"
+        ).encode()
     )
     path.write_bytes(data)
     return path

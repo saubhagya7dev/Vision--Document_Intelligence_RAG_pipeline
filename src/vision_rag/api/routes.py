@@ -2,6 +2,7 @@
 
 import io
 import logging
+import shutil
 import threading
 from pathlib import Path
 from typing import Any, Iterator, Literal
@@ -127,8 +128,14 @@ def get_components() -> tuple[IngestionPipeline | None, RAGSynthesizer]:
     global _synthesizer
     # A text-only library must not load a multi-GB visual model just to answer.
     library = get_library()
+
     def has_visual() -> bool:
-        return any(get_store().count_build(build) > 0 for build in library.ready_builds())
+        hidden = library.processing.hidden_points(library.profile)
+        return any(
+            get_store().count_build(build, hidden) > 0
+            for build in library.ready_builds()
+        )
+
     pipeline = get_pipeline() if not settings.hybrid_ingestion or has_visual() else None
     with _component_lock:
         if _synthesizer is None:
@@ -191,6 +198,20 @@ class PageOverride(BaseModel):
     mode: Literal["auto", "text", "visual", "ocr", "skip"] = "auto"
 
 
+class PageTaskResponse(BaseModel):
+    id: str
+    build_id: str
+    version_id: str
+    document_id: str
+    page_number: int
+    mode: Literal["auto", "text", "visual", "ocr", "skip"]
+    state: Literal["uploaded", "running", "ready", "failed", "cancelled"]
+    attempts: int
+    error: str | None
+    created_at: str
+    updated_at: str
+
+
 def processing_build(version_id: str) -> str:
     library = get_library()
     source_version(version_id)
@@ -204,15 +225,27 @@ def processing_build(version_id: str) -> str:
 
 
 @router.get("/versions/{version_id}/processing")
-def page_processing(version_id: str) -> dict[str, Any]:
+def page_processing(
+    version_id: str,
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict[str, Any]:
     library = get_library()
     with library.access:
         build = processing_build(version_id)
+        pages = library.processing.pages(build, limit=limit, offset=offset)
+        for page in pages:
+            page["data"].pop("native_text", None)
+            page["data"].pop("blocks", None)
+            page["data"].get("features", {}).pop("ocr_text", None)
         return {
             "build_id": build,
-            "pages": library.processing.pages(build),
+            "pages": pages,
+            "offset": offset,
+            "limit": limit,
             "tasks": library.metadata.rows(
-                "SELECT * FROM page_tasks WHERE build_id=? ORDER BY created_at DESC LIMIT 100",
+                "SELECT * FROM page_tasks WHERE build_id=? ORDER BY "
+                "created_at DESC LIMIT 100",
                 (build,),
             ),
         }
@@ -223,9 +256,7 @@ def page_text(version_id: str, page_num: int) -> dict[str, Any]:
     library = get_library()
     with library.access:
         build = processing_build(version_id)
-        pages = [
-            p for p in library.processing.pages(build) if p["page_number"] == page_num
-        ]
+        pages = library.processing.pages(build, number=page_num)
         if not pages:
             raise HTTPException(
                 404, "Page extraction is unavailable; process this page first"
@@ -236,13 +267,23 @@ def page_text(version_id: str, page_num: int) -> dict[str, Any]:
             "SELECT id,data FROM text_chunks WHERE build_id=? AND page_number=?",
             (build, page_num),
         )
+        tasks = library.metadata.rows(
+            "SELECT * FROM page_tasks WHERE build_id=? AND page_number=? "
+            "ORDER BY created_at DESC LIMIT 1",
+            (build, page_num),
+        )
         return {
             **pages[0],
             "chunks": [{"id": r["id"], **json.loads(r["data"])} for r in records],
+            "task": tasks[0] if tasks else None,
         }
 
 
-@router.post("/versions/{version_id}/pages/{page_num}/processing", status_code=202)
+@router.post(
+    "/versions/{version_id}/pages/{page_num}/processing",
+    status_code=202,
+    response_model=PageTaskResponse,
+)
 def override_page(
     version_id: str, page_num: int, request: PageOverride
 ) -> dict[str, Any]:
@@ -262,7 +303,7 @@ def override_page(
         raise HTTPException(409, str(error)) from None
 
 
-@router.get("/page-tasks/{task_id}")
+@router.get("/page-tasks/{task_id}", response_model=PageTaskResponse)
 def get_page_task(task_id: str) -> dict[str, Any]:
     try:
         return get_library().processing.task(task_id)
@@ -485,7 +526,10 @@ def get_stats() -> dict[str, Any]:
     library = get_library()
     documents = library.documents()
     try:
-        count = sum(get_store().count_build(build) for build in library.ready_builds())
+        hidden = library.processing.hidden_points(library.profile)
+        count = sum(
+            get_store().count_build(build, hidden) for build in library.ready_builds()
+        )
         status = "ready"
     except Exception:
         logger.exception("Vector statistics unavailable")
@@ -496,11 +540,19 @@ def get_stats() -> dict[str, Any]:
         "WHERE d.workspace=? AND j.state NOT IN ('ready','failed','cancelled')",
         (library.workspace,),
     )[0]["count"]
+    page_tasks = library.metadata.rows(
+        "SELECT COUNT(*) AS count FROM page_tasks t JOIN builds b ON b.id=t.build_id "
+        "JOIN versions v ON v.id=b.version_id JOIN documents d ON d.id=v.document_id "
+        "WHERE d.workspace=? AND d.deleted_at IS NULL "
+        "AND t.state IN ('uploaded','running')",
+        (library.workspace,),
+    )[0]["count"]
     return {
         "total_documents": len(documents),
         "total_vectors": count,
         "collection_status": status,
         "pending_jobs": pending,
+        "pending_page_tasks": page_tasks,
     }
 
 
@@ -520,6 +572,11 @@ def diagnostics() -> dict[str, Any]:
         "workspace": settings.workspace_id,
         "worker_enabled": settings.ingestion_worker_enabled,
         "index_profile": settings.index_profile,
+        "hybrid_ingestion": settings.hybrid_ingestion,
+        "ocr_enabled": settings.ocr_enabled,
+        "ocr_available": bool(shutil.which(settings.tesseract_executable)),
+        "text_chunk_limit": settings.text_chunk_limit,
+        "text_chunk_overlap": settings.text_chunk_overlap,
     }
 
 

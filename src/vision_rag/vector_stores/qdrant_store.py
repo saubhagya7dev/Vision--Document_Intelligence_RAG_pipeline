@@ -191,7 +191,7 @@ class QdrantVectorStore(BaseVectorStore):
                 wait=True,
             )
 
-    def count_build(self, build_id: str) -> int:
+    def count_build(self, build_id: str, exclude_ids: list[str] | None = None) -> int:
         with self.lock:
             return self.client.count(
                 collection_name=self.collection_name,
@@ -199,6 +199,9 @@ class QdrantVectorStore(BaseVectorStore):
                 count_filter=Filter(
                     must=[
                         FieldCondition(key="build_id", match=MatchValue(value=build_id))
-                    ]
+                    ],
+                    must_not=[HasIdCondition(has_id=list(exclude_ids))]
+                    if exclude_ids
+                    else None,
                 ),
             ).count

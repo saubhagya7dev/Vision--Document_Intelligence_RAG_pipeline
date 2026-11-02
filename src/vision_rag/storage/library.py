@@ -272,7 +272,8 @@ class DocumentLibrary:
             try:
                 self.source(job["version_id"])
                 tasks = self.metadata.rows(
-                    "SELECT 1 FROM page_tasks WHERE build_id=? AND state!='ready' LIMIT 1",
+                    "SELECT 1 FROM page_processing "
+                    "WHERE build_id=? AND state!='ready' LIMIT 1",
                     (job["build_id"],),
                 )
                 expected = self.processing.expected_vectors(
@@ -337,7 +338,11 @@ class DocumentLibrary:
                 lambda: self._control(job_id),
                 record,
             )
-            if len(self.processing.pages(job["build_id"])) != version["page_count"]:
+            processed = self.metadata.rows(
+                "SELECT COUNT(*) AS n FROM page_processing WHERE build_id=?",
+                (job["build_id"],),
+            )[0]["n"]
+            if processed != version["page_count"]:
                 raise Conflict("Extraction is incomplete")
         else:
             self.processing.clear(job["build_id"])
@@ -460,7 +465,7 @@ class DocumentLibrary:
     def _process_page_task(self) -> bool:
         if self.hybrid is None:
             return False
-        task = self.processing.claim()
+        task = self.processing.claim(self.profile)
         if task is None:
             return False
         try:

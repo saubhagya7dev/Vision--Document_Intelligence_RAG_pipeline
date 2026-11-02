@@ -172,6 +172,7 @@ def test_page_override_isolated_hidden_retry_and_restart(tmp_path):
 def test_ocr_retains_native_and_falls_back_on_failure(tmp_path):
     path = create_pdf(tmp_path / "scan.pdf", ("scan",))
     ocr = MagicMock()
+    ocr.language = "eng"
     ocr.extract.return_value = [
         Block("Scanned evidence SCAN42 revenue 120 units. " * 4, (0, 0, 100, 100))
     ]
@@ -211,5 +212,77 @@ def test_discovery_bridge_keeps_channels_and_deduplicates_pages(tmp_path):
         results = retriever.retrieve("ALPHA42", 3)
         assert {r["payload"]["page_number"] for r in results} == {1, 2}
         assert results[0]["score"] is None
+    finally:
+        close(lib, store)
+
+
+def test_legacy_page_override_keeps_unprocessed_vectors_after_restart(tmp_path):
+    path = create_pdf(tmp_path / "legacy.pdf", ("text", "table", "text"))
+    root = tmp_path / "library"
+    lib, store, _, _ = open_hybrid(root)
+    processor = lib.hybrid
+    lib.hybrid = None
+    job = lib.upload(io.BytesIO(path.read_bytes()), "legacy.pdf")
+    lib.process_one()
+    assert store.count_build(job["build_id"]) == 3
+    lib.hybrid = processor
+    lib.processing.enqueue(job["build_id"], 1, "text")
+    lib.process_one()
+    assert store.count_build(job["build_id"]) == 2
+    close(lib, store)
+    lib, store, _, _ = open_hybrid(root)
+    try:
+        lib.start(False, False)
+        assert lib.ready_builds() == [job["build_id"]]
+        assert lib.processing.expected_vectors(job["build_id"], 3) == 2
+    finally:
+        close(lib, store)
+
+
+def test_running_page_task_recovers_and_respects_profile(tmp_path):
+    path = create_pdf(tmp_path / "text.pdf", ("text",))
+    root = tmp_path / "library"
+    lib, store, _, _ = open_hybrid(root)
+    job = lib.upload(io.BytesIO(path.read_bytes()), "text.pdf")
+    lib.process_one()
+    task = lib.processing.enqueue(job["build_id"], 1, "text")
+    assert lib.processing.claim("wrong-profile") is None
+    assert lib.processing.claim("profile")["id"] == task["id"]
+    close(lib, store)
+    lib, store, _, _ = open_hybrid(root)
+    try:
+        lib.start(False, False)
+        assert lib.processing.task(task["id"])["state"] == "uploaded"
+        lib.process_one()
+        assert lib.processing.task(task["id"])["state"] == "ready"
+        assert lib.processing.task(task["id"])["attempts"] == 2
+    finally:
+        close(lib, store)
+
+
+def test_schema_one_upgrade_preserves_original_records(tmp_path):
+    path = create_pdf(tmp_path / "text.pdf", ("text",))
+    root = tmp_path / "library"
+    lib, store, _, _ = open_hybrid(root)
+    job = lib.upload(io.BytesIO(path.read_bytes()), "text.pdf")
+    with lib.metadata.connection(True) as db:
+        for table in ("page_tasks", "page_processing", "text_chunks", "chunk_search"):
+            db.execute("DROP TABLE " + table)
+        db.execute("PRAGMA user_version=1")
+    close(lib, store)
+    lib, store, _, _ = open_hybrid(root)
+    try:
+        assert lib.metadata.version(job["version_id"])["filename"] == "text.pdf"
+        lib.start(False, False)
+        lib.process_one()
+        assert lib.metadata.job(job["id"])["state"] == "ready"
+        assert lib.processing.search("ALPHA42", "profile", 3)
+        from vision_rag.storage.metadata import Metadata
+        from vision_rag.storage.processing import ProcessingMetadata
+
+        other = ProcessingMetadata(Metadata(root / "metadata.sqlite3", "other"))
+        assert other.search("ALPHA42", "profile", 3) == []
+        with pytest.raises(KeyError):
+            other.enqueue(job["build_id"], 1, "text")
     finally:
         close(lib, store)

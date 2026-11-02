@@ -30,7 +30,7 @@ class DocumentLoader:
         self.dpi = dpi
         self.max_render_pixels = max_render_pixels
         self.fmt = fmt
-        self.cache_dir = Path(cache_dir) if cache_dir is not None else None
+        self.cache_dir = Path(cache_dir).resolve() if cache_dir is not None else None
         self._hashes: dict[tuple[str, int, int, int], str] = {}
         self._cache_lock = threading.RLock()
 

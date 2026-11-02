@@ -82,6 +82,8 @@ class HybridProcessor:
                 if self.ocr is None:
                     info.warnings.append("ocr_disabled_visual_fallback")
                 else:
+                    info.features["ocr_engine"] = "tesseract"
+                    info.features["ocr_language"] = self.ocr.language
                     try:
                         assert image is not None
                         with stage("ocr", page=number):
