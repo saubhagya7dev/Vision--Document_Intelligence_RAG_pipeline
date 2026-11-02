@@ -1,17 +1,17 @@
-import uuid
-from typing import List, Any, Dict, Optional
+from typing import Any, Dict, List, Optional
+
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from vision_rag.core.vector_store import BaseVectorStore
 
+
 class QdrantVectorStore(BaseVectorStore):
     """Implementation of BaseVectorStore using Qdrant.
-    
-    Qdrant supports storing and querying multi-vector representations (late interaction),
-    which is essential for ColPali.
+
+    This baseline uses pooled vectors. A later phase adds versioned multivectors.
     """
-    
+
     def __init__(
         self,
         host: str = "localhost",
@@ -35,61 +35,64 @@ class QdrantVectorStore(BaseVectorStore):
         if in_memory:
             # In-memory mode: no external server needed
             self.client = QdrantClient(":memory:")
-            print("Qdrant running in IN-MEMORY mode (data will not persist on restart).")
+            print(
+                "Qdrant running in IN-MEMORY mode (data will not persist on restart)."
+            )
         else:
             self.client = QdrantClient(host=host, port=port)
             print(f"Connecting to Qdrant at {host}:{port}...")
 
         # Ensure collection exists
         self._ensure_collection(vector_size)
-        
+
     def _ensure_collection(self, vector_size: int) -> None:
         """Create the collection if it doesn't already exist."""
         collections = self.client.get_collections().collections
         exists = any(c.name == self.collection_name for c in collections)
-        
+
         if not exists:
-            # For ColPali, we would typically configure multi-vector settings here
-            # In Qdrant, we use standard collections but the payload can store multi-vectors
-            # or we configure the collection to use multivector parameters if supported.
-            # Assuming standard vector params for simplicity in this baseline.
+            # Keep the historical pooled schema until the retrieval migration.
             self.client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
             )
             print(f"Created Qdrant collection '{self.collection_name}'.")
 
-    def upsert(self, ids: List[str], vectors: List[Any], payloads: Optional[List[Dict[str, Any]]] = None) -> None:
+    def upsert(
+        self,
+        ids: List[str],
+        vectors: List[Any],
+        payloads: Optional[List[Dict[str, Any]]] = None,
+    ) -> None:
         """Upsert vectors into Qdrant."""
         if payloads is None:
             payloads = [{} for _ in range(len(ids))]
-            
+        if not (len(ids) == len(vectors) == len(payloads)):
+            raise ValueError("IDs, vectors, and payloads must have equal lengths")
+
         points = [
             PointStruct(id=id_, vector=vector, payload=payload)
             for id_, vector, payload in zip(ids, vectors, payloads)
         ]
-        
-        self.client.upsert(
-            collection_name=self.collection_name,
-            points=points
-        )
+
+        self.client.upsert(collection_name=self.collection_name, points=points)
 
     def search(self, query_vector: Any, limit: int = 5) -> List[Dict[str, Any]]:
         """Search for similar vectors in Qdrant."""
         search_result = self.client.query_points(
-            collection_name=self.collection_name,
-            query=query_vector,
-            limit=limit
+            collection_name=self.collection_name, query=query_vector, limit=limit
         )
-        
+
         results = []
         for scored_point in search_result.points:
-            results.append({
-                "id": scored_point.id,
-                "score": scored_point.score,
-                "payload": scored_point.payload
-            })
-            
+            results.append(
+                {
+                    "id": scored_point.id,
+                    "score": scored_point.score,
+                    "payload": scored_point.payload,
+                }
+            )
+
         return results
 
     def get_collection_info(self) -> Dict[str, Any]:
@@ -97,7 +100,7 @@ class QdrantVectorStore(BaseVectorStore):
         try:
             info = self.client.get_collection(collection_name=self.collection_name)
             return {
-                "vectors_count": info.vectors_count,
+                "vectors_count": info.points_count,
                 "points_count": info.points_count,
                 "status": str(info.status),
             }
@@ -106,13 +109,11 @@ class QdrantVectorStore(BaseVectorStore):
 
     def delete_by_payload_filter(self, key: str, value: Any) -> None:
         """Delete all vectors matching a payload field condition in Qdrant."""
-        from qdrant_client.models import Filter, FieldCondition, MatchValue
-        
+        from qdrant_client.models import FieldCondition, Filter, MatchValue
+
         self.client.delete(
             collection_name=self.collection_name,
             points_selector=Filter(
-                must=[
-                    FieldCondition(key=key, match=MatchValue(value=value))
-                ]
+                must=[FieldCondition(key=key, match=MatchValue(value=value))]
             ),
         )

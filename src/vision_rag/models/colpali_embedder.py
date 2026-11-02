@@ -1,75 +1,96 @@
-import torch
-from typing import List, Any, cast
+"""ColPali baseline encoder with bounded, serialized inference."""
+
+import threading
+from typing import Any, cast
+
 from PIL import Image
-from colpali_engine.models import ColPali, ColPaliProcessor
 
 from vision_rag.core.embeddings import BaseEmbeddingModel
+from vision_rag.runtime import select_device
+from vision_rag.telemetry import stage
 
 
 class ColPaliEmbeddingModel(BaseEmbeddingModel):
-    """Implementation of BaseEmbeddingModel using ColPali.
+    def __init__(
+        self,
+        model_name: str = "vidore/colpali-v1.3",
+        device: str | None = "auto",
+        precision: str = "auto",
+        batch_size: int = 2,
+    ) -> None:
+        # Heavy dependencies are loaded only during explicit initialization.
+        with stage("model_imports"):
+            from colpali_engine.models import ColPali, ColPaliProcessor
 
-    ColPali converts images into multi-vector patch representations, allowing for
-    late-interaction retrieval which is highly effective for visual documents.
-    Uses the dedicated `colpali-engine` library for correct model loading.
-    """
+        self.device, dtype = select_device(device or "auto", precision)
+        if batch_size < 1:
+            raise ValueError("Batch size must be positive")
+        self.batch_size = batch_size
+        self._lock = threading.Lock()
+        with stage("model_loading", device=self.device, precision=str(dtype)):
+            self.model: Any = ColPali.from_pretrained(
+                model_name, torch_dtype=dtype, device_map=self.device
+            ).eval()
+            self.processor: Any = ColPaliProcessor.from_pretrained(model_name)
 
-    def __init__(self, model_name: str = "vidore/colpali-v1.3", device: str | None = None):
-        """Initialize the ColPali model.
+    def _encode_batch(self, items: list[Any], images: bool) -> list[Any]:
+        import torch
 
-        Args:
-            model_name: HuggingFace model name for ColPali (e.g. 'vidore/colpali-v1.3').
-            device: Device to load the model on ('cuda', 'mps', 'cpu'). Auto-detected if None.
-        """
-        if device is None:
-            if torch.cuda.is_available():
-                self.device = "cuda"
-            elif torch.backends.mps.is_available():
-                self.device = "mps"
-            else:
-                self.device = "cpu"
-        else:
-            self.device = device
+        with stage("inference_queue"):
+            self._lock.acquire()
+        try:
+            with torch.inference_mode(), stage("model_inference", items=len(items)):
+                return self._infer(items, images)
+        finally:
+            self._lock.release()
 
-        # Use float16 on GPU for efficiency; float32 on CPU
-        dtype = torch.float16 if self.device != "cpu" else torch.float32
-
-        print(f"Loading ColPali model '{model_name}' on {self.device} ({dtype})...")
-        self.model = ColPali.from_pretrained(
-            model_name,
-            torch_dtype=dtype,
-            device_map=self.device,
-        ).eval()
-        self.processor = ColPaliProcessor.from_pretrained(model_name)
-        print("ColPali model loaded successfully.")
-
-    def encode_images(self, images: List[Image.Image]) -> List[Any]:
-        """Encode a list of PIL Images into single-vector embeddings via mean pooling.
-
-        ColPali natively produces multi-vector patch embeddings (num_patches × 128).
-        We mean-pool across the patch dimension to get one 128-dim vector per image,
-        making it compatible with standard single-vector Qdrant collections.
-        """
-        if not images:
-            return []
-
-        with torch.no_grad():
-            batch = self.processor.process_images(images).to(self.device)
-            # Shape: (batch_size, num_patches, 128)
+    def _infer(self, items: list[Any], images: bool) -> list[Any]:
+        batch = None
+        embeddings = None
+        try:
+            batch = (
+                self.processor.process_images(items)
+                if images
+                else self.processor.process_queries(items)
+            ).to(self.device)
             embeddings = self.model(**batch)
-            # Mean-pool across patches → (batch_size, 128)
-            embeddings = embeddings.mean(dim=1)
-            return cast(List[Any], embeddings.cpu().tolist())
+            # Preserve the historical pooled index until versioned reindexing.
+            return cast(list[Any], embeddings.mean(dim=1).cpu().tolist())
+        finally:
+            del embeddings, batch
 
-    def encode_queries(self, queries: List[str]) -> List[Any]:
-        """Encode a list of text queries into single-vector embeddings via mean pooling."""
-        if not queries:
-            return []
+    def _encode(self, items: list[Any], images: bool) -> list[Any]:
+        import torch
 
-        with torch.no_grad():
-            batch = self.processor.process_queries(queries).to(self.device)
-            # Shape: (batch_size, num_tokens, 128)
-            embeddings = self.model(**batch)
-            # Mean-pool across tokens → (batch_size, 128)
-            embeddings = embeddings.mean(dim=1)
-            return cast(List[Any], embeddings.cpu().tolist())
+        result: list[Any] = []
+        for start in range(0, len(items), self.batch_size):
+            chunk = items[start : start + self.batch_size]
+            try:
+                result.extend(self._encode_batch(chunk, images))
+            except torch.OutOfMemoryError:
+                if self.device == "cuda":
+                    torch.cuda.empty_cache()
+                if len(chunk) == 1:
+                    raise RuntimeError(
+                        "A single page exceeds accelerator memory. Choose a smaller "
+                        "model or use EMBEDDING_DEVICE=cpu."
+                    ) from None
+                # Retry every page; never silently omit an out-of-memory batch.
+                for item in chunk:
+                    result.extend(self._encode([item], images))
+        return result
+
+    def encode_images(self, images: list[Image.Image]) -> list[Any]:
+        return self._encode(images, True)
+
+    def encode_queries(self, queries: list[str]) -> list[Any]:
+        return self._encode(queries, False)
+
+    def close(self) -> None:
+        import torch
+
+        with self._lock:
+            self.model = None
+            self.processor = None
+            if self.device == "cuda":
+                torch.cuda.empty_cache()

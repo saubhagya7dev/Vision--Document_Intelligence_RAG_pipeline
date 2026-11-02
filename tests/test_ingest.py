@@ -1,7 +1,8 @@
-import pytest
 from pathlib import Path
-from PIL import Image
+
 import pypdfium2 as pdfium
+import pytest
+from PIL import Image
 
 from vision_rag.ingest.document_loader import DocumentLoader
 
@@ -34,4 +35,3 @@ def test_document_loader_file_not_found():
     loader = DocumentLoader()
     with pytest.raises(FileNotFoundError):
         loader.load_pdf("non_existent_file.pdf")
-
