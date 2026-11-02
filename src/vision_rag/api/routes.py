@@ -4,7 +4,7 @@ import io
 import logging
 import threading
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Iterator, Literal
 from urllib.parse import quote
 
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile
@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from vision_rag.config import settings
 from vision_rag.generate.synthesizer import RAGSynthesizer
 from vision_rag.ingest.document_loader import DocumentLoader
+from vision_rag.ingest.ocr import TesseractOCR
 from vision_rag.ingest.pipeline import IngestionPipeline
 from vision_rag.retrieval.retriever import Retriever
 from vision_rag.storage.library import DocumentLibrary, ResourceLimit
@@ -75,6 +76,16 @@ def get_library() -> DocumentLibrary:
                 settings.workspace_id,
                 settings.max_upload_mb * 1024 * 1024,
                 settings.max_document_pages,
+                hybrid=settings.hybrid_ingestion,
+                chunk_limit=settings.text_chunk_limit,
+                chunk_overlap=settings.text_chunk_overlap,
+                ocr=TesseractOCR(
+                    settings.tesseract_executable,
+                    settings.ocr_language,
+                    settings.ocr_timeout_seconds,
+                )
+                if settings.ocr_enabled
+                else None,
             )
             _library = library
             try:
@@ -112,9 +123,13 @@ def get_pipeline() -> IngestionPipeline:
         return _pipeline
 
 
-def get_components() -> tuple[IngestionPipeline, RAGSynthesizer]:
+def get_components() -> tuple[IngestionPipeline | None, RAGSynthesizer]:
     global _synthesizer
-    pipeline = get_pipeline()
+    # A text-only library must not load a multi-GB visual model just to answer.
+    library = get_library()
+    def has_visual() -> bool:
+        return any(get_store().count_build(build) > 0 for build in library.ready_builds())
+    pipeline = get_pipeline() if not settings.hybrid_ingestion or has_visual() else None
     with _component_lock:
         if _synthesizer is None:
             from vision_rag.models.gemini_generator import GeminiGenerator
@@ -123,13 +138,20 @@ def get_components() -> tuple[IngestionPipeline, RAGSynthesizer]:
                 model_name=settings.generation_model_name,
                 api_key=settings.google_api_key,
             )
-            library = get_library()
             _synthesizer = RAGSynthesizer(
                 Retriever(
-                    pipeline.embedder,
+                    pipeline.embedder if pipeline is not None else None,
                     get_store(),
                     library.ready_builds,
                     settings.workspace_id,
+                    lexical_search=lambda query, limit: library.processing.search(
+                        query, library.profile, limit
+                    ),
+                    hidden_points=lambda: library.processing.hidden_points(
+                        library.profile
+                    ),
+                    embedding_factory=lambda: get_pipeline().embedder,
+                    has_visual=has_visual,
                 ),
                 generator,
                 get_loader(),
@@ -163,6 +185,89 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     sources: list[dict[str, Any]]
+
+
+class PageOverride(BaseModel):
+    mode: Literal["auto", "text", "visual", "ocr", "skip"] = "auto"
+
+
+def processing_build(version_id: str) -> str:
+    library = get_library()
+    source_version(version_id)
+    builds = library.metadata.rows(
+        "SELECT id FROM builds WHERE version_id=? AND profile=?",
+        (version_id, library.profile),
+    )
+    if not builds:
+        raise HTTPException(409, "Version needs a compatible index build")
+    return str(builds[0]["id"])
+
+
+@router.get("/versions/{version_id}/processing")
+def page_processing(version_id: str) -> dict[str, Any]:
+    library = get_library()
+    with library.access:
+        build = processing_build(version_id)
+        return {
+            "build_id": build,
+            "pages": library.processing.pages(build),
+            "tasks": library.metadata.rows(
+                "SELECT * FROM page_tasks WHERE build_id=? ORDER BY created_at DESC LIMIT 100",
+                (build,),
+            ),
+        }
+
+
+@router.get("/versions/{version_id}/pages/{page_num}/text")
+def page_text(version_id: str, page_num: int) -> dict[str, Any]:
+    library = get_library()
+    with library.access:
+        build = processing_build(version_id)
+        pages = [
+            p for p in library.processing.pages(build) if p["page_number"] == page_num
+        ]
+        if not pages:
+            raise HTTPException(
+                404, "Page extraction is unavailable; process this page first"
+            )
+        import json
+
+        records = library.metadata.rows(
+            "SELECT id,data FROM text_chunks WHERE build_id=? AND page_number=?",
+            (build, page_num),
+        )
+        return {
+            **pages[0],
+            "chunks": [{"id": r["id"], **json.loads(r["data"])} for r in records],
+        }
+
+
+@router.post("/versions/{version_id}/pages/{page_num}/processing", status_code=202)
+def override_page(
+    version_id: str, page_num: int, request: PageOverride
+) -> dict[str, Any]:
+    library = get_library()
+    if library.hybrid is None:
+        raise HTTPException(409, "Enable HYBRID_INGESTION to process pages")
+    try:
+        with library.access:
+            task = library.processing.enqueue(
+                processing_build(version_id), page_num, request.mode
+            )
+        library.wake_event.set()
+        return task
+    except (KeyError, IndexError):
+        raise HTTPException(404, "Document page not found") from None
+    except Conflict as error:
+        raise HTTPException(409, str(error)) from None
+
+
+@router.get("/page-tasks/{task_id}")
+def get_page_task(task_id: str) -> dict[str, Any]:
+    try:
+        return get_library().processing.task(task_id)
+    except KeyError:
+        raise HTTPException(404, "Page task not found") from None
 
 
 class JobResponse(BaseModel):

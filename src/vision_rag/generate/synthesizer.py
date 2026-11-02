@@ -58,6 +58,7 @@ class RAGSynthesizer:
                             "score": result.get("score"),
                             "source": display,
                             "page": page,
+                            "channel": payload.get("channel", "visual"),
                             **{
                                 key: payload[key]
                                 for key in ("version_id", "document_id", "build_id")

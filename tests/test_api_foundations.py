@@ -19,6 +19,8 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "ingestion_worker_enabled", False)
     monkeypatch.setattr(settings, "import_legacy_pdfs", False)
     monkeypatch.setattr(settings, "model_warmup", False)
+    # Preserve Phase 2's all-page-vector contract in its regression fixtures.
+    monkeypatch.setattr(settings, "hybrid_ingestion", False)
     monkeypatch.setattr(settings, "render_dpi", 72)
     for name in ("_loader", "_vdb", "_pipeline", "_synthesizer", "_library"):
         monkeypatch.setattr(routes, name, None)
