@@ -95,3 +95,64 @@ def test_chunk_settings_reject_invalid_overlap():
 
     with pytest.raises(ValidationError):
         Settings(_env_file=None, text_chunk_limit=100, text_chunk_overlap=100)
+
+
+def test_data_controls_confirmation_history_and_reset(hybrid_client, tmp_path):
+    source = create_pdf(tmp_path / "source.pdf", ("text",))
+    first = hybrid_client.post(
+        "/api/v1/ingest", files={"file": ("first.pdf", source.read_bytes())}
+    ).json()
+    lib = routes.get_library()
+    lib.process_one()
+    hybrid_client.post(
+        "/api/v1/ingest",
+        files={"file": ("queued.pdf", source.read_bytes() + b"\n% queued")},
+    )
+    assert len(hybrid_client.get("/api/v1/jobs").json()) == 2
+    assert (
+        hybrid_client.post(
+            "/api/v1/maintenance", json={"action": "reset", "confirmation": "CLEAR"}
+        ).status_code
+        == 422
+    )
+    assert (
+        hybrid_client.post(
+            "/api/v1/maintenance",
+            json={"action": "reset", "confirmation": "DELETE"},
+            headers={"origin": "https://unrelated.example"},
+        ).status_code
+        == 403
+    )
+    assert len(lib.documents()) == 2
+    response = hybrid_client.post(
+        "/api/v1/maintenance", json={"action": "history", "confirmation": "CLEAR"}
+    )
+    assert response.status_code == 200
+    history = hybrid_client.get("/api/v1/jobs").json()
+    assert len(history) == 1 and history[0]["state"] == "uploaded"
+    assert hybrid_client.get("/api/v1/jobs/" + first["id"]).status_code == 200
+    assert len(lib.documents()) == 2
+    assert (
+        hybrid_client.post(
+            "/api/v1/maintenance", json={"action": "cache", "confirmation": "CLEAR"}
+        ).status_code
+        == 200
+    )
+    assert (
+        hybrid_client.post(
+            "/api/v1/maintenance", json={"action": "reset", "confirmation": "DELETE"}
+        ).status_code
+        == 200
+    )
+    assert hybrid_client.get("/api/v1/documents").json() == []
+    assert hybrid_client.get("/api/v1/jobs").json() == []
+    assert hybrid_client.get("/api/v1/stats").json()["total_vectors"] == 0
+    assert hybrid_client.get("/api/v1/jobs/" + first["id"]).status_code == 404
+
+
+def test_current_frontend_assets_are_versioned(hybrid_client):
+    response = hybrid_client.get("/")
+    assert response.headers["cache-control"] == "no-store"
+    assert "/static/styles.css?v=" in response.text
+    assert "/static/app.js?v=" in response.text
+    assert hybrid_client.get("/api/v1/documents").headers["cache-control"] == "no-store"

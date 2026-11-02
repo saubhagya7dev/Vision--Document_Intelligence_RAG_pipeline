@@ -1738,3 +1738,12 @@ h3 {
 #data-status { color: var(--text-primary); }
 .data-dialog .btn-danger { min-height: 42px; }
 @media (max-width: 600px) { .header-inner { gap: 8px; } #data-controls-btn { font-size: 0.72rem; padding: 8px 10px; } }
+.processing-dialog { margin: auto; max-height: 90dvh; }
+.processing-dialog .modal-header { position: sticky; top: 0; z-index: 1; background: inherit; padding: 8px 0; }
+#data-controls-btn { color: var(--text-body); border-color: var(--border-active); }
+.data-dialog { font-size: 0.9rem; }
+.data-dialog p { margin: 8px 0; }
+.data-dialog .data-option { padding: 8px 4px; }
+.data-dialog .data-option small { font-size: 0.8rem; }
+.data-dialog .modal-header { margin-bottom: 8px; padding: 0; }
+.data-dialog fieldset { margin: 10px 0; }

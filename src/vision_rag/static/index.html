@@ -62,6 +62,7 @@
                 </a>
             </nav>
             <div class="header-right">
+                <button class="btn btn-secondary btn-sm" id="data-controls-btn">Data &amp; history</button>
                 <div class="status-indicator" id="api-status">
                     <span class="status-dot"></span>
                     <span class="status-text">Checking...</span>
@@ -400,6 +401,32 @@
             </div>
         </div>
     </div>
+
+    <dialog id="data-dialog" class="processing-dialog data-dialog" aria-labelledby="data-title">
+        <div class="modal-header">
+            <h3 id="data-title">Data &amp; history</h3>
+            <button class="btn btn-secondary" id="data-close">Close</button>
+        </div>
+        <p>Choose what to clear. Your configuration, downloaded models and OCR runtime are kept.</p>
+        <fieldset id="data-options">
+            <legend>Clear options</legend>
+            <label class="data-option"><input type="radio" name="data-action" value="history" checked>
+                <span><strong>Clear history</strong><small>Remove chat, sources and activity from your browser, and hide completed upload and cleanup history. Keep documents and active jobs.</small></span>
+            </label>
+            <label class="data-option"><input type="radio" name="data-action" value="cache">
+                <span><strong>Clear page cache</strong><small>Delete rendered pages and thumbnails. Keep documents, extracted text and indexes. Previews regenerate when opened.</small></span>
+            </label>
+            <label class="data-option"><input type="radio" name="data-action" value="reset">
+                <span><strong>Start fresh</strong><small>Permanently delete all library PDFs (including pre-upgrade PDFs in the data folder), versions, extracted text, indexes, jobs, history and page caches.</small></span>
+            </label>
+        </fieldset>
+        <p id="data-description">Clear history keeps your documents available.</p>
+        <label id="data-confirm-label" hidden>Type DELETE to confirm permanent deletion
+            <input id="data-confirm" type="text" autocomplete="off" spellcheck="false">
+        </label>
+        <p id="data-status" role="status" aria-live="polite"></p>
+        <button class="btn btn-danger" id="data-submit">Clear history</button>
+    </dialog>
 
     <dialog id="processing-dialog" class="processing-dialog" aria-labelledby="processing-title">
         <div class="modal-header">

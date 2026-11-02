@@ -6,11 +6,12 @@ import shutil
 import threading
 from pathlib import Path
 from typing import Any, Iterator, Literal
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from starlette.requests import Request
 
 from vision_rag.config import settings
 from vision_rag.generate.synthesizer import RAGSynthesizer
@@ -198,6 +199,56 @@ class PageOverride(BaseModel):
     mode: Literal["auto", "text", "visual", "ocr", "skip"] = "auto"
 
 
+class MaintenanceRequest(BaseModel):
+    action: Literal["history", "cache", "reset"]
+    confirmation: Literal["CLEAR", "DELETE"]
+
+
+@router.get("/maintenance")
+def maintenance_status() -> dict[str, Any]:
+    library = get_library()
+    return {
+        "reset_pending": library.reset_pending(),
+        "running": library.maintenance_requested.is_set(),
+        "reset_supported": library.store.local,
+        "documents": len(library.documents()),
+    }
+
+
+@router.post("/maintenance")
+def maintain_library(request: MaintenanceRequest, http: Request) -> dict[str, str]:
+    if request.action == "reset" and request.confirmation != "DELETE":
+        raise HTTPException(422, "Confirm permanent deletion with DELETE")
+    origin = http.headers.get("origin")
+    if origin and (urlsplit(origin).scheme, urlsplit(origin).netloc) != (
+        http.url.scheme,
+        http.url.netloc,
+    ):
+        raise HTTPException(403, "Data controls require a same-origin request")
+    if http.headers.get("sec-fetch-site") == "cross-site":
+        raise HTTPException(403, "Data controls require a same-origin request")
+    library = get_library()
+    try:
+        if request.action == "history":
+            library.clear_history()
+        elif request.action == "cache":
+            library.clear_page_cache()
+        else:
+            library.reset()
+            if library.thread is None:
+                library.start(settings.ingestion_worker_enabled, False)
+        return {"status": "cleared", "action": request.action}
+    except Conflict as error:
+        raise HTTPException(409, str(error)) from None
+    except Exception:
+        logger.exception("Library maintenance failed")
+        raise HTTPException(
+            503,
+            "Cleanup incomplete. Retry the same action; "
+            "inspect server logs if it repeats.",
+        ) from None
+
+
 class PageTaskResponse(BaseModel):
     id: str
     build_id: str
@@ -363,11 +414,18 @@ def upload_version(document_id: str, file: UploadFile = File(...)) -> JobRespons
 @router.get("/jobs", response_model=list[JobResponse])
 def list_jobs(limit: int = Query(default=50, ge=1, le=200)) -> list[dict[str, Any]]:
     library = get_library()
+    if library.reset_pending():
+        return []
     return library.metadata.rows(
         "SELECT j.*,d.filename,CASE WHEN d.deleted_at IS NULL THEN 0 ELSE 1 END "
         "AS document_deleted FROM jobs j JOIN documents d ON d.id=j.document_id "
-        "WHERE d.workspace=? ORDER BY j.created_at DESC LIMIT ?",
-        (library.workspace, limit),
+        "WHERE d.workspace=? AND (j.state NOT IN ('ready','failed','cancelled') "
+        "OR j.updated_at>?) ORDER BY j.created_at DESC LIMIT ?",
+        (
+            library.workspace,
+            library.metadata.setting("history_cleared_at") or "",
+            limit,
+        ),
     )
 
 

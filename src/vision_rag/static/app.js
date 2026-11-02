@@ -22,6 +22,7 @@
     let jobsRefreshing = false;
     let activeUploadJobId = null;
     let activeUploadToken = null;
+    let clearingData = false;
     const terminalJobs = new Set(['ready', 'failed', 'cancelled']);
 
     // =========================
@@ -192,6 +193,7 @@
     }
 
     function saveSessionState() {
+        if (clearingData) return;
         sessionStorage.setItem('vr_query_count', queryCount.toString());
         sessionStorage.setItem('vr_chat_history', JSON.stringify(chatHistory));
         sessionStorage.setItem('vr_last_sources', JSON.stringify(lastSources));
@@ -981,6 +983,90 @@
     // =========================
     // REFRESH STATS BUTTON
     // =========================
+    function setupDataControls() {
+        let pending = false;
+        const dialog = document.getElementById('data-dialog');
+        const status = document.getElementById('data-status');
+        const submit = document.getElementById('data-submit');
+        const close = document.getElementById('data-close');
+        const confirmation = document.getElementById('data-confirm');
+        const labels = {history: 'Clear history', cache: 'Clear page cache', reset: 'Delete library and start fresh'};
+        const selected = () => dialog.querySelector('input[name="data-action"]:checked').value;
+        const update = () => {
+            const action = selected();
+            document.getElementById('data-confirm-label').hidden = action !== 'reset';
+            submit.textContent = labels[action];
+            submit.disabled = action === 'reset' && confirmation.value !== 'DELETE';
+            document.getElementById('data-description').textContent = action === 'reset'
+                ? 'This permanently deletes library data. Running work will stop at its next safe boundary; an active model call may need time to finish.'
+                : action === 'cache' ? 'Only derived page images and thumbnails are removed. Running ingestion may pause briefly.'
+                : 'Your documents and active jobs stay available. Browser history is cleared across open tabs of this app.';
+        };
+        const clearBrowserHistory = () => {
+            for (const storage of [sessionStorage, localStorage]) {
+                for (const key of Object.keys(storage)) {
+                    if (key.startsWith('vr_') && key !== 'vr_reset_epoch') storage.removeItem(key);
+                }
+            }
+            chatHistory = []; lastSources = []; activityLog = []; uploadHistory = []; queryCount = 0;
+        };
+        window.addEventListener('storage', event => {
+            if (event.key === 'vr_reset_epoch' && event.newValue) {
+                clearingData = true;
+                clearBrowserHistory();
+                location.reload();
+            }
+        });
+        document.getElementById('data-controls-btn').addEventListener('click', async () => {
+            confirmation.value = '';
+            status.textContent = '';
+            update();
+            dialog.showModal();
+            try {
+                const saved = await api.get('/maintenance');
+                if (saved.reset_pending) status.textContent = 'A previous reset is incomplete. Select Start fresh and retry to finish cleanup.';
+            } catch (err) { status.textContent = err.message; }
+        });
+        close.addEventListener('click', () => dialog.close());
+        dialog.addEventListener('cancel', event => { if (pending) event.preventDefault(); });
+        dialog.querySelectorAll('input[name="data-action"]').forEach(input => input.addEventListener('change', update));
+        confirmation.addEventListener('input', update);
+        submit.addEventListener('click', async () => {
+            const action = selected();
+            if (action === 'reset' && confirmation.value !== 'DELETE') return;
+            pending = true;
+            clearingData = action !== 'cache';
+            submit.disabled = close.disabled = true;
+            document.getElementById('data-options').disabled = true;
+            status.textContent = 'Clearing data… Please wait for the server to finish.';
+            try {
+                await api.post('/maintenance', {action, confirmation: action === 'reset' ? 'DELETE' : 'CLEAR'});
+                if (action === 'cache') {
+                    pending = false;
+                    close.disabled = false;
+                    document.getElementById('data-options').disabled = false;
+                    update();
+                    status.textContent = 'Page cache cleared. Previews will regenerate when opened.';
+                    return;
+                }
+                if (action !== 'cache') {
+                    clearBrowserHistory();
+                    localStorage.setItem('vr_reset_epoch', String(Date.now()));
+                }
+                // A new document prevents an old in-flight response restoring
+                // cleared browser state and fetches the versioned current assets.
+                location.replace('/?fresh=' + Date.now() + '#dashboard');
+            } catch (err) {
+                pending = false;
+                clearingData = false;
+                close.disabled = false;
+                document.getElementById('data-options').disabled = false;
+                status.textContent = err.message;
+                update();
+            }
+        });
+    }
+
     function setupDashboardControls() {
         document.getElementById('refresh-stats-btn').addEventListener('click', () => {
             initDashboard();
@@ -998,6 +1084,7 @@
         setupDeleteModal();
         setupDashboardControls();
         setupJobActions();
+        setupDataControls();
 
         // Router
         window.addEventListener('hashchange', () => {
