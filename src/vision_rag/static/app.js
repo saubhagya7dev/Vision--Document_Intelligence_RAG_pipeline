@@ -96,8 +96,8 @@
             }
         },
 
-        getPageImageUrl(filename, pageNum) {
-            return `${API_BASE}/documents/${encodeURIComponent(filename)}/pages/${pageNum}`;
+        getPageImageUrl(filename, pageNum, thumbnail = false) {
+            return `${API_BASE}/documents/${encodeURIComponent(filename)}/pages/${pageNum}${thumbnail ? '?thumbnail=true' : ''}`;
         }
     };
 
@@ -642,7 +642,7 @@
             const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
             const page = src.page || '?';
             const score = typeof src.score === 'number' ? src.score.toFixed(2) : '—';
-            const imgUrl = src.source ? api.getPageImageUrl(filename, page) : '';
+            const imgUrl = src.source ? api.getPageImageUrl(filename, page, true) : '';
 
             return `
                 <div class="source-card" data-src-index="${i}" onclick="window.__previewSource(${i})">
