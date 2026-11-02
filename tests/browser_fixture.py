@@ -36,6 +36,7 @@ def main() -> None:
         settings.ingestion_worker_enabled = False
         settings.import_legacy_pdfs = False
         settings.model_warmup = False
+        settings.hybrid_ingestion = False
         settings.render_dpi = 72
         encoder = FixtureEncoder()
 

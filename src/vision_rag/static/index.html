@@ -401,6 +401,32 @@
         </div>
     </div>
 
+    <dialog id="processing-dialog" class="processing-dialog" aria-labelledby="processing-title">
+        <div class="modal-header">
+            <h3 id="processing-title">Page processing</h3>
+            <button class="btn btn-secondary" id="processing-close">Close</button>
+        </div>
+        <p>Inspect saved text and routing decisions. Reprocessing affects this page only.</p>
+        <div class="processing-controls">
+            <label>Page <input id="processing-page" type="number" min="1" value="1"></label>
+            <button class="btn btn-secondary" id="processing-inspect">Inspect page</button>
+            <label>Processing mode
+                <select id="processing-mode">
+                    <option value="auto">Automatic</option>
+                    <option value="visual">Native text + vision</option>
+                    <option value="ocr">Native text + OCR + vision</option>
+                    <option value="text">Native text only</option>
+                    <option value="skip">Skip page</option>
+                </select>
+            </label>
+            <button class="btn btn-primary" id="processing-submit">Reprocess page</button>
+        </div>
+        <p class="doc-job-status">Text-only and skip overrides can exclude evidence. OCR needs a local Tesseract installation; failures retain visual processing.</p>
+        <p id="processing-status" role="status" aria-live="polite"></p>
+        <p id="processing-reasons"></p>
+        <p id="processing-warnings" class="job-error"></p>
+        <pre id="processing-text" tabindex="0" aria-label="Extracted page text"></pre>
+    </dialog>
     <script src="/static/app.js"></script>
 </body>
 

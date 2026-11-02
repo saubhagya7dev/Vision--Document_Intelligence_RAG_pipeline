@@ -394,6 +394,7 @@
             uploaded: 'Queued', validating: 'Validating',
             loading_model: 'Loading embedding model', rendering: 'Rendering pages',
             embedding: 'Embedding pages', indexing: 'Saving index',
+            extracting: 'Extracting text and checking layout', ocr: 'Reading scanned text',
             cleaning: 'Removing vectors and files',
             ready: job.kind === 'delete' ? 'Cleanup complete' : 'Ready',
             failed: 'Failed', cancelled: 'Cancelled'
@@ -472,6 +473,7 @@
     }
 
     function setupJobActions() {
+        setupProcessingControls();
         document.addEventListener('click', async event => {
             const button = event.target.closest('[data-job-action]');
             if (!button) return;
@@ -515,6 +517,86 @@
     // =========================
     // CHAT
     // =========================
+    let processingVersion = null;
+    let processingTimer = null;
+    let processingGeneration = 0;
+
+    function setupProcessingControls() {
+        const dialog = document.getElementById('processing-dialog');
+        const status = document.getElementById('processing-status');
+        const pageInput = document.getElementById('processing-page');
+        const submit = document.getElementById('processing-submit');
+        const inspect = async () => {
+            const version = processingVersion;
+            const page = Number(pageInput.value);
+            const generation = ++processingGeneration;
+            submit.disabled = false;
+            status.textContent = 'Loading page extraction…';
+            for (const id of ['processing-text', 'processing-reasons', 'processing-warnings']) document.getElementById(id).textContent = '';
+            try {
+                const record = await api.get(`/versions/${encodeURIComponent(version)}/pages/${page}/text`);
+                if (generation !== processingGeneration || !dialog.open) return;
+                status.textContent = `Page ${page} · ${record.state} · revision ${record.revision} · ${record.mode}`;
+                const data = record.data;
+                document.getElementById('processing-mode').value = record.mode;
+                document.getElementById('processing-reasons').textContent = `Text quality: ${data.quality || 'pending'}. ${(data.reasons || []).join(', ')}. Chunks: ${data.chunk_count || 0}.`;
+                document.getElementById('processing-warnings').textContent = (data.warnings || []).join('; ');
+                document.getElementById('processing-text').textContent = (data.native_text || '[No native text]') + (data.features?.ocr_text ? '\n\nOCR text:\n' + data.features.ocr_text : '');
+                if (record.task && ['uploaded', 'running'].includes(record.task.state)) {
+                    status.textContent += ` · task ${record.task.state}`;
+                    submit.disabled = true;
+                    processingTimer = setTimeout(inspect, 1500);
+                } else if (record.task?.error) {
+                    status.textContent += ` · ${record.task.error}`;
+                }
+            } catch (err) {
+                if (generation === processingGeneration) status.textContent = `No extraction available: ${err.message}`;
+            }
+        };
+        document.addEventListener('click', event => {
+            const button = event.target.closest('[data-processing-version]');
+            if (!button) return;
+            processingVersion = button.dataset.processingVersion;
+            pageInput.value = 1;
+            document.getElementById('processing-mode').value = 'auto';
+            dialog.showModal();
+            inspect();
+        });
+        document.getElementById('processing-close').addEventListener('click', () => dialog.close());
+        dialog.addEventListener('close', () => {
+            clearTimeout(processingTimer);
+            processingGeneration++;
+            submit.disabled = false;
+        });
+        document.getElementById('processing-inspect').addEventListener('click', inspect);
+        submit.addEventListener('click', async () => {
+            if (!pageInput.reportValidity()) return;
+            submit.disabled = true;
+            const generation = ++processingGeneration;
+            try {
+                const task = await api.post(`/versions/${encodeURIComponent(processingVersion)}/pages/${Number(pageInput.value)}/processing`, {mode: document.getElementById('processing-mode').value});
+                const poll = async () => {
+                    if (!dialog.open || generation !== processingGeneration) return;
+                    try {
+                        const saved = await api.get(`/page-tasks/${encodeURIComponent(task.id)}`);
+                        if (!dialog.open || generation !== processingGeneration) return;
+                        status.textContent = `Page ${saved.page_number}: ${saved.state} · attempt ${saved.attempts}${saved.error ? ' · ' + saved.error : ''}`;
+                        if (['ready', 'failed', 'cancelled'].includes(saved.state)) {
+                            submit.disabled = false;
+                            if (saved.state === 'ready') await inspect();
+                            return;
+                        }
+                    } catch (err) { status.textContent = `Connection lost: ${err.message}. Retrying…`; }
+                    processingTimer = setTimeout(poll, 1500);
+                };
+                await poll();
+            } catch (err) {
+                status.textContent = err.message;
+                submit.disabled = false;
+            }
+        });
+    }
+
     function initChat() {
         renderChatMessages();
         renderSources();
@@ -816,6 +898,7 @@
                     <div class="doc-card-actions">
                         <span data-job-buttons>${doc.job_id ? jobButtons({id: doc.job_id, kind: 'ingest', state: doc.state, cancel_requested: doc.cancel_requested}) : ''}</span>
                         <button class="job-action" data-version-for="${escapeHtml(doc.id)}">New version</button>
+                        ${doc.active_version_id ? `<button class="job-action" data-processing-version="${escapeHtml(doc.active_version_id)}">Page processing</button>` : ''}
                         <button class="doc-delete-btn" data-doc-delete="${escapeHtml(doc.id)}" data-filename="${escapeHtml(doc.filename)}">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                             Delete

@@ -1705,3 +1705,12 @@ h3 {
         grid-template-columns: 1fr;
     }
 }
+.processing-dialog { background: var(--bg-secondary, #151a22); color: var(--text-primary, #eee); border: 1px solid var(--border-color, #334); border-radius: 14px; width: min(850px, 92vw); max-height: 90vh; padding: 24px; overflow: auto; }
+.processing-dialog::backdrop { background: #000a; }
+.processing-dialog p { margin: 12px 0; }
+.processing-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.processing-controls label { display: flex; flex-direction: column; gap: 6px; }
+.processing-controls input, .processing-controls select { color: inherit; background: #202630; border: 1px solid #566; border-radius: 6px; padding: 10px; }
+.processing-controls input { width: 90px; }
+#processing-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 42vh; overflow: auto; padding: 16px; background: #0c1018; font-size: 13px; }
+.processing-dialog :focus-visible { outline: 2px solid #34d399; outline-offset: 3px; }
