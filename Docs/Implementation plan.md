@@ -64,6 +64,8 @@ See [Phase 2 guide](Phase%202%20guide.md) for setup, migration, contracts and li
 - [ ] Broad OCR/language quality and representative held-out quality.
 
 See [Phase 3 guide](Phase%203%20guide.md) for setup, measurements, and limits.
+Follow-up button styling and [Data controls](Data%20controls.md) add history/cache
+clearing and confirmed, recoverable local resets. The current suite has 87 tests.
 The optional OCR adapter and fallback are implemented and a real scan smoke check passed; broad recognition quality and
 held-out product quality are not claimed as validated.
 

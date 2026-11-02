@@ -111,9 +111,9 @@ representative document corpus. OCR remains CPU-based; ColPali uses CUDA.
 
 ## Existing libraries and page overrides
 
-Metadata schema 1 migrates transactionally to schema 2, preserving documents,
+Metadata schema 1 migrates transactionally to the current schema 3, preserving documents,
 versions, jobs, and vectors. SQLite must include FTS5, as the tested Python build
-does. Old code rejects schema 2; do not downgrade code against this library.
+does. Old code rejects newer schemas; do not downgrade code against this library.
 General index migration/rollback remains Phase 4.
 
 Previously ready Phase 2 pages keep their visual vectors. There is no surprise
@@ -221,3 +221,5 @@ dense text encoder, trained query router, or MaxSim implementation in this phase
 These limits are not reported as passing checks.
 
 Phase 4 has not started.
+
+Follow-up UI fixes and reset options are documented in [Data controls](Data%20controls.md).
