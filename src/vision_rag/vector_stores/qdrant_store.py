@@ -1,7 +1,17 @@
+from pathlib import Path
+from threading import RLock
 from typing import Any, Dict, List, Optional
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, PointStruct, VectorParams
+from qdrant_client.models import (
+    Distance,
+    FieldCondition,
+    Filter,
+    MatchAny,
+    MatchValue,
+    PointStruct,
+    VectorParams,
+)
 
 from vision_rag.core.vector_store import BaseVectorStore
 
@@ -19,6 +29,7 @@ class QdrantVectorStore(BaseVectorStore):
         collection_name: str = "vision_rag_docs",
         vector_size: int = 128,
         in_memory: bool = False,
+        path: str | Path | None = None,
     ):
         """Initialize the Qdrant vector store.
 
@@ -31,8 +42,11 @@ class QdrantVectorStore(BaseVectorStore):
                        Data is lost on restart. Ideal for development and testing.
         """
         self.collection_name = collection_name
+        self.lock = RLock()
 
-        if in_memory:
+        if path is not None:
+            self.client = QdrantClient(path=str(path))
+        elif in_memory:
             # In-memory mode: no external server needed
             self.client = QdrantClient(":memory:")
             print(
@@ -43,7 +57,11 @@ class QdrantVectorStore(BaseVectorStore):
             print(f"Connecting to Qdrant at {host}:{port}...")
 
         # Ensure collection exists
-        self._ensure_collection(vector_size)
+        try:
+            self._ensure_collection(vector_size)
+        except BaseException:
+            self.client.close()
+            raise
 
     def _ensure_collection(self, vector_size: int) -> None:
         """Create the collection if it doesn't already exist."""
@@ -57,6 +75,17 @@ class QdrantVectorStore(BaseVectorStore):
                 vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
             )
             print(f"Created Qdrant collection '{self.collection_name}'.")
+        else:
+            config = self.client.get_collection(
+                self.collection_name
+            ).config.params.vectors
+            if (
+                not isinstance(config, VectorParams)
+                or config.size != vector_size
+                or config.distance != Distance.COSINE
+                or config.multivector_config
+            ):
+                raise ValueError("Incompatible vector collection; use a new collection")
 
     def upsert(
         self,
@@ -75,13 +104,38 @@ class QdrantVectorStore(BaseVectorStore):
             for id_, vector, payload in zip(ids, vectors, payloads)
         ]
 
-        self.client.upsert(collection_name=self.collection_name, points=points)
+        with self.lock:
+            self.client.upsert(
+                collection_name=self.collection_name, points=points, wait=True
+            )
 
-    def search(self, query_vector: Any, limit: int = 5) -> List[Dict[str, Any]]:
+    def search(
+        self,
+        query_vector: Any,
+        limit: int = 5,
+        *,
+        build_ids: list[str] | None = None,
+        workspace: str | None = None,
+    ) -> List[Dict[str, Any]]:
         """Search for similar vectors in Qdrant."""
-        search_result = self.client.query_points(
-            collection_name=self.collection_name, query=query_vector, limit=limit
-        )
+        if build_ids == []:
+            return []
+        conditions: list[Any] = []
+        if build_ids is not None:
+            conditions.append(
+                FieldCondition(key="build_id", match=MatchAny(any=build_ids))
+            )
+        if workspace is not None:
+            conditions.append(
+                FieldCondition(key="workspace", match=MatchValue(value=workspace))
+            )
+        with self.lock:
+            search_result = self.client.query_points(
+                collection_name=self.collection_name,
+                query=query_vector,
+                limit=limit,
+                query_filter=Filter(must=conditions) if conditions else None,
+            )
 
         results = []
         for scored_point in search_result.points:
@@ -98,7 +152,8 @@ class QdrantVectorStore(BaseVectorStore):
     def get_collection_info(self) -> Dict[str, Any]:
         """Get collection statistics from Qdrant."""
         try:
-            info = self.client.get_collection(collection_name=self.collection_name)
+            with self.lock:
+                info = self.client.get_collection(collection_name=self.collection_name)
             return {
                 "vectors_count": info.points_count,
                 "points_count": info.points_count,
@@ -109,11 +164,23 @@ class QdrantVectorStore(BaseVectorStore):
 
     def delete_by_payload_filter(self, key: str, value: Any) -> None:
         """Delete all vectors matching a payload field condition in Qdrant."""
-        from qdrant_client.models import FieldCondition, Filter, MatchValue
+        with self.lock:
+            self.client.delete(
+                collection_name=self.collection_name,
+                points_selector=Filter(
+                    must=[FieldCondition(key=key, match=MatchValue(value=value))]
+                ),
+                wait=True,
+            )
 
-        self.client.delete(
-            collection_name=self.collection_name,
-            points_selector=Filter(
-                must=[FieldCondition(key=key, match=MatchValue(value=value))]
-            ),
-        )
+    def count_build(self, build_id: str) -> int:
+        with self.lock:
+            return self.client.count(
+                collection_name=self.collection_name,
+                exact=True,
+                count_filter=Filter(
+                    must=[
+                        FieldCondition(key="build_id", match=MatchValue(value=build_id))
+                    ]
+                ),
+            ).count

@@ -22,7 +22,14 @@ class BaseVectorStore(ABC):
         pass
 
     @abstractmethod
-    def search(self, query_vector: Any, limit: int = 5) -> List[Dict[str, Any]]:
+    def search(
+        self,
+        query_vector: Any,
+        limit: int = 5,
+        *,
+        build_ids: list[str] | None = None,
+        workspace: str | None = None,
+    ) -> List[Dict[str, Any]]:
         """Search for the most similar vectors.
 
         Args:
