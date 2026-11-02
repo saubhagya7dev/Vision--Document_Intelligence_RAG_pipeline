@@ -1,6 +1,6 @@
 # Phase 2 — durable library and ingestion jobs
 
-Phase 2 is implemented. Phase 3 has not started. The original README is unchanged.
+Phase 2 is implemented. This is its historical guide; see [Phase 3 guide](Phase%203%20guide.md) for the current ingestion workflow. The original README is unchanged.
 
 ## What works now
 
@@ -203,4 +203,4 @@ To repeat:
 - No clean shared/container deployment, backup/restore, power-loss filesystem test
   or representative retrieval-quality benchmark is claimed.
 
-Phase 3 has not started.
+Phase 3 is documented separately in [Phase 3 guide](Phase%203%20guide.md).
