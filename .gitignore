@@ -1,6 +1,7 @@
 # Environments
 .env
 .venv
+.tools/
 env/
 venv/
 ENV/
