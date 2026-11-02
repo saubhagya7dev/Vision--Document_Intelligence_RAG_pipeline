@@ -70,6 +70,34 @@ def test_text_quality(value, state):
     assert quality(value)[0] == state
 
 
+def test_decoration_footnotes_and_invisible_layers(tmp_path):
+    path = create_pdf(
+        tmp_path / "difficult.pdf", ("decoration", "footnotes", "invisible")
+    )
+    decoration, footnotes, invisible = [inspect_page(path, n) for n in range(1, 4)]
+    assert not decoration.visual and not decoration.ocr
+    assert decoration.reasons == ["small_decoration_only"]
+    assert footnotes.visual and "dense_small_text" in footnotes.reasons
+    assert invisible.visual and invisible.features["invisible_text"]
+
+
+def test_cross_page_tables_keep_separate_page_evidence(tmp_path):
+    path = create_pdf(tmp_path / "tables.pdf", ("table", "table_continued"))
+    lib, store, _, _ = open_hybrid(tmp_path / "library")
+    try:
+        job = lib.upload(io.BytesIO(path.read_bytes()), "tables.pdf")
+        lib.process_one()
+        records = lib.processing.pages(job["build_id"])
+        assert [p["page_number"] for p in records] == [1, 2]
+        assert all(p["visual"] for p in records)
+        assert "Table continued" in records[1]["data"]["native_text"]
+        assert {
+            r["page_number"] for r in lib.metadata.rows("SELECT * FROM text_chunks")
+        } == {1, 2}
+    finally:
+        close(lib, store)
+
+
 def test_chunk_bounds_unicode_overlap_and_headings():
     text = "收入利润" * 300 + "LONG_IDENTIFIER_" * 40
     result = chunks([Block(text, (0, 0, 50, 100), heading="Revenue")], 100, 20)

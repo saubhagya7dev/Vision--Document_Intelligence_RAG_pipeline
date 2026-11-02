@@ -66,8 +66,12 @@ def create_pdf(
     pages = []
     for index, kind in enumerate(kinds):
         commands = []
-        if kind not in ("scan", "empty"):
-            commands.append("BT /F1 20 Tf 40 740 Td (Quarterly report) Tj ET")
+        if kind not in ("scan", "empty", "decoration"):
+            title = (
+                "Table continued" if kind == "table_continued" else "Quarterly report"
+            )
+            render_mode = "3 Tr " if kind == "invisible" else ""
+            commands.append(f"BT {render_mode}/F1 20 Tf 40 740 Td ({title}) Tj ET")
             for row in range(15):
                 value = (
                     f"Evidence row {row}: ALPHA42 revenue 120 units "
@@ -77,8 +81,12 @@ def create_pdf(
                     value = "Left column observations."
                 if kind == "broken":
                     value = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-                commands.append(f"BT /F1 11 Tf 40 {700 - row * 18} Td ({value}) Tj ET")
-        if kind in ("mixed", "table"):
+                font_size = 6 if kind == "footnotes" else 11
+                commands.append(
+                    f"BT {render_mode}/F1 {font_size} Tf "
+                    f"40 {700 - row * 18} Td ({value}) Tj ET"
+                )
+        if kind in ("mixed", "table", "table_continued"):
             for row in range(6):
                 commands.append(f"40 {300 + row * 22} m 550 {300 + row * 22} l S")
             for col in range(5):
@@ -88,7 +96,7 @@ def create_pdf(
                 commands.append(
                     f"BT /F1 10 Tf 330 {700 - row * 18} Td (Right column data.) Tj ET"
                 )
-        if kind == "logo":
+        if kind in ("logo", "decoration"):
             commands.append("q 20 0 0 20 560 750 cm /I1 Do Q")
         if kind == "scan":
             commands.append("q 600 0 0 780 0 0 cm /I1 Do Q")
