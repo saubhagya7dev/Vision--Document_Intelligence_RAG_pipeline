@@ -18,6 +18,11 @@
     let lastSources = JSON.parse(sessionStorage.getItem('vr_last_sources') || '[]');
     let uploadHistory = JSON.parse(sessionStorage.getItem('vr_upload_history') || '[]');
     let activityLog = JSON.parse(sessionStorage.getItem('vr_activity') || '[]');
+    let durableJobs = [];
+    let jobsRefreshing = false;
+    let activeUploadJobId = null;
+    let activeUploadToken = null;
+    const terminalJobs = new Set(['ready', 'failed', 'cancelled']);
 
     // =========================
     // API CLIENT
@@ -54,7 +59,7 @@
             return res.json();
         },
 
-        uploadFile(file, onProgress) {
+        uploadFile(file, onProgress, documentId = null) {
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 const formData = new FormData();
@@ -82,7 +87,8 @@
                 xhr.addEventListener('error', () => reject(new Error('Network error during upload')));
                 xhr.addEventListener('abort', () => reject(new Error('Upload aborted')));
 
-                xhr.open('POST', `${API_BASE}/ingest`);
+                const path = documentId ? `/documents/${encodeURIComponent(documentId)}/versions` : '/ingest';
+                xhr.open('POST', `${API_BASE}${path}`);
                 xhr.send(formData);
             });
         },
@@ -96,8 +102,9 @@
             }
         },
 
-        getPageImageUrl(filename, pageNum, thumbnail = false) {
-            return `${API_BASE}/documents/${encodeURIComponent(filename)}/pages/${pageNum}${thumbnail ? '?thumbnail=true' : ''}`;
+        getPageImageUrl(filename, pageNum, thumbnail = false, versionId = null) {
+            const source = versionId ? `/versions/${encodeURIComponent(versionId)}` : `/documents/${encodeURIComponent(filename)}`;
+            return `${API_BASE}${source}/pages/${pageNum}${thumbnail ? '?thumbnail=true' : ''}`;
         }
     };
 
@@ -341,91 +348,168 @@
         });
     }
 
-    async function handleFileUpload(file) {
-        // Validate
+    async function handleFileUpload(file, documentId = null) {
         if (!file.name.toLowerCase().endsWith('.pdf')) {
             toast.show('Only PDF files are supported.', 'error');
             return;
         }
-
-        // Show progress UI
-        const progressContainer = document.getElementById('upload-progress-container');
-        const progressFill = document.getElementById('progress-fill');
-        const filenameEl = document.getElementById('upload-filename');
-        const filesizeEl = document.getElementById('upload-filesize');
-        const statusEl = document.getElementById('upload-status');
-
-        progressContainer.style.display = 'block';
-        filenameEl.textContent = file.name;
-        filesizeEl.textContent = formatBytes(file.size);
-        progressFill.style.width = '0%';
-        statusEl.textContent = 'Uploading...';
-
+        const container = document.getElementById('upload-progress-container');
+        const token = Symbol('upload');
+        activeUploadToken = token;
+        const fill = document.getElementById('progress-fill');
+        const status = document.getElementById('upload-status');
+        container.style.display = 'block';
+        document.getElementById('upload-filename').textContent = file.name;
+        document.getElementById('upload-filesize').textContent = formatBytes(file.size);
+        fill.style.width = '0%';
+        status.style.color = '';
+        status.textContent = 'Uploading...';
+        activeUploadJobId = null;
         try {
-            await api.uploadFile(file, (percent) => {
-                progressFill.style.width = `${percent}%`;
-                statusEl.textContent = percent < 100 ? `Uploading... ${percent}%` : 'Processing document...';
-            });
+            const job = await api.uploadFile(file, percent => {
+                if (activeUploadToken !== token) return;
+                fill.style.width = `${percent}%`;
+                status.textContent = percent < 100 ? `Uploading... ${percent}%` : 'Validating upload...';
+            }, documentId);
+            if (activeUploadToken === token) {
+                activeUploadJobId = job.id;
+                fill.style.width = '0%';
+                status.textContent = job.deduplicated ? 'Existing upload found; checking its job.' : 'Upload saved. Queued for indexing.';
+            }
+            toast.show(job.deduplicated ? 'This content is already in the library.' : 'Upload saved; indexing is queued.', 'info');
+            await refreshJobs();
+        } catch (error) {
+            if (activeUploadToken === token) {
+                status.textContent = `Upload failed: ${error.message}`;
+                status.style.color = '#ef4444';
+            }
+            toast.show(`Upload failed: ${error.message}`, 'error');
+        }
+    }
 
-            progressFill.style.width = '100%';
-            statusEl.textContent = 'Ingested successfully!';
-            statusEl.style.color = '#10b981';
+    function jobLabel(job) {
+        if (job.document_deleted && job.kind === 'ingest' && terminalJobs.has(job.state)) return 'Document removed';
+        if (job.cancel_requested && !terminalJobs.has(job.state)) return 'Cancellation requested — finishing current batch';
+        const labels = {
+            uploaded: 'Queued', validating: 'Validating',
+            loading_model: 'Loading embedding model', rendering: 'Rendering pages',
+            embedding: 'Embedding pages', indexing: 'Saving index',
+            cleaning: 'Removing vectors and files',
+            ready: job.kind === 'delete' ? 'Cleanup complete' : 'Ready',
+            failed: 'Failed', cancelled: 'Cancelled'
+        };
+        return labels[job.state] || job.state;
+    }
 
-            // Add to upload history
-            uploadHistory.unshift({
-                name: file.name,
-                size: file.size,
-                time: new Date().toISOString(),
-                status: 'success'
-            });
-            addActivity('upload', `Uploaded "${file.name}"`);
-            saveSessionState();
+    function jobButtons(job) {
+        if (job.document_deleted && job.kind === 'ingest') return '';
+        if (['failed', 'cancelled'].includes(job.state)) {
+            return `<button class="job-action" data-job-id="${escapeHtml(job.id)}" data-job-action="retry">Retry${job.kind === 'delete' ? ' cleanup' : ''}</button>`;
+        }
+        if (job.kind === 'ingest' && !terminalJobs.has(job.state) && !job.cancel_requested) {
+            return `<button class="job-action" data-job-id="${escapeHtml(job.id)}" data-job-action="cancel">Cancel</button>`;
+        }
+        return '';
+    }
+
+    async function refreshJobs() {
+        if (jobsRefreshing) return;
+        jobsRefreshing = true;
+        const connection = document.getElementById('jobs-connection');
+        try {
+            const jobs = await api.get('/jobs');
+            const previous = new Map(durableJobs.map(job => [job.id, job.state]));
+            durableJobs = jobs;
+            if (connection) connection.textContent = 'Recent jobs saved on the server';
             renderUploadHistory();
-
-            toast.show(`Successfully ingested ${file.name}`, 'success');
-
-            // Reset progress after delay
-            setTimeout(() => {
-                progressContainer.style.display = 'none';
-                statusEl.style.color = '';
-            }, 3000);
-
-        } catch (err) {
-            statusEl.textContent = `Error: ${err.message}`;
-            statusEl.style.color = '#ef4444';
-
-            uploadHistory.unshift({
-                name: file.name,
-                size: file.size,
-                time: new Date().toISOString(),
-                status: 'error'
-            });
-            saveSessionState();
-            renderUploadHistory();
-
-            toast.show(`Upload failed: ${err.message}`, 'error');
+            let refreshDocuments = false;
+            for (const job of jobs) {
+                if (previous.has(job.id) && previous.get(job.id) !== job.state) {
+                    if (job.state === 'ready') toast.show(`${job.filename}: ${jobLabel(job)}`, 'success');
+                    if (job.state === 'failed') toast.show(`${job.filename}: processing failed. Retry is available.`, 'error');
+                    if (terminalJobs.has(job.state)) refreshDocuments = true;
+                }
+                document.querySelectorAll('[data-document-job]').forEach(card => {
+                    if (card.dataset.documentJob !== job.id) return;
+                    card.querySelector('.doc-job-status').textContent = `${jobLabel(job)} · ${job.pages_done}/${job.total_pages} pages indexed${job.error ? ' · ' + job.error : ''}`;
+                    card.querySelector('[data-job-buttons]').innerHTML = jobButtons(job);
+                });
+                if (job.id === activeUploadJobId) {
+                    const percent = job.total_pages ? Math.round(100 * job.pages_done / job.total_pages) : 0;
+                    document.getElementById('progress-fill').style.width = `${percent}%`;
+                    document.getElementById('upload-status').textContent =
+                        `${jobLabel(job)} — ${job.pages_done}/${job.total_pages} pages indexed${job.error ? '. ' + job.error : ''}`;
+                }
+            }
+            if (refreshDocuments && getPageFromHash() === 'documents') await initDocuments();
+        } catch (error) {
+            if (connection) connection.textContent = 'Cannot refresh jobs. Retrying automatically.';
+        } finally {
+            jobsRefreshing = false;
         }
     }
 
     function renderUploadHistory() {
         const container = document.getElementById('upload-history');
-        if (uploadHistory.length === 0) {
-            container.innerHTML = '<div class="empty-state small"><p>No documents uploaded in this session yet.</p></div>';
+        if (!durableJobs.length) {
+            container.innerHTML = '<div class="empty-state small"><p>No ingestion or cleanup jobs yet.</p></div>';
             return;
         }
-
-        container.innerHTML = uploadHistory.map(item => `
-            <div class="upload-history-item">
-                <div class="file-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                </div>
+        container.innerHTML = durableJobs.map(job => {
+            const style = job.state === 'ready' ? 'success' : job.state === 'failed' ? 'error' : 'processing';
+            const label = escapeHtml(jobLabel(job));
+            return `<div class="upload-history-item">
                 <div class="file-details">
-                    <div class="file-name">${escapeHtml(item.name)}</div>
-                    <div class="file-meta">${formatBytes(item.size)} • ${timeAgo(item.time)}</div>
+                    <div class="file-name">${escapeHtml(job.filename || 'Document')} ${job.kind === 'delete' ? '— deletion cleanup' : ''}</div>
+                    <div class="file-meta">${label} ${job.kind === 'ingest' ? `· ${job.pages_done}/${job.total_pages} pages indexed` : ''} · attempt ${job.attempts}</div>
+                    ${job.kind === 'ingest' ? `<progress max="${Math.max(1, job.total_pages)}" value="${job.pages_done}" aria-label="Indexed pages"></progress>` : ''}
+                    ${job.error ? `<p class="job-error">${escapeHtml(job.error)}</p>` : ''}
                 </div>
-                <span class="status-badge ${item.status}">${item.status === 'success' ? 'Ingested' : 'Failed'}</span>
-            </div>
-        `).join('');
+                <span class="status-badge ${style}">${label}</span>
+                ${jobButtons(job)}
+            </div>`;
+        }).join('');
+    }
+
+    function setupJobActions() {
+        document.addEventListener('click', async event => {
+            const button = event.target.closest('[data-job-action]');
+            if (!button) return;
+            button.disabled = true;
+            try {
+                await api.post(`/jobs/${encodeURIComponent(button.dataset.jobId)}/${button.dataset.jobAction}`, {});
+                await refreshJobs();
+                if (getPageFromHash() === 'documents') await initDocuments();
+            } catch (error) {
+                toast.show(error.message, 'error');
+            } finally {
+                button.disabled = false;
+            }
+        });
+        document.addEventListener('click', event => {
+            const deletion = event.target.closest('[data-doc-delete]');
+            if (deletion) {
+                window.__deleteDoc(deletion.dataset.docDelete, deletion.dataset.filename);
+                return;
+            }
+            const version = event.target.closest('[data-version-for]');
+            if (version) {
+                const picker = document.createElement('input');
+                picker.type = 'file';
+                picker.accept = '.pdf,application/pdf';
+                picker.addEventListener('change', () => {
+                    if (picker.files[0]) {
+                        location.hash = '#upload';
+                        handleFileUpload(picker.files[0], version.dataset.versionFor);
+                    }
+                });
+                picker.click();
+            }
+        });
+        refreshJobs();
+        setInterval(() => {
+            if (!document.hidden) refreshJobs();
+        }, 2000);
     }
 
     // =========================
@@ -642,7 +726,7 @@
             const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
             const page = src.page || '?';
             const score = typeof src.score === 'number' ? src.score.toFixed(2) : '—';
-            const imgUrl = src.source ? api.getPageImageUrl(filename, page, true) : '';
+            const imgUrl = src.source ? api.getPageImageUrl(filename, page, true, src.version_id) : '';
 
             return `
                 <div class="source-card" data-src-index="${i}" onclick="window.__previewSource(${i})">
@@ -666,7 +750,7 @@
 
         const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
         const page = src.page || '?';
-        const imgUrl = src.source ? api.getPageImageUrl(filename, page) : '';
+        const imgUrl = src.source ? api.getPageImageUrl(filename, page, false, src.version_id) : '';
 
         document.getElementById('preview-modal-title').textContent = `${filename} — Page ${page}`;
         document.getElementById('preview-image').src = imgUrl;
@@ -707,7 +791,7 @@
             }
 
             grid.innerHTML = docs.map(doc => `
-                <div class="doc-card" data-filename="${escapeHtml(doc.filename)}">
+                <div class="doc-card" data-document-job="${escapeHtml(doc.job_id || '')}" data-filename="${escapeHtml(doc.filename)}">
                     <div class="doc-card-header">
                         <div class="doc-card-icon">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -720,9 +804,14 @@
                     <div class="doc-card-meta">
                         <span class="doc-meta-tag">${doc.page_count} page${doc.page_count !== 1 ? 's' : ''}</span>
                         <span class="doc-meta-tag">${formatBytes(doc.size_bytes)}</span>
+                        <span class="doc-meta-tag">Version ${doc.version || '?'} · ${escapeHtml(doc.state)}</span>
                     </div>
+                    <p class="doc-job-status">${doc.pages_done || 0}/${doc.total_pages || doc.page_count} pages indexed${doc.error ? ' · ' + escapeHtml(doc.error) : ''}</p>
+                    ${doc.active_version_id && doc.active_version_id !== doc.version_id ? '<p class="doc-job-status">The previous ready version remains searchable.</p>' : ''}
                     <div class="doc-card-actions">
-                        <button class="doc-delete-btn" onclick="window.__deleteDoc('${escapeHtml(doc.filename)}')">
+                        <span data-job-buttons>${doc.job_id ? jobButtons({id: doc.job_id, kind: 'ingest', state: doc.state, cancel_requested: doc.cancel_requested}) : ''}</span>
+                        <button class="job-action" data-version-for="${escapeHtml(doc.id)}">New version</button>
+                        <button class="doc-delete-btn" data-doc-delete="${escapeHtml(doc.id)}" data-filename="${escapeHtml(doc.filename)}">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                             Delete
                         </button>
@@ -755,8 +844,8 @@
     // Delete document
     let pendingDeleteFilename = null;
 
-    window.__deleteDoc = function (filename) {
-        pendingDeleteFilename = filename;
+    window.__deleteDoc = function (reference, filename = reference) {
+        pendingDeleteFilename = reference;
         document.getElementById('delete-modal-text').textContent = `Are you sure you want to delete "${filename}"? This will also remove its vectors from the database. This action cannot be undone.`;
         document.getElementById('delete-modal').style.display = 'flex';
     };
@@ -775,8 +864,9 @@
 
             try {
                 await api.delete(`/documents/${encodeURIComponent(filename)}`);
-                addActivity('delete', `Deleted "${filename}"`);
-                toast.show(`Deleted ${filename}`, 'success');
+                addActivity('delete', 'Removed a document from the library');
+                toast.show('Document removed; cleanup queued.', 'success');
+                refreshJobs();
                 initDocuments(); // Refresh list
             } catch (err) {
                 toast.show(`Failed to delete: ${err.message}`, 'error');
@@ -819,6 +909,7 @@
         setupChat();
         setupDeleteModal();
         setupDashboardControls();
+        setupJobActions();
 
         // Router
         window.addEventListener('hashchange', () => {

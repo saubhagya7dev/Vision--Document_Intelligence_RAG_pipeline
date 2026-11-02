@@ -1432,6 +1432,29 @@ h3 {
     border-color: var(--danger);
 }
 
+.job-action {
+    padding: 7px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    color: var(--text-body);
+    background: var(--bg-card);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.8rem;
+}
+
+.job-action:disabled { opacity: 0.5; cursor: wait; }
+.job-action:focus-visible, .doc-delete-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.upload-history-item { flex-wrap: wrap; }
+.upload-history-item progress { width: 100%; max-width: 340px; accent-color: var(--accent); }
+.doc-job-status, #jobs-connection { color: var(--text-muted); font-size: 0.8rem; margin: 10px 0; }
+.job-error { color: var(--danger); font-size: 0.8rem; }
+.doc-card-actions { flex-wrap: wrap; gap: 8px; }
+
 /* === MODALS === */
 .modal-overlay {
     position: fixed;
