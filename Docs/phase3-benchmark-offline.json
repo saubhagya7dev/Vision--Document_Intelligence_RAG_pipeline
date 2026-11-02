@@ -1,0 +1,39 @@
+{
+  "hardware": {
+    "torch_version": "2.13.0+cu130",
+    "cuda_build": "13.0",
+    "cuda_available": true,
+    "mps_available": false,
+    "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+    "accelerator": {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "total_memory_bytes": 6438846464,
+      "free_memory_bytes": 5329911808,
+      "compute_capability": [
+        8,
+        9
+      ],
+      "bfloat16_supported": true,
+      "compiled_architectures": [
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_90",
+        "sm_100",
+        "sm_120"
+      ]
+    },
+    "recommended_device": "cuda",
+    "action": null
+  },
+  "platform": "Windows-11-10.0.26300-SP0",
+  "dpi": 150,
+  "batch_size": 1,
+  "provider_calls": 0,
+  "ocr": "disabled in all cases",
+  "corpus": "six generated pages: prose, mixed prose/table, vector table, scan, empty, prose/logo",
+  "quality_scope": "synthetic evidence discovery only; not held-out answer quality",
+  "cases": {},
+  "status": "failed",
+  "error": "OSError: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.\nCheck your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'."
+}
