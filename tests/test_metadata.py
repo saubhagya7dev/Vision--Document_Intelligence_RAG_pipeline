@@ -90,3 +90,14 @@ def test_workspace_boundaries_and_restart_recovery(tmp_path):
     assert repo.job(job["id"])["state"] == "uploaded"
     with pytest.raises(KeyError):
         Metadata(path, "two").job(job["id"])
+
+
+def test_older_retry_does_not_roll_back_a_newer_active_version(tmp_path):
+    repo = Metadata(tmp_path / "metadata.sqlite3")
+    first, _ = register(repo)
+    repo.finish(first["id"], "failed")
+    newer, _ = register(repo, digest="new", replace=first["document_id"])
+    publish(repo, newer)
+    repo.retry(first["id"])
+    publish(repo, first)
+    assert repo.ready_builds("pooled-v1") == [newer["build_id"]]

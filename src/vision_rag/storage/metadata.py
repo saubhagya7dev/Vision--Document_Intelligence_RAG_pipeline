@@ -7,7 +7,14 @@ from pathlib import Path
 from typing import Any, Iterator
 from uuid import NAMESPACE_URL, uuid4, uuid5
 
-ACTIVE = ("validating", "rendering", "embedding", "indexing")
+ACTIVE = (
+    "validating",
+    "loading_model",
+    "rendering",
+    "embedding",
+    "indexing",
+    "cleaning",
+)
 TERMINAL = ("ready", "failed", "cancelled")
 
 SCHEMA = """
@@ -269,8 +276,11 @@ class Metadata:
                 if deleted or job["cancel_requested"]:
                     raise Conflict("Job was cancelled before publication")
                 db.execute(
-                    "UPDATE documents SET active_version_id=? WHERE id=?",
-                    (job["version_id"], job["document_id"]),
+                    "UPDATE documents SET active_version_id=? WHERE id=? "
+                    "AND (active_version_id IS NULL OR "
+                    "(SELECT ordinal FROM versions WHERE id=active_version_id) <= "
+                    "(SELECT ordinal FROM versions WHERE id=?))",
+                    (job["version_id"], job["document_id"], job["version_id"]),
                 )
             if job["build_id"]:
                 db.execute(
@@ -359,7 +369,8 @@ class Metadata:
                 "UPDATE jobs SET state='uploaded',"
                 "error='Interrupted; queued for recovery',"
                 "updated_at=? WHERE state IN "
-                "('validating','rendering','embedding','indexing') "
+                "('validating','loading_model','rendering','embedding',"
+                "'indexing','cleaning') "
                 "AND document_id IN (SELECT id FROM documents WHERE workspace=?)",
                 (now(), self.workspace),
             )

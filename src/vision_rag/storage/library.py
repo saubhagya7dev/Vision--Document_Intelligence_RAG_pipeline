@@ -283,6 +283,7 @@ class DocumentLibrary:
                 *size,
             )
 
+        self.metadata.progress(job_id, "loading_model", 0)
         pipeline = self.pipeline()
         self._control(job_id)
         pipeline.ingest_document(
@@ -307,6 +308,7 @@ class DocumentLibrary:
             self.metadata.finish(job_id, "ready")
 
     def _delete(self, job: dict[str, Any]) -> None:
+        self.metadata.progress(job["id"], "cleaning", 0)
         with self.access:
             self.store.delete_by_payload_filter("document_id", job["document_id"])
             versions = self.metadata.rows(

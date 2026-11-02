@@ -175,3 +175,69 @@ def test_missing_or_corrupt_source_and_lost_index_never_remain_ready(tmp_path):
             lib.source(job["version_id"])
     finally:
         close(lib, store)
+
+
+def test_background_thread_writes_persistent_qdrant(tmp_path):
+    from time import monotonic, sleep
+
+    lib, store, _ = open_library(tmp_path / "library")
+    try:
+        job = lib.upload(io.BytesIO(pdf_bytes(tmp_path)), "report.pdf")
+        lib.start(worker_enabled=True, import_legacy=False)
+        deadline = monotonic() + 10
+        while lib.metadata.job(job["id"])["state"] not in ("ready", "failed"):
+            assert monotonic() < deadline
+            sleep(0.02)
+        assert lib.metadata.job(job["id"])["state"] == "ready"
+        assert store.count_build(job["build_id"]) == 3
+    finally:
+        close(lib, store)
+
+
+def test_hard_process_exit_recovers_partial_build(tmp_path):
+    import subprocess
+    import sys
+
+    root = tmp_path / "library"
+    lib, store, _ = open_library(root)
+    job = lib.upload(io.BytesIO(pdf_bytes(tmp_path)), "report.pdf")
+    close(lib, store)
+    script = """
+import os,sys
+from pathlib import Path
+from vision_rag.ingest.document_loader import DocumentLoader
+from vision_rag.ingest.pipeline import IngestionPipeline
+from vision_rag.storage.library import DocumentLibrary
+from vision_rag.vector_stores.qdrant_store import QdrantVectorStore
+class Encoder:
+    calls = 0
+    def encode_images(self, images):
+        self.calls += 1
+        if self.calls == 2:
+            os._exit(23)
+        return [[1.,0.] for _ in images]
+root = Path(sys.argv[1])
+store = QdrantVectorStore(path=root/"qdrant", vector_size=2)
+loader = DocumentLoader(dpi=72,cache_dir=root/"artifacts")
+pipeline = IngestionPipeline(loader,Encoder(),store,batch_size=1)
+lib = DocumentLibrary(root,loader,store,lambda:pipeline,"profile")
+lib.process_one()
+"""
+    result = subprocess.run(
+        [sys.executable, "-c", script, str(root)],
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    assert result.returncode == 23, result.stderr
+    lib, store, _ = open_library(root)
+    try:
+        assert store.count_build(job["build_id"]) == 1
+        assert lib.ready_builds() == []
+        lib.start(worker_enabled=False, import_legacy=False)
+        assert lib.metadata.job(job["id"])["state"] == "uploaded"
+        lib.process_one()
+        assert lib.ready_builds() == [job["build_id"]]
+        assert store.count_build(job["build_id"]) == 3
+    finally:
+        close(lib, store)
