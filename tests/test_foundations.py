@@ -157,3 +157,27 @@ def test_corrupt_cache_is_regenerated_and_oversized_page_is_rejected(
         assert image.size == (100, 200)
     with pytest.raises(ValueError, match="MAX_RENDER_PIXELS"):
         DocumentLoader(max_render_pixels=10).load_page(pdf_path, 1)
+
+
+def test_ingest_retrieve_and_synthesize_with_real_pdf_and_qdrant(pdf_path, tmp_path):
+    from vision_rag.retrieval.retriever import Retriever
+
+    loader = DocumentLoader(dpi=72, cache_dir=tmp_path / "cache")
+    embedder = MagicMock()
+    embedder.encode_images.side_effect = lambda images: [[1.0, 0.0] for _ in images]
+    embedder.encode_queries.return_value = [[1.0, 0.0]]
+    generator = MagicMock()
+    generator.generate.return_value = "Adapter integration answer"
+    store = QdrantVectorStore(in_memory=True, vector_size=2)
+    try:
+        IngestionPipeline(loader, embedder, store).ingest_document(pdf_path)
+        assert store.get_collection_info()["points_count"] == 5
+        answer, sources = RAGSynthesizer(
+            Retriever(embedder, store), generator, loader
+        ).query("question", top_k=1)
+        assert answer == "Adapter integration answer"
+        assert len(sources) == 1
+        assert sources[0]["source"] == str(pdf_path)
+        assert 1 <= sources[0]["page"] <= 5
+    finally:
+        store.client.close()

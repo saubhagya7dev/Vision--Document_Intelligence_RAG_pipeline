@@ -39,3 +39,6 @@ htmlcov/
 
 # Local Vector DB data
 qdrant_data/
+
+# Uploaded originals and generated page artifacts
+/data/

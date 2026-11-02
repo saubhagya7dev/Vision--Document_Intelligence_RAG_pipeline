@@ -216,3 +216,21 @@ def test_lifespan_can_warm_up_before_serving(tmp_path, monkeypatch):
         initialize.assert_called_once()
         assert warmed.get("/health").status_code == 200
     shutdown.assert_called_once()
+
+
+def test_stage_timings_share_request_trace_without_content(client, tmp_path, caplog):
+    import json
+    import logging
+
+    make_pdf(tmp_path / "private-report.pdf")
+    with caplog.at_level(logging.INFO, logger="vision_rag.timings"):
+        response = client.get("/api/v1/documents")
+    records = [
+        json.loads(record.message)
+        for record in caplog.records
+        if record.name == "vision_rag.timings"
+    ]
+    assert {"page_inspection", "http_request"} <= {r["stage"] for r in records}
+    assert all(r["trace_id"] == response.headers["X-Trace-ID"] for r in records)
+    assert all(r["duration_ms"] >= 0 for r in records)
+    assert "private-report" not in str(records)
