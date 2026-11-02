@@ -29,6 +29,7 @@ class BaseVectorStore(ABC):
         *,
         build_ids: list[str] | None = None,
         workspace: str | None = None,
+        exclude_ids: list[str] | None = None,
     ) -> List[Dict[str, Any]]:
         """Search for the most similar vectors.
 

@@ -14,6 +14,8 @@ ACTIVE = (
     "embedding",
     "indexing",
     "cleaning",
+    "extracting",
+    "ocr",
 )
 TERMINAL = ("ready", "failed", "cancelled")
 
@@ -51,6 +53,22 @@ CREATE TABLE IF NOT EXISTS pages (
  PRIMARY KEY(version_id,page_number,dpi));
 CREATE TABLE IF NOT EXISTS legacy_imports (
  path TEXT PRIMARY KEY, document_id TEXT NOT NULL REFERENCES documents(id));
+CREATE TABLE IF NOT EXISTS page_processing (
+ build_id TEXT NOT NULL REFERENCES builds(id), page_number INTEGER NOT NULL,
+ revision INTEGER NOT NULL, mode TEXT NOT NULL, state TEXT NOT NULL,
+ visual INTEGER NOT NULL, data TEXT NOT NULL, updated_at TEXT NOT NULL,
+ PRIMARY KEY(build_id,page_number));
+CREATE TABLE IF NOT EXISTS text_chunks (
+ id TEXT PRIMARY KEY, build_id TEXT NOT NULL REFERENCES builds(id),
+ page_number INTEGER NOT NULL, data TEXT NOT NULL, text TEXT NOT NULL);
+CREATE VIRTUAL TABLE IF NOT EXISTS chunk_search USING fts5(id UNINDEXED,text);
+CREATE TABLE IF NOT EXISTS page_tasks (
+ id TEXT PRIMARY KEY, build_id TEXT NOT NULL REFERENCES builds(id),
+ page_number INTEGER NOT NULL, mode TEXT NOT NULL, state TEXT NOT NULL,
+ attempts INTEGER NOT NULL DEFAULT 0, error TEXT, created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS pending_page_task
+ ON page_tasks(build_id,page_number) WHERE state IN ('uploaded','running');
 """
 
 
@@ -72,13 +90,13 @@ class Metadata:
         path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1):
+            if version not in (0, 1, 2):
                 raise RuntimeError(
                     "Unsupported metadata schema; restore compatible code"
                 )
             db.execute("PRAGMA journal_mode=WAL")
             db.executescript(
-                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=1; COMMIT;"
+                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=2; COMMIT;"
             )
 
     @contextmanager
@@ -371,7 +389,7 @@ class Metadata:
                 "error='Interrupted; queued for recovery',"
                 "updated_at=? WHERE state IN "
                 "('validating','loading_model','rendering','embedding',"
-                "'indexing','cleaning') "
+                "'indexing','cleaning','extracting','ocr') "
                 "AND document_id IN (SELECT id FROM documents WHERE workspace=?)",
                 (now(), self.workspace),
             )

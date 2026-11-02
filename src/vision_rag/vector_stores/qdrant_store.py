@@ -7,8 +7,10 @@ from qdrant_client.models import (
     Distance,
     FieldCondition,
     Filter,
+    HasIdCondition,
     MatchAny,
     MatchValue,
+    PointIdsList,
     PointStruct,
     VectorParams,
 )
@@ -116,6 +118,7 @@ class QdrantVectorStore(BaseVectorStore):
         *,
         build_ids: list[str] | None = None,
         workspace: str | None = None,
+        exclude_ids: list[str] | None = None,
     ) -> List[Dict[str, Any]]:
         """Search for similar vectors in Qdrant."""
         if build_ids == []:
@@ -134,7 +137,14 @@ class QdrantVectorStore(BaseVectorStore):
                 collection_name=self.collection_name,
                 query=query_vector,
                 limit=limit,
-                query_filter=Filter(must=conditions) if conditions else None,
+                query_filter=Filter(
+                    must=conditions,
+                    must_not=[HasIdCondition(has_id=list(exclude_ids))]
+                    if exclude_ids
+                    else None,
+                )
+                if conditions or exclude_ids
+                else None,
             )
 
         results = []
@@ -148,6 +158,14 @@ class QdrantVectorStore(BaseVectorStore):
             )
 
         return results
+
+    def delete_ids(self, ids: list[str]) -> None:
+        with self.lock:
+            self.client.delete(
+                collection_name=self.collection_name,
+                points_selector=PointIdsList(points=list(ids)),
+                wait=True,
+            )
 
     def get_collection_info(self) -> Dict[str, Any]:
         """Get collection statistics from Qdrant."""
