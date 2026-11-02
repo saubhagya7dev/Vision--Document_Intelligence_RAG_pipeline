@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Literal, Optional
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,6 +36,19 @@ class Settings(BaseSettings):
     workspace_id: str = Field(default="local", min_length=1, max_length=100)
     ingestion_worker_enabled: bool = True
     import_legacy_pdfs: bool = True
+    hybrid_ingestion: bool = True
+    text_chunk_limit: int = Field(default=1200, ge=32, le=8000)
+    text_chunk_overlap: int = Field(default=120, ge=0, le=2000)
+    ocr_enabled: bool = True
+    tesseract_executable: str = "tesseract"
+    ocr_language: str = "eng"
+    ocr_timeout_seconds: float = Field(default=60, ge=1, le=600)
+
+    @model_validator(mode="after")
+    def check_chunk_budget(self) -> "Settings":
+        if self.text_chunk_overlap >= self.text_chunk_limit:
+            raise ValueError("TEXT_CHUNK_OVERLAP must be smaller than TEXT_CHUNK_LIMIT")
+        return self
 
     @property
     def index_profile(self) -> str:

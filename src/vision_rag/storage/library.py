@@ -10,9 +10,12 @@ from typing import Any, BinaryIO, Callable
 from uuid import UUID, uuid4
 
 from vision_rag.ingest.document_loader import DocumentLoader
+from vision_rag.ingest.hybrid import HybridProcessor
+from vision_rag.ingest.ocr import TesseractOCR
 from vision_rag.ingest.pipeline import IngestionCancelled, IngestionPipeline
 from vision_rag.storage.metadata import Conflict, Metadata, now
 from vision_rag.storage.ownership import LibraryOwnership
+from vision_rag.storage.processing import ProcessingMetadata
 from vision_rag.telemetry import stage, trace
 from vision_rag.vector_stores.qdrant_store import QdrantVectorStore
 
@@ -38,6 +41,10 @@ class DocumentLibrary:
         workspace: str = "local",
         max_upload_bytes: int = 100 * 1024 * 1024,
         max_pages: int = 1000,
+        hybrid: bool = False,
+        chunk_limit: int = 1200,
+        chunk_overlap: int = 120,
+        ocr: TesseractOCR | None = None,
     ) -> None:
         self.root = root.resolve()
         self.owner = LibraryOwnership(self.root)
@@ -50,6 +57,21 @@ class DocumentLibrary:
         self.profile, self.workspace = profile, workspace
         self.max_upload_bytes, self.max_pages = max_upload_bytes, max_pages
         self.access = RLock()
+        self.processing = ProcessingMetadata(self.metadata)
+        self.hybrid = (
+            HybridProcessor(
+                loader,
+                store,
+                lambda: self.pipeline(),
+                self.processing,
+                self.access,
+                chunk_limit,
+                chunk_overlap,
+                ocr,
+            )
+            if hybrid
+            else None
+        )
         self.stop_event, self.wake_event = Event(), Event()
         self.thread: Thread | None = None
 
@@ -199,6 +221,7 @@ class DocumentLibrary:
 
     def start(self, worker_enabled: bool = True, import_legacy: bool = True) -> None:
         self.metadata.recover()
+        self.processing.recover()
         self.reconcile()
         if import_legacy:
             imported = {
@@ -248,7 +271,14 @@ class DocumentLibrary:
         for job in ready:
             try:
                 self.source(job["version_id"])
-                if self.store.count_build(job["build_id"]) != job["total_pages"]:
+                tasks = self.metadata.rows(
+                    "SELECT 1 FROM page_tasks WHERE build_id=? AND state!='ready' LIMIT 1",
+                    (job["build_id"],),
+                )
+                expected = self.processing.expected_vectors(
+                    job["build_id"], job["total_pages"]
+                )
+                if not tasks and self.store.count_build(job["build_id"]) != expected:
                     raise Conflict("Index is missing or incomplete; retry ingestion")
             except Exception as error:
                 self.metadata.finish(job["id"], "failed", str(error))
@@ -290,25 +320,44 @@ class DocumentLibrary:
                 *size,
             )
 
-        self.metadata.progress(job_id, "loading_model", 0)
-        pipeline = self.pipeline()
+        base = {
+            "workspace": self.workspace,
+            "document_id": job["document_id"],
+            "version_id": version["id"],
+            "build_id": job["build_id"],
+            "original_filename": version["filename"],
+            "profile": self.profile,
+        }
+        if self.hybrid is not None:
+            self.hybrid.ingest(
+                path,
+                base,
+                version["page_count"],
+                lambda state, done: self.metadata.progress(job_id, state, done),
+                lambda: self._control(job_id),
+                record,
+            )
+            if len(self.processing.pages(job["build_id"])) != version["page_count"]:
+                raise Conflict("Extraction is incomplete")
+        else:
+            self.processing.clear(job["build_id"])
+            self.metadata.progress(job_id, "loading_model", 0)
+            pipeline = self.pipeline()
+            self._control(job_id)
+            pipeline.ingest_document(
+                path,
+                base,
+                progress=lambda state, done: self.metadata.progress(
+                    job_id, state, done
+                ),
+                check_control=lambda: self._control(job_id),
+                page_record=record,
+            )
         self._control(job_id)
-        pipeline.ingest_document(
-            path,
-            {
-                "workspace": self.workspace,
-                "document_id": job["document_id"],
-                "version_id": version["id"],
-                "build_id": job["build_id"],
-                "original_filename": version["filename"],
-                "profile": self.profile,
-            },
-            progress=lambda state, done: self.metadata.progress(job_id, state, done),
-            check_control=lambda: self._control(job_id),
-            page_record=record,
+        expected = self.processing.expected_vectors(
+            job["build_id"], version["page_count"]
         )
-        self._control(job_id)
-        if self.store.count_build(job["build_id"]) != version["page_count"]:
+        if self.store.count_build(job["build_id"]) != expected:
             raise Conflict("Vector count does not match the document")
         with self.access:
             self._control(job_id)
@@ -318,6 +367,18 @@ class DocumentLibrary:
         self.metadata.progress(job["id"], "cleaning", 0)
         with self.access:
             self.store.delete_by_payload_filter("document_id", job["document_id"])
+            for build in self.metadata.rows(
+                "SELECT b.id FROM builds b JOIN versions v ON v.id=b.version_id "
+                "WHERE v.document_id=?",
+                (job["document_id"],),
+            ):
+                self.processing.clear(build["id"])
+                with self.metadata.connection(True) as db:
+                    db.execute(
+                        "UPDATE page_tasks SET state='cancelled',updated_at=? "
+                        "WHERE build_id=? AND state!='ready'",
+                        (now(), build["id"]),
+                    )
             versions = self.metadata.rows(
                 "SELECT * FROM versions WHERE document_id=?", (job["document_id"],)
             )
@@ -364,7 +425,7 @@ class DocumentLibrary:
     def process_one(self) -> bool:
         job = self.metadata.claim()
         if job is None:
-            return False
+            return self._process_page_task()
         with trace(job["id"]), stage("ingestion_job", kind=job["kind"]):
             try:
                 if job["kind"] == "delete":
@@ -394,6 +455,64 @@ class DocumentLibrary:
                     "failed",
                     "Processing failed; inspect server logs and retry",
                 )
+        return True
+
+    def _process_page_task(self) -> bool:
+        if self.hybrid is None:
+            return False
+        task = self.processing.claim()
+        if task is None:
+            return False
+        try:
+            version, path = self.source(task["version_id"])
+
+            def control() -> None:
+                if self.stop_event.is_set():
+                    raise WorkerInterrupted()
+                if self.metadata.version(version["id"])["deleted_at"]:
+                    raise IngestionCancelled()
+
+            def record(number: int, size: tuple[int, int]) -> None:
+                image = self.loader._artifact(path, number)
+                thumb = self.loader._artifact(path, number, True)
+                if image is not None and thumb is not None:
+                    self.metadata.record_page(
+                        version["id"],
+                        number,
+                        self.loader.dpi,
+                        image.relative_to(self.root).as_posix(),
+                        thumb.relative_to(self.root).as_posix(),
+                        *size,
+                    )
+
+            self.hybrid.page(
+                path,
+                task["page_number"],
+                {
+                    "workspace": self.workspace,
+                    "document_id": version["document_id"],
+                    "version_id": version["id"],
+                    "build_id": task["build_id"],
+                    "original_filename": version["filename"],
+                    "profile": self.profile,
+                },
+                task["mode"],
+                lambda state, done: None,
+                control,
+                record,
+            )
+            self.processing.finish_task(task["id"], "ready")
+        except WorkerInterrupted:
+            self.processing.finish_task(
+                task["id"], "uploaded", "Interrupted; queued for recovery"
+            )
+        except IngestionCancelled:
+            self.processing.finish_task(task["id"], "cancelled", "Document removed")
+        except Exception:
+            logger.exception("Page reprocessing failed; original retained")
+            self.processing.finish_task(
+                task["id"], "failed", "Page processing failed; retry the override"
+            )
         return True
 
     def _loop(self) -> None:
