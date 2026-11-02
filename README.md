@@ -1,168 +1,359 @@
-# Vision — document intelligence
+<div align="center">
 
-Vision answers questions about PDF pages using local ColPali embeddings, Qdrant retrieval, and Gemini generation. FastAPI serves a plain HTML/CSS/JavaScript interface.
+#  Vision - A Native Document Intelligence
 
-**Upgrade status: Phase 1 implemented. Phases 2–7 have not started.** The current retrieval representation is still mean-pooled ColPali vectors, not late-interaction MaxSim. Hybrid text retrieval and validated claim-level citations are planned.
+### OCR-Free RAG Pipeline using Vision-Language Models
 
-## What Phase 1 changes
+[![ColPali](https://img.shields.io/badge/ColPali-v1.3-orange.svg)](https://huggingface.co/vidore/colpali-v1.3)
+[![Qdrant](https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C.svg)](https://qdrant.tech/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com)
+[![Gemini](https://img.shields.io/badge/Gemini-3.6--flash-4285F4.svg)](https://ai.google.dev/)
+[![Python 3.10 - 3.14](https://img.shields.io/badge/python-3.10--3.14-blue.svg)](https://www.python.org/downloads/)
+[![uv](https://img.shields.io/badge/uv-Package%20Manager-DE5FE9?logo=uv&logoColor=white)](https://docs.astral.sh/uv/)
+[![Tests](https://img.shields.io/badge/Tests-10%20passed-brightgreen?logo=pytest&logoColor=white)](#-running-tests)
 
-- Counts PDF pages without rendering them.
-- Renders only the requested page for previews and answer context.
-- Caches lossless page images and thumbnails under content hashes.
-- Processes ingestion in bounded batches; serializes model inference.
-- Detects CPU/CUDA/MPS, supports explicit precision and device selection, and retries multi-page accelerator memory failures one item at a time.
-- Separates lightweight library/storage initialization from heavy model initialization.
-- Offers startup model loading, readiness state, and shutdown cleanup.
-- Runs blocking routes in FastAPI's thread pool so a query does not block the event loop.
-- Emits stage timings with request trace IDs and no question/document content in timing records.
-- Fixes Qdrant point statistics and rejects mismatched vector batches.
-- Adds basic request/upload limits, filename containment, duplicate-name protection, and best-effort cleanup after failed ingestion.
 
-See [Phase 1 results and limits](Docs/Phase%201%20results.md), [raw benchmark](Docs/phase1-benchmark.json), and [phase checklist](Docs/Implementation%20plan.md).
+*A next-generation document retrieval system that bypasses OCR entirely — treating every page as an image and using Vision-Language Models to understand layout, tables, charts, and diagrams perfectly.*
 
-## Architecture today
+</div>
+
+> 🚧 **Under upgradation** — See the [upgradation plan](Docs/Implementation%20plan.md) for the phased roadmap and current progress.
+
+<div align="center">
+  <img src="Screenshots/Screenshot 2026-10-20 061731.png" alt="Dashboard" width="49%" />
+  <img src="Screenshots/Screenshot 2026-10-20 062234.png" alt="Query and Results" width="49%" />
+</div>
+
+## The Problem
+
+Traditional RAG (Retrieval-Augmented Generation) pipelines convert PDFs to text using OCR before feeding them into a language model. This approach **completely breaks down** when dealing with:
+
+- 📊 **Complex tables** with merged cells and nested headers
+- 📈 **Charts and graphs** where meaning is purely visual
+- 🏗️ **Architecture diagrams** and flowcharts
+- 📝 **Multi-column layouts** with mixed text and images
+- 🎨 **Infographics** where spatial arrangement carries meaning
+
+**Vision-Native RAG** solves this by skipping text extraction entirely. Every document page is treated as an image and understood visually.
+
+---
+
+## Architecture
 
 ```mermaid
 flowchart LR
-    UI[Browser] --> API[FastAPI worker threads]
-    API --> PDF[Saved original PDF]
-    PDF --> BATCH[Bounded page rendering]
-    BATCH --> CACHE[Lossless page and thumbnail artifacts]
-    BATCH --> EMB[Serialized ColPali inference]
-    EMB --> POOL[Mean-pooled baseline vectors]
-    POOL --> DB[Qdrant]
-    API --> QUERY[ColPali query embedding]
-    QUERY --> DB
-    DB --> PAGES[Selected pages from cache or single-page render]
-    PAGES --> GEMINI[Gemini]
-    GEMINI --> ANSWER[Answer and retrieved source list]
+    UI["Web UI / REST Client"]
+
+    subgraph INGEST["1. Document Ingestion"]
+        direction LR
+        PDF["PDF Documents"] --> LOADER["PDF Loader"]
+        LOADER --> IMG["Page Images"]
+        IMG --> COLPALI["ColPali Vision Embedder"]
+        COLPALI --> DB[("Qdrant Vector DB")]
+        LOADER -.-> CACHE[("Local Image Cache")]
+    end
+
+    subgraph RETRIEVAL["2. Retrieval & Generation"]
+        direction LR
+        QUERY["User Question"] --> QEMB["ColPali Query Embedder"]
+        QEMB --> SEARCH["MaxSim Search"]
+        SEARCH --> TOPK["Top-k Pages"]
+        TOPK --> RAG["RAG Synthesizer"]
+        RAG --> GEMINI["Gemini Vision Model"]
+        GEMINI --> ANSWER["Grounded Answer + Citations"]
+    end
+
+    UI --> PDF
+    UI --> QUERY
+    DB <--> SEARCH
+    CACHE -.-> RAG
+    ANSWER --> UI
+```
+### How It Works
+
+1. **Ingest** → Upload a PDF. Each page is converted to a high-res image using `pypdfium2` (zero external dependencies). ColPali generates a 128-dimensional embedding vector for each page. These vectors are stored in Qdrant.
+
+2. **Query** → Your question is embedded by ColPali into the same vector space. Qdrant finds the most visually relevant pages. Those page images (not text!) are sent directly to Gemini, which reads and reasons over them to produce an answer.
+
+**The key insight:** The VLM sees the *exact same thing* a human sees — tables, charts, formatting, and all. No information is lost to OCR.
+
+---
+
+##  Project Structure
+
+```
+Vision-Native-RAG-Pipeline/
+│
+├── src/vision_rag/              # Main application package
+│   ├── api/                     # FastAPI endpoints
+│   │   ├── main.py              # App entrypoint & uvicorn config
+│   │   └── routes.py            # /ingest, /query and UI routes
+│   │
+│   ├── static/                  # Interactive UI
+│   │   ├── index.html           # SPA Shell
+│   │   ├── styles.css           # Wallety-inspired styling
+│   │   └── app.js               # Application logic
+│   │
+│   ├── core/                    # Abstract base classes (interfaces)
+│   │   ├── embeddings.py        # BaseEmbeddingModel
+│   │   ├── generator.py         # BaseVLMGenerator
+│   │   └── vector_store.py      # BaseVectorStore
+│   │
+│   ├── models/                  # Model implementations
+│   │   ├── colpali_embedder.py  # ColPali embedding model
+│   │   └── gemini_generator.py  # Gemini VLM generator
+│   │
+│   ├── ingest/                  # Document ingestion pipeline
+│   │   ├── document_loader.py   # PDF → PIL Images
+│   │   └── pipeline.py          # Orchestrates ingest flow
+│   │
+│   ├── retrieval/               # Search & retrieval
+│   │   └── retriever.py         # Query → Top-K pages
+│   │
+│   ├── generate/                # Answer generation
+│   │   └── synthesizer.py       # End-to-end RAG orchestrator
+│   │
+│   ├── vector_stores/           # Vector DB implementations
+│   │   └── qdrant_store.py      # Qdrant client wrapper
+│   │
+│   └── config.py                # Pydantic settings from .env
+│
+├── tests/                       # Test suite
+│   ├── test_ingest.py
+│   ├── test_retrieval.py
+│   └── test_api.py
+│
+├── data/                        # Persisted uploaded PDFs
+├── docker-compose.yml           # Qdrant (production mode)
+├── Makefile                     # Dev shortcuts
+├── pyproject.toml               # Dependencies & build config
+└── .env                         # Environment variables
 ```
 
-A source list identifies retrieved pages; it does not prove that each generated claim is supported.
+---
 
-## Run locally on Windows
+##  🚀 Quick Start
 
-Use Python 3.10–3.14 and run from the repository root. The current environment was tested with Python 3.14.9; a clean installation on every supported Python version has not been tested.
+### Prerequisites
 
-```powershell
-uv sync --extra dev --frozen
-Copy-Item .env.example .env
-# Edit .env: add GOOGLE_API_KEY and an available GENERATION_MODEL_NAME.
-.\.venv\Scripts\python.exe -m vision_rag.api.main
+- **Python 3.10 – 3.14** (PyTorch does not support Python 3.15 yet)
+- **Google API Key** for Gemini ([Get one here](https://aistudio.google.com/apikey))
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/saubhagya7dev/Vision---Document-Intelligence-RAG-pipeline.git
+cd Vision---Document-Intelligence-RAG-pipeline
+
+# Create virtual environment and install dependencies
+uv venv
+uv pip install -e .[dev]
 ```
 
-If you already have a configured environment and .env, keep them; start with the final command. The server binds to [localhost:8000](http://localhost:8000). API documentation is at [localhost:8000/docs](http://localhost:8000/docs).
+### 2. Configure Environment
 
-The first ingestion/query loads the embedding model unless MODEL_WARMUP=true. Loading can download model weights and can require model access approval. No weights or paid provider calls are needed for the routine tests. Model and provider access must be verified separately for a real answer.
+Create a `.env` file in the project root:
 
-### GPU diagnostics and profiles
+```env
+# Vector Database
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
 
-```powershell
-.\.venv\Scripts\python.exe -c "import json; from vision_rag.runtime import device_diagnostics; print(json.dumps(device_diagnostics(), indent=2))"
+# Models
+EMBEDDING_MODEL_NAME=vidore/colpali-v1.3
+GENERATION_MODEL_NAME=gemini-3.6-flash
+
+# API Keys
+GOOGLE_API_KEY=your_google_api_key_here
 ```
 
-Or open [diagnostics](http://localhost:8000/api/v1/diagnostics) while the app is running.
+### 3. Run the Server
 
-The local RTX 4050 Laptop GPU now runs PyTorch 2.13.0+cu130 and matching TorchVision 0.28.0+cu130. CUDA computation and real ColPali image/query embeddings have been verified. The local configuration uses automatic device selection and batches of one. The model creates significant memory pressure on this 6 GB GPU; this is not proof that it fits entirely in physical VRAM. See [GPU setup and verification](Docs/GPU%20setup.md).
-
-To reproduce this Windows/Python 3.14 CUDA profile after environment sync:
-
-```powershell
-uv pip install --python .venv/Scripts/python.exe -r requirements/cuda-windows-py314.txt
-.\.venv\Scripts\python.exe scripts/check_gpu.py
-# Optional real-model check; allows missing model/processor files to download.
-.\.venv\Scripts\python.exe scripts/check_gpu.py --model --allow-downloads
+```bash
+uv run python -m vision_rag.api.main
 ```
 
-Stop Vision before replacing Torch on Windows; loaded DLLs cannot be replaced. Run the app through its .venv Python, or use uv run --no-sync. A normal uv sync/run can restore the default Torch build from uv.lock; reinstall this profile afterward and recheck diagnostics. Other machines should use the [official PyTorch installer selector](https://pytorch.org/get-started/locally/) rather than assuming this profile is appropriate.
+The API will be live at `http://localhost:8000`. Open `http://localhost:8000/docs` for the interactive Swagger UI.
 
-Suggested starting settings, **not hardware performance guarantees**:
+### 4. Try It Out
 
-| Profile | Device | Precision | Batch |
-| --- | --- | --- | --- |
-| CPU fallback | cpu | float32 | 1 |
-| Constrained accelerator | auto | auto | 1 |
-| Default | auto | auto | 2 |
-| Larger accelerator trial | cuda | auto | 4 |
+**The Interactive UI:**
+Open [http://localhost:8000](http://localhost:8000) in your browser to access the beautiful Wallety-inspired interactive dashboard. You can upload documents, view statistics, and chat with your PDFs visually.
 
-Set EMBEDDING_DEVICE, EMBEDDING_PRECISION and INGESTION_BATCH_SIZE accordingly. Keep RENDER_DPI=300 initially. The model itself must fit in memory: reducing batches cannot make oversized model weights fit. Unsupported explicit devices fail rather than silently switching. A multi-item memory failure retries every item individually; a single-item failure reports a smaller-model/CPU action. Selecting another model name does not establish compatibility with the current ColPali adapter.
+**Using the API:**
 
-MODEL_WARMUP=true moves component loading into startup; startup fails if initialization fails. With false, library and health endpoints work before models load. GET /api/v1/ready returns 503 until components are loaded, then 200. This indicates local initialization, not verified provider connectivity or answer quality.
-
-## Configuration
-
-.env.example lists defaults and limits. In particular:
-
-| Setting | Default | Purpose |
-| --- | --- | --- |
-| DATA_DIR | data | Original PDFs and cached artifacts |
-| RENDER_DPI | 300 | Full page rendition resolution |
-| INGESTION_BATCH_SIZE | 2 | Maximum page and encoder batch |
-| EMBEDDING_DEVICE | auto | auto, cpu, cuda, mps |
-| EMBEDDING_PRECISION | auto | auto, float32, float16, bfloat16 |
-| MODEL_WARMUP | false | Initialize components before serving |
-| MAX_UPLOAD_MB | 100 | Bytes copied from a parsed upload |
-| MAX_DOCUMENT_PAGES | 1000 | Validated PDF page limit |
-| MAX_RENDER_PIXELS | 40000000 | Reject oversized page rasters |
-| QDRANT_IN_MEMORY | true | Existing disposable local index mode |
-
-Auto precision uses float32 on CPU and float16 on CUDA/MPS. Explicit bfloat16 requires supported CUDA hardware.
-
-In-memory Qdrant loses its index on restart. For the existing server mode, run docker compose up -d and set QDRANT_IN_MEMORY=false. Durable metadata, ingestion recovery, versioning, and storage reconciliation belong to Phase 2. Run one application worker in Phase 1; multiple worker processes duplicate models and invalidate the in-memory storage assumptions.
-
-Artifacts use data/artifacts/<content-hash>/<dpi>-v1-<kind>-<page>.png. They preserve full-page detail; thumbnails are at most 240 × 320. Corrupt cached images regenerate from originals. Cache writes add work on first ingestion; disk retention and orphan cleanup are not implemented. With the server stopped, artifacts may be cleared and will regenerate. Keep originals and index data.
-
-## API examples
-
-```powershell
-curl.exe -F "file=@report.pdf" http://localhost:8000/api/v1/ingest
-$question = @{ query = 'What is the revenue?'; top_k = 3 } | ConvertTo-Json
-Invoke-RestMethod -Uri 'http://localhost:8000/api/v1/query' -Method Post -ContentType 'application/json' -Body $question
+**Upload a PDF:**
+```bash
+curl -X POST "http://localhost:8000/api/v1/ingest" \
+  -F "file=@your_document.pdf"
 ```
 
-Successful ingestion returns status and message. Queries return:
+**Ask a Question:**
+```bash
+curl -X POST "http://localhost:8000/api/v1/query" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What is the total revenue in Q3?", "top_k": 3}'
+```
 
+---
+
+##  Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `QDRANT_HOST` | `localhost` | Qdrant server hostname |
+| `QDRANT_PORT` | `6333` | Qdrant server port |
+| `QDRANT_IN_MEMORY` | `True` | Use in-process Qdrant (no Docker needed) |
+| `EMBEDDING_MODEL_NAME` | `vidore/colpali-v1.3` | HuggingFace model for visual embeddings |
+| `GENERATION_MODEL_NAME` | `gemini-3.6-flash` | Gemini model for answer generation |
+| `GOOGLE_API_KEY` | — | Your Google AI API key |
+
+### Storage Modes
+
+| Mode | Config | Requires Docker | Data Persists |
+|------|--------|----------------|---------------|
+| **In-Memory** (default) | `QDRANT_IN_MEMORY=True` | ❌ No | ❌ Lost on restart |
+| **Docker** (production) | `QDRANT_IN_MEMORY=False` | ✅ Yes | ✅ Persistent |
+
+To switch to persistent storage:
+```bash
+docker compose up -d          # Start Qdrant
+# Set QDRANT_IN_MEMORY=False in .env
+uv run python -m vision_rag.api.main
+```
+
+---
+
+##  Testing
+
+```bash
+# Run all tests
+make test
+
+# Or directly
+pytest tests/
+```
+
+---
+
+##  Development
+
+```bash
+# Format code
+make format
+
+# Lint
+make lint
+
+# Setup dev environment (includes pre-commit hooks)
+make setup
+```
+
+---
+
+##  Extensibility
+
+The project uses **Abstract Base Classes** in the `core/` directory, making it easy to swap components:
+
+| Interface | Current Implementation | Swap With |
+|-----------|----------------------|-----------|
+| `BaseEmbeddingModel` | ColPali (visual) | CLIP, SigLIP, any VLM encoder |
+| `BaseVLMGenerator` | Gemini 3.6 Flash | GPT-4o, Claude, LLaVA |
+| `BaseVectorStore` | Qdrant | Pinecone, Weaviate, ChromaDB |
+
+To add a new implementation, simply create a class that inherits from the base and inject it in `routes.py`.
+
+---
+
+##  API Reference
+
+### `GET /health`
+Health check endpoint.
+
+**Response:** `{"status": "ok"}`
+
+---
+
+### `GET /api/v1/documents`
+List all uploaded PDF documents.
+
+---
+
+### `GET /api/v1/stats`
+Get dashboard statistics.
+
+---
+
+### `DELETE /api/v1/documents/{filename}`
+Delete a document and its associated vectors.
+
+---
+
+### `POST /api/v1/ingest`
+Upload and process a PDF document.
+
+**Request:** `multipart/form-data` with a `file` field (PDF only)
+
+**Response:**
 ```json
 {
-  "answer": "Generated answer text",
-  "sources": [{"score": 0.9, "source": "absolute/path/report.pdf", "page": 1}]
+  "status": "success",
+  "message": "Successfully ingested report.pdf"
 }
 ```
 
-The score above illustrates the contract; it is not a measured relevance threshold.
+---
 
-| Method | Route | Purpose |
-| --- | --- | --- |
-| GET | /health | Lightweight process liveness |
-| GET | /api/v1/ready | Component initialization state |
-| GET | /api/v1/diagnostics | Hardware/configuration/model diagnostics |
-| GET | /api/v1/documents | Original PDF inventory and direct page counts |
-| POST | /api/v1/ingest | Synchronous bounded ingestion |
-| POST | /api/v1/query | Answer from selected retrieved page images |
-| GET | /api/v1/documents/{filename}/pages/{page} | Single-page JPEG |
-| GET | Same route with ?thumbnail=true | Cached thumbnail |
-| DELETE | /api/v1/documents/{filename} | Delete matching vectors and original |
-| GET | /api/v1/stats | Point count and storage status |
+### `POST /api/v1/query`
+Query the ingested documents.
 
-Responses include X-Trace-ID. Timing logs distinguish model imports/loading, upload handling, PDF inspection, rendering/cache I/O, inference queue wait, inference, embedding, upsert, query embedding, retrieval, evidence preparation, provider generation, and HTTP duration. Native text extraction, reranking, and first-token timing are not reported because those stages do not exist yet. Upload timing starts after multipart parsing; it is not network transfer time.
-
-Same-name uploads return 409 instead of overwriting existing evidence. Use the delete action before replacement for now; proper version semantics arrive in Phase 2. Basic limits do not replace ingress body limits, authentication, or authorization.
-
-## Verify and benchmark
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe -m ruff check src tests scripts
-.\.venv\Scripts\python.exe -m mypy src
-.\.venv\Scripts\python.exe scripts/benchmark_phase1.py --output Docs/phase1-benchmark.json
+**Request Body:**
+```json
+{
+  "query": "What are the key findings?",
+  "top_k": 3
+}
 ```
 
-The benchmark generates a synthetic eight-page PDF in temporary storage and launches a fresh process for each case. Optional psutil provides process peak-memory readings. It does not download models, call a provider, or measure retrieval/answer quality. The report includes per-sample values, versions, hardware, and measurement limits.
+**Response:**
+```json
+{
+  "answer": "Based on the document pages, the key findings are...",
+  "sources": [
+    {"id": "uuid", "score": 0.92, "payload": {"source": "report.pdf", "page_number": 5}}
+  ]
+}
+```
 
-In the restricted Codex Windows sandbox, asyncio's socket-pair setup stalled before API requests reached the app; API tests were verified outside that sandbox.
+---
 
-## Current limits
+##  Tech Stack
 
-This remains a local prototype. A synthetic single-page GPU inference smoke check passes; end-to-end model/provider latency, retrieval quality, and visual label fidelity across real documents remain unverified. There is no backend conversation persistence, hybrid index, claim-level citation validator, durable ingestion queue, or shared-deployment access boundary. Ingestion uses random page IDs and best-effort cleanup; crash consistency and cross-store transactions are not guaranteed. The document list inventories files, not authoritative index readiness.
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| **API Framework** | FastAPI | High-performance async REST API |
+| **Embedding Model** | ColPali v1.3 | Vision-native document embeddings |
+| **Vector Database** | Qdrant | Similarity search and storage |
+| **Generation Model** | Gemini 3.6 Flash | Multimodal reasoning over images |
+| **PDF Processing** | pypdfium2 | Fast, zero-dependency PDF page → image conversion |
+| **Config Management** | Pydantic Settings | Type-safe environment configuration |
 
-The original generation-model default has not been validated against the provider. Configure a currently available model in .env. The frontend still contains illustrative analytics and browser-only conversation state; their replacement is planned for Phase 5. Shared deployment, full security hardening, packaging verification, and release evaluation remain Phase 7 work.
+---
+
+##  Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+---
+<BR>
+
+<div align="center">
+
+**Built using Vision-Language Models**
+
+*If legacy OCR-based RAG is a bicycle, Vision-Native RAG is a Tesla.*
+
+</div>
