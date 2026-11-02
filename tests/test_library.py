@@ -241,3 +241,42 @@ lib.process_one()
         assert store.count_build(job["build_id"]) == 3
     finally:
         close(lib, store)
+
+
+def test_only_one_process_can_own_library_and_orphans_are_reconciled(tmp_path):
+    from uuid import uuid4
+
+    from vision_rag.storage.ownership import LibraryOwnership
+
+    root = tmp_path / "library"
+    lib, store, _ = open_library(root)
+    try:
+        with pytest.raises(RuntimeError, match="already open"):
+            LibraryOwnership(root)
+        orphan = lib.path(f"originals/{uuid4()}.pdf")
+        orphan.parent.mkdir(exist_ok=True)
+        orphan.write_bytes(b"unpublished")
+        partial = lib.path(f"incoming/{uuid4()}.part")
+        partial.parent.mkdir(exist_ok=True)
+        partial.write_bytes(b"interrupted upload")
+        untouched = root / "pre-existing.upload"
+        untouched.write_bytes(b"unknown old upload")
+        lib.reconcile()
+        assert not orphan.exists() and not partial.exists()
+        assert untouched.exists()
+    finally:
+        close(lib, store)
+
+
+def test_changed_profile_never_overwrites_existing_build_vectors(tmp_path):
+    lib, store, encoder = open_library(tmp_path / "library")
+    try:
+        job = lib.upload(io.BytesIO(pdf_bytes(tmp_path)), "report.pdf")
+        lib.profile = "different-model"
+        lib.process_one()
+        assert lib.metadata.job(job["id"])["state"] == "failed"
+        assert "profile changed" in lib.metadata.job(job["id"])["error"]
+        assert store.count_build(job["build_id"]) == 0
+        encoder.encode_images.assert_not_called()
+    finally:
+        close(lib, store)

@@ -184,6 +184,8 @@ def test_logical_delete_is_immediate_cleanup_is_retryable(
     assert deletion.status_code == 202
     assert client.get("/api/v1/documents").json() == []
     assert client.get("/api/v1/stats").json()["total_vectors"] == 0
+    assert client.get("/api/v1/stats").json()["pending_jobs"] == 1
+    assert client.get("/api/v1/jobs/" + job["id"]).json()["document_deleted"]
     assert (
         client.get("/api/v1/versions/" + job["version_id"] + "/file").status_code == 404
     )
@@ -292,3 +294,14 @@ def test_unready_query_and_unknown_job_do_not_initialize_models(client, monkeypa
     assert client.post("/api/v1/jobs/missing/retry").status_code == 404
     assert client.get("/api/v1/versions/missing/file").status_code == 404
     initialize.assert_not_called()
+
+
+def test_startup_warmup_uses_embedding_pipeline_without_provider(client, monkeypatch):
+    from vision_rag.api import main
+
+    initialize = MagicMock()
+    monkeypatch.setattr(settings, "model_warmup", True)
+    monkeypatch.setattr(main, "get_pipeline", initialize)
+    with TestClient(app) as warmed:
+        initialize.assert_called_once()
+        assert warmed.get("/health").status_code == 200

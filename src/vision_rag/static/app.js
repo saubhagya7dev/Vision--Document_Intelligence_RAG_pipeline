@@ -726,7 +726,7 @@
             const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
             const page = src.page || '?';
             const score = typeof src.score === 'number' ? src.score.toFixed(2) : '—';
-            const imgUrl = src.source ? api.getPageImageUrl(filename, page, true, src.version_id) : '';
+            const imgUrl = src.version_id ? api.getPageImageUrl(filename, page, true, src.version_id) : '';
 
             return `
                 <div class="source-card" data-src-index="${i}" onclick="window.__previewSource(${i})">
@@ -736,6 +736,7 @@
                     <div class="source-info">
                         <div class="source-page-label">Page ${page}</div>
                         <div class="source-file-name" title="${escapeHtml(filename)}">${escapeHtml(filename)}</div>
+                        ${src.version_id ? '' : '<span class="source-score">Legacy source — ask again to resolve its version.</span>'}
                         <span class="source-score">Score: ${score}</span>
                     </div>
                 </div>
@@ -747,6 +748,10 @@
     window.__previewSource = function (index) {
         const src = lastSources[index];
         if (!src) return;
+        if (!src.version_id) {
+            toast.show('This older answer has no recorded source version. Ask again to inspect its evidence.', 'info');
+            return;
+        }
 
         const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
         const page = src.page || '?';

@@ -265,6 +265,13 @@ class DocumentLibrary:
         job_id = job["id"]
         self._control(job_id)
         version, path = self.source(job["version_id"])
+        build = self.metadata.rows(
+            "SELECT profile FROM builds WHERE id=?", (job["build_id"],)
+        )[0]
+        if build["profile"] != self.profile:
+            raise Conflict(
+                "Index profile changed; restore its configuration before retry"
+            )
         self.store.delete_by_payload_filter("build_id", job["build_id"])
         if self.loader.page_count(path) != version["page_count"]:
             raise Conflict("Original page count changed")
@@ -378,6 +385,8 @@ class DocumentLibrary:
                         "failed",
                         "Cancellation cleanup failed; retry cleanup",
                     )
+            except Conflict as error:
+                self.metadata.finish(job["id"], "failed", str(error))
             except Exception:
                 logger.exception("Durable job failed; originals retained")
                 self.metadata.finish(

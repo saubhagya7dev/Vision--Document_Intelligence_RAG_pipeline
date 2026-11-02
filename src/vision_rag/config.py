@@ -15,9 +15,8 @@ class Settings(BaseSettings):
     qdrant_port: int = 6333
     qdrant_collection_name: str = "vision_rag_docs"
     qdrant_mode: Literal["local", "memory", "server"] = "local"
-    qdrant_in_memory: bool = (
-        True  # Set to False when using a real Qdrant server (e.g. Docker)
-    )
+    # Accepted so older .env files still load; qdrant_mode now selects storage.
+    qdrant_in_memory: bool | None = None
 
     # Models
     embedding_model_name: str = "vidore/colpali"

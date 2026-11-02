@@ -181,6 +181,7 @@ class JobResponse(BaseModel):
     updated_at: str
     filename: str | None = None
     deduplicated: bool = False
+    document_deleted: bool = False
 
 
 def upload_job(file: UploadFile, document_id: str | None = None) -> JobResponse:
@@ -217,7 +218,8 @@ def upload_version(document_id: str, file: UploadFile = File(...)) -> JobRespons
 def list_jobs(limit: int = Query(default=50, ge=1, le=200)) -> list[dict[str, Any]]:
     library = get_library()
     return library.metadata.rows(
-        "SELECT j.*,d.filename FROM jobs j JOIN documents d ON d.id=j.document_id "
+        "SELECT j.*,d.filename,CASE WHEN d.deleted_at IS NULL THEN 0 ELSE 1 END "
+        "AS document_deleted FROM jobs j JOIN documents d ON d.id=j.document_id "
         "WHERE d.workspace=? ORDER BY j.created_at DESC LIMIT ?",
         (library.workspace, limit),
     )
@@ -236,6 +238,15 @@ def retry_job(job_id: str) -> dict[str, Any]:
     library = get_library()
     try:
         with library.access:
+            previous = library.metadata.job(job_id)
+            if previous["build_id"]:
+                build = library.metadata.rows(
+                    "SELECT profile FROM builds WHERE id=?", (previous["build_id"],)
+                )[0]
+                if build["profile"] != library.profile:
+                    raise Conflict(
+                        "Index profile changed; restore its configuration before retry"
+                    )
             job = library.metadata.retry(job_id)
         library.wake_event.set()
         return job
@@ -368,18 +379,23 @@ def get_page_image(
 def get_stats() -> dict[str, Any]:
     library = get_library()
     documents = library.documents()
-    count = sum(get_store().count_build(build) for build in library.ready_builds())
+    try:
+        count = sum(get_store().count_build(build) for build in library.ready_builds())
+        status = "ready"
+    except Exception:
+        logger.exception("Vector statistics unavailable")
+        count = None
+        status = "unavailable"
+    pending = library.metadata.rows(
+        "SELECT COUNT(*) AS count FROM jobs j JOIN documents d ON d.id=j.document_id "
+        "WHERE d.workspace=? AND j.state NOT IN ('ready','failed','cancelled')",
+        (library.workspace,),
+    )[0]["count"]
     return {
         "total_documents": len(documents),
         "total_vectors": count,
-        "collection_status": "ready",
-        "pending_jobs": len(
-            [
-                doc
-                for doc in documents
-                if doc["state"] not in ("ready", "failed", "cancelled")
-            ]
-        ),
+        "collection_status": status,
+        "pending_jobs": pending,
     }
 
 

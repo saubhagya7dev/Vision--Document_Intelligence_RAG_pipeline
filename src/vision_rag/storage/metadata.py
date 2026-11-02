@@ -127,7 +127,8 @@ class Metadata:
 
     def job(self, job_id: str) -> dict[str, Any]:
         rows = self.rows(
-            "SELECT j.*,d.filename FROM jobs j JOIN documents d ON d.id=j.document_id "
+            "SELECT j.*,d.filename,CASE WHEN d.deleted_at IS NULL THEN 0 ELSE 1 END "
+            "AS document_deleted FROM jobs j JOIN documents d ON d.id=j.document_id "
             "WHERE j.id=? AND d.workspace=?",
             (job_id, self.workspace),
         )
