@@ -64,9 +64,11 @@ class HybridRetriever:
         page_range: tuple[int, int] | None = None,
         tier: str = "hybrid",
         fusion: str | None = None,
+        version_ids: list[str] | None = None,
+        index_id: str | None = None,
     ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-        row = self.indexes.active()
-        if row is None:
+        row = self.indexes.row(index_id) if index_id else self.indexes.active()
+        if row is None or row["state"] != "ready":
             raise Conflict("Retrieval index is preparing; inspect indexing progress")
         if tier not in TIERS:
             raise ValueError("Unknown retrieval tier")
@@ -75,7 +77,7 @@ class HybridRetriever:
                 "Select enough source pages to cover all requested documents"
             )
         spec = json.loads(row["specification"])
-        allowed = self.indexes.eligible(row, documents, page_range)
+        allowed = self.indexes.eligible(row, documents, page_range, version_ids)
         channels: list[list[dict[str, Any]]] = []
         if tier in ("text", "hybrid", "rerank") and allowed["text"]:
             # Queries must respect the same tokenizer budget; never truncate silently.

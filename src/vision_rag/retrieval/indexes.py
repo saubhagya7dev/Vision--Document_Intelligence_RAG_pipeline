@@ -186,17 +186,28 @@ class RetrievalIndexes:
         row: dict[str, Any],
         documents: list[str] | None = None,
         pages: tuple[int, int] | None = None,
+        versions: list[str] | None = None,
     ) -> dict[str, list[str]]:
+        selection = (
+            "AND r.version_id IN (SELECT value FROM json_each(?)) "
+            if versions is not None
+            else "AND r.build_id IN (SELECT value FROM json_each(?)) "
+            "AND d.active_version_id=r.version_id "
+        )
         rows = self.meta.rows(
             "SELECT r.* FROM retrieval_items r JOIN documents d ON d.id=r.document_id "
             "JOIN builds b ON b.id=r.build_id LEFT JOIN page_processing p "
             "ON p.build_id=r.build_id AND p.page_number=r.page_number "
             "WHERE r.index_id=? AND d.workspace=? AND d.deleted_at IS NULL "
-            "AND r.build_id IN (SELECT value FROM json_each(?)) "
-            "AND d.active_version_id=r.version_id AND b.state='ready' "
+            + selection
+            + "AND b.state='ready' "
             "AND ((r.revision=0 AND p.page_number IS NULL) OR "
             "(p.revision=r.revision AND p.state='ready'))",
-            (row["id"], self.library.workspace, json.dumps(self.source_builds())),
+            (
+                row["id"],
+                self.library.workspace,
+                json.dumps(versions if versions is not None else self.source_builds()),
+            ),
         )
         return {
             kind: [
