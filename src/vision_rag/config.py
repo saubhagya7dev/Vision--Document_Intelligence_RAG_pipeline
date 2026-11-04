@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     session_seconds: int = Field(default=28800, ge=60, le=86400)
     session_cookie_secure: bool = False
     trusted_tls_proxy: bool = False
+    trusted_proxy_ips: list[str] = ["127.0.0.1", "::1"]
     max_request_mb: int = Field(default=102, ge=1, le=1024)
 
     def check_deployment(self) -> None:
@@ -70,6 +71,10 @@ class Settings(BaseSettings):
             raise ValueError("Configure explicit ALLOWED_HOSTS without wildcards")
         if any(origin == "*" for origin in self.cors_origins):
             raise ValueError("Configure explicit CORS_ORIGINS without wildcards")
+        if not self.trusted_proxy_ips or any(
+            "*" in ip for ip in self.trusted_proxy_ips
+        ):
+            raise ValueError("Configure explicit TRUSTED_PROXY_IPS without wildcards")
         if self.access_token and len(self.access_token.get_secret_value()) < 32:
             raise ValueError("ACCESS_TOKEN must contain at least 32 characters")
         if self.deployment_profile == "local" and not local:

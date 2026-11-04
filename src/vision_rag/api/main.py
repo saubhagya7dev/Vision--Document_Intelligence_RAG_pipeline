@@ -15,13 +15,14 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from vision_rag.api.findings import router as findings_router
-from vision_rag.api.security import RequestBoundary, router as security_router
 from vision_rag.api.routes import (
     get_library,
     router,
     shutdown_components,
     warmup_components,
 )
+from vision_rag.api.security import RequestBoundary
+from vision_rag.api.security import router as security_router
 from vision_rag.api.workspace import router as workspace_router
 from vision_rag.config import settings
 from vision_rag.telemetry import stage, trace
@@ -123,6 +124,7 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
             "workspace.js",
             "evidence.js",
             "findings.js",
+            "session.js",
         ):
             digest = hashlib.sha256((STATIC_DIR / asset).read_bytes()).hexdigest()[:12]
             html = html.replace(f'/static/{asset}"', f'/static/{asset}?v={digest}"')
@@ -139,7 +141,8 @@ def start() -> None:
         host=settings.bind_host,
         port=settings.bind_port,
         reload=False,
-        proxy_headers=False,
+        proxy_headers=settings.trusted_tls_proxy,
+        forwarded_allow_ips=",".join(settings.trusted_proxy_ips),
         access_log=False,
     )
 
