@@ -125,6 +125,7 @@
         busy(true);
         evidence.reset();
         current = await api('/conversations', 'POST', {title: 'New conversation', document_ids: null});
+        el('answer-progress').textContent = '';
         localStorage.setItem('vr_conversation', current.id);
         scope(); render(); sources([]); evidence.reset();
         el('viewer-controls').hidden = true; await list(); status('New conversation ready.');
@@ -147,6 +148,7 @@
         if (active || submitting) return;
         const query = retryText || el('chat-input').value.trim(); if (!query) return;
         submitting = true; busy(true);
+        el('answer-progress').textContent = 'Submitting question…';
         try {
             if (!current) await create();
             if (retryRequest) {
@@ -216,6 +218,9 @@
     const showEvidence = (source, restore = false) => evidence.show(source, restore);
     function setup() {
         evidence.setup();
+        document.querySelector('.skip-link').addEventListener('click', event => {
+            event.preventDefault(); el('app-main').focus();
+        });
         el('new-conversation').addEventListener('click', () => create().catch(report));
         el('conversation-list').addEventListener('change', e => { if (e.target.value) openConversation(e.target.value).catch(report); });
         el('rename-conversation').addEventListener('click', async () => {
