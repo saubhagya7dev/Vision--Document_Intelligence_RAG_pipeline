@@ -15,11 +15,13 @@ from starlette.requests import Request
 
 from vision_rag.config import settings
 from vision_rag.core.embeddings import BaseEmbeddingModel
+from vision_rag.generate.grounding import GroundedSynthesizer
 from vision_rag.generate.synthesizer import RAGSynthesizer
 from vision_rag.ingest.document_loader import DocumentLoader
 from vision_rag.ingest.ocr import TesseractOCR
 from vision_rag.ingest.pipeline import IngestionPipeline
 from vision_rag.models.retrieval_models import RetrievalModels
+from vision_rag.retrieval.engine import HybridRetriever
 from vision_rag.retrieval.indexes import RetrievalIndexes
 from vision_rag.retrieval.retriever import Retriever
 from vision_rag.storage.library import DocumentLibrary, ResourceLimit
@@ -232,11 +234,25 @@ def shutdown_components() -> None:
 class QueryRequest(BaseModel):
     query: str = Field(min_length=1, max_length=8000)
     top_k: int = Field(default=3, ge=1, le=20)
+    document_ids: list[str] | None = Field(default=None, max_length=6)
+    page_start: int = Field(default=1, ge=1)
+    page_end: int = Field(default=100000, ge=1)
+    previous_question: str | None = Field(default=None, max_length=2000)
+    tier: Literal["auto", "text", "visual", "hybrid", "rerank"] = "auto"
+    evidence_only: bool = False
 
 
 class QueryResponse(BaseModel):
     answer: str
     sources: list[dict[str, Any]]
+    claims: list[dict[str, Any]] = Field(default_factory=list)
+    grounding_status: str = "legacy"
+    original_query: str | None = None
+    retrieval_query: str | None = None
+    retrieval: dict[str, Any] = Field(default_factory=dict)
+    provider_calls: int = 0
+    support_validation: str | None = None
+    provider_usage: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class ReindexRequest(BaseModel):
@@ -583,17 +599,131 @@ def query_pipeline(request: QueryRequest) -> QueryResponse:
     if not request.query.strip():
         raise HTTPException(422, "Question must not be blank")
     library = get_library()
+    if library.retrieval is None and (
+        request.evidence_only
+        or request.document_ids is not None
+        or request.tier != "auto"
+        or request.page_start != 1
+        or request.page_end != 100000
+    ):
+        raise HTTPException(
+            409, "Enable PHASE4_ENABLED for scoped retrieval and Find pages"
+        )
     try:
         # Deletion cannot remove source artifacts while a response uses them.
         with library.access:
-            if not library.ready_builds():
+            if not library.ready_builds() and not (
+                library.retrieval is not None and library.retrieval.source_builds()
+            ):
                 return QueryResponse(answer="No ready documents found.", sources=[])
+            if library.retrieval is not None:
+                manager = index_manager()
+                active = manager.active()
+                if active is None:
+                    raise Conflict(
+                        "Retrieval index is preparing; inspect indexing progress"
+                    )
+                documents = (
+                    None
+                    if request.document_ids is None
+                    else list(
+                        dict.fromkeys(
+                            library.metadata.document(doc)["id"]
+                            for doc in request.document_ids
+                        )
+                    )
+                )
+                if request.page_start > request.page_end:
+                    raise ValueError("Page range is reversed")
+                if request.evidence_only:
+                    from vision_rag.generate.grounding import followup_query
+
+                    rewritten = followup_query(request.query, request.previous_question)
+                    hits, details = HybridRetriever(
+                        manager,
+                        settings.retrieval_candidates,
+                        settings.evidence_char_budget,
+                    ).retrieve(
+                        rewritten,
+                        max(request.top_k, len(documents or [])),
+                        documents,
+                        (request.page_start, request.page_end),
+                        "hybrid" if request.tier == "auto" else request.tier,
+                    )
+                    sources = []
+                    for hit in hits:
+                        payload = hit["payload"]
+                        version, _ = library.source(payload["version_id"])
+                        sources.append(
+                            {
+                                "evidence_id": hit["evidence_id"],
+                                "source": version["filename"],
+                                "version_id": version["id"],
+                                "document_id": version["document_id"],
+                                "page": payload["page_number"],
+                                "score": hit["score"],
+                                "score_kind": hit["score_kind"],
+                                "excerpt": payload.get("text", ""),
+                            }
+                        )
+                    return QueryResponse(
+                        answer=f"Found {len(sources)} source pages. "
+                        "Inspect the evidence below.",
+                        sources=sources,
+                        grounding_status="evidence_only",
+                        original_query=request.query,
+                        retrieval_query=rewritten,
+                        retrieval=details,
+                        provider_calls=0,
+                        support_validation="retrieval only; "
+                        "no factual answer generated",
+                    )
+                _, legacy = get_components()
+                learned = None
+                if settings.router_path:
+                    from vision_rag.retrieval.router import CostRouter
+
+                    learned = CostRouter.load(settings.router_path)
+                    if learned.profile != active["profile"]:
+                        raise Conflict("Router was trained for another index profile")
+                grounded = GroundedSynthesizer(
+                    HybridRetriever(
+                        manager,
+                        settings.retrieval_candidates,
+                        settings.evidence_char_budget,
+                    ),
+                    legacy.generator,
+                    get_loader(),
+                    library.source,
+                    learned,
+                )
+                result = grounded.query(
+                    request.query,
+                    max(request.top_k, len(documents or [])),
+                    documents,
+                    request.previous_question,
+                    request.tier,
+                    (request.page_start, request.page_end),
+                )
+                return QueryResponse(**result)
             _, synthesizer = get_components()
             answer, sources = synthesizer.query(
                 user_query=request.query, top_k=request.top_k
             )
             return QueryResponse(answer=answer, sources=sources)
-    except Exception:
+    except Conflict as error:
+        raise HTTPException(409, str(error)) from None
+    except KeyError:
+        raise HTTPException(404, "Requested document or index not found") from None
+    except ValueError as error:
+        raise HTTPException(422, str(error)) from None
+    except Exception as error:
+        if getattr(error, "code", None) == 429:
+            raise HTTPException(
+                429,
+                "The answer provider quota is exhausted. Use Find pages for local "
+                "retrieval, or retry after the provider quota resets.",
+            ) from None
         logger.exception("Query failed")
         raise HTTPException(
             503, "Answer service unavailable; inspect diagnostics"
