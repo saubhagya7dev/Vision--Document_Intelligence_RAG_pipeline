@@ -1,6 +1,6 @@
 # Vision implementation checklist
 
-Current scope: Phase 5 is implemented. Stop before Phase 6. The full prompted LLM routing comparison remains pending provider quota reset. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
+Current scope: the core Phase 6 workflow is implemented. Stop before Phase 7 and optional analytical extensions. The earlier quota-limited prompted-router comparison has not been resumed. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
 
 ## Phase 1 — diagnosis and performance foundations
 
@@ -109,14 +109,33 @@ is finished; the external comparison above is not reported as completed.
 - [ ] Live provider streaming validation after account quota availability.
 - [ ] Broad accessibility audit and real-provider performance measurements.
 
-See [Phase 5 guide](Phase%205%20guide.md). No Phase 6 analytical findings or
-exports were added. Routine verification uses isolated fictional documents and
+See [Phase 5 guide](Phase%205%20guide.md). At Phase 5 delivery, no analytical findings
+or exports had been added. Routine verification uses isolated fictional documents and
 simulated inference; existing Phase 4 quality limits still apply.
+
+## Phase 6 — one complete comparison workflow
+
+- [x] Explicit selection of two to four reports/retained document versions.
+- [x] Per-version bounded hybrid evidence and complete field/version matrices.
+- [x] Cited factual cells, explicit missing evidence and constrained conflicts.
+- [x] Reported value/unit/currency/period/scope retention and context warnings.
+- [x] Citation inspection in an independent evidence pane.
+- [x] Immutable saved findings, user review status and chat-answer findings.
+- [x] JSON/CSV/Markdown exports with source manifests and access checks.
+- [x] Source deletion, workspace/reset isolation, history/draft behavior and sanitization.
+- [x] Browser compare → inspect → review → save → reopen → download workflow.
+- [x] One real provider comparison smoke check on fictional pages.
+- [x] Regression and static checks; see Phase 6 guide and verification record.
+- [ ] Optional calculations, regions, automated version diffs and similarity maps.
+- [ ] Representative quality, shared access/authentication and release validation.
+
+See [Phase 6 guide](Phase%206%20guide.md). No normalization or new numerical
+calculations are presented as reported facts. Historical versions without retained
+eligible indexes show missing evidence. Phase 7 has not been started.
 
 ## Later phases — not started
 
 
-6. Analysis: cited comparisons, deterministic numerical calculations, regions/version review, findings and exports. Exit: one complete reproducible multi-document workflow.
 7. Evaluation/release: held-out document tasks, quality and hardware comparisons, access controls, security, deployment/restore and accurate release documentation. Exit: measured release gates, no unsupported production claims.
 
 Tests and measurements run throughout each implemented phase. Phase 2 adds a durable local metadata/worker boundary without new extraction dependencies, models, frontend frameworks or distributed services.

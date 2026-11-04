@@ -84,4 +84,31 @@
   checks passed. Live Gemini streaming and remaining Phase 4 provider comparisons
   are still externally unverified; no additional paid requests were made.
 
-Stop after Phase 5 in this task. Preserve the original README and user research.
+## Phase 6 — 2026-11-04
+
+- Implement the core comparison workflow only; defer calculations, region
+  questions and automated version-diff analysis. Preserve reported context
+  instead of normalizing currencies, periods or units.
+- Add explicit historical-version eligibility against retained ready indexes.
+  Keep normal chat eligibility restricted to active versions. Missing retained
+  evidence is an explicit coverage limitation, not proof of document-wide absence.
+- Validate a complete version/field matrix, requiring same-version citations for
+  factual cells and two references for conflicts. Treat semantic support as
+  unverified even after a user marks evidence reviewed.
+- Store server-owned drafts and immutable content hashes. Keep titles and user
+  review separate; save completed chat answers from authoritative message rows.
+- Export JSON, CSV and readable Markdown with source manifests and verification
+  status. Preserve exact values through JSON/value_json while protecting human
+  CSV display fields and escaping Markdown/HTML.
+- Recheck source/workspace availability on all reads and export formats. Keep
+  saved findings through history clearing, serialize draft cleanup against
+  comparison publication, and block reset across other workspace findings.
+- Verify an older-version comparison, citation navigation, saving/reopening and
+  actual downloads in an isolated generated-PDF fixture. Check narrow layout
+  overflow without changing the production library.
+- One bounded real Gemini adapter request now passed on fictional pages in
+  11.2 seconds. The earlier quota-limited Phase 4 routing comparison and Phase 5
+  live streaming checks remain separate and were not resumed. No broad quality,
+  performance, hardware-scaling or dollar-cost conclusion follows from this smoke.
+
+Stop after the core Phase 6 workflow. Preserve the original README and user research.
