@@ -72,6 +72,19 @@ CREATE UNIQUE INDEX IF NOT EXISTS pending_page_task
 CREATE TABLE IF NOT EXISTS app_state (
  workspace TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL,
  PRIMARY KEY(workspace,key));
+CREATE TABLE IF NOT EXISTS retrieval_indexes (
+ id TEXT PRIMARY KEY,workspace TEXT NOT NULL,profile TEXT NOT NULL,
+ storage_id TEXT NOT NULL,
+ specification TEXT NOT NULL,state TEXT NOT NULL,snapshot TEXT NOT NULL,
+ auto_activate INTEGER NOT NULL,created_at TEXT NOT NULL,updated_at TEXT NOT NULL,
+ pages_done INTEGER NOT NULL DEFAULT 0,error TEXT);
+CREATE TABLE IF NOT EXISTS retrieval_items (
+ index_id TEXT NOT NULL REFERENCES retrieval_indexes(id),id TEXT NOT NULL,
+ kind TEXT NOT NULL,document_id TEXT NOT NULL,version_id TEXT NOT NULL,
+ build_id TEXT NOT NULL,page_number INTEGER NOT NULL,revision INTEGER NOT NULL,
+ PRIMARY KEY(index_id,id));
+CREATE VIRTUAL TABLE IF NOT EXISTS retrieval_search
+ USING fts5(index_id UNINDEXED,point_id UNINDEXED,text);
 """
 
 
@@ -93,13 +106,13 @@ class Metadata:
         path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1, 2, 3):
+            if version not in (0, 1, 2, 3, 4):
                 raise RuntimeError(
                     "Unsupported metadata schema; restore compatible code"
                 )
             db.execute("PRAGMA journal_mode=WAL")
             db.executescript(
-                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=3; COMMIT;"
+                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=4; COMMIT;"
             )
 
     @contextmanager
@@ -184,6 +197,7 @@ class Metadata:
         version_id: str,
         replace_document: str | None = None,
         legacy_path: str | None = None,
+        reuse_other_profile: bool = False,
     ) -> tuple[dict[str, Any], bool]:
         """Deduplicate and create version/build/job in one short transaction."""
         with self.connection(True) as db:
@@ -210,6 +224,12 @@ class Metadata:
                     "WHERE b.version_id=? AND b.profile=?",
                     (duplicate["id"], profile),
                 ).fetchone()
+                if existing is None and reuse_other_profile:
+                    existing = db.execute(
+                        "SELECT j.* FROM jobs j JOIN builds b ON b.id=j.build_id "
+                        "WHERE b.version_id=? ORDER BY j.created_at DESC LIMIT 1",
+                        (duplicate["id"],),
+                    ).fetchone()
                 if existing:
                     if legacy_path:
                         db.execute(
