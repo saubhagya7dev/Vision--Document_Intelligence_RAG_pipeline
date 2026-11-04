@@ -1,12 +1,14 @@
 import json
 import os
-from typing import Any, List
+import re
+from typing import Any, Callable, List
 
 from google import genai
 from google.genai import types
 from PIL import Image
 
 from vision_rag.core.generator import BaseVLMGenerator
+from vision_rag.generate.events import Cancelled, checkpoint
 
 
 class GeminiGenerator(BaseVLMGenerator):
@@ -50,7 +52,12 @@ class GeminiGenerator(BaseVLMGenerator):
         )
 
     def generate_grounded(
-        self, query: str, evidence: list[dict[str, Any]], images: list[Image.Image]
+        self,
+        query: str,
+        evidence: list[dict[str, Any]],
+        images: list[Image.Image],
+        on_delta: Callable[[str], None] | None = None,
+        cancelled: Cancelled | None = None,
     ) -> dict[str, Any]:
         schema = {
             "type": "object",
@@ -92,18 +99,41 @@ class GeminiGenerator(BaseVLMGenerator):
         ]
         for item, image in zip(evidence, images):
             contents.extend([json.dumps(item, ensure_ascii=False), image])
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=contents,
-            config=types.GenerateContentConfig(
-                temperature=0,
-                max_output_tokens=2048,
-                automatic_function_calling=types.AutomaticFunctionCallingConfig(
-                    disable=True
-                ),
-                response_mime_type="application/json",
-                response_json_schema=schema,
+        config = types.GenerateContentConfig(
+            temperature=0,
+            max_output_tokens=2048,
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(
+                disable=True
             ),
+            response_mime_type="application/json",
+            response_json_schema=schema,
+        )
+        self.last_usage = {}
+        if on_delta is not None:
+            raw, displayed = "", ""
+            stream = self.client.models.generate_content_stream(
+                model=self.model_name, contents=contents, config=config
+            )
+            try:
+                for chunk in stream:
+                    checkpoint(cancelled)
+                    raw += chunk.text or ""
+                    if len(raw) > 100000:
+                        raise ValueError("Provider response exceeded the answer budget")
+                    draft = draft_claims(raw)
+                    if draft.startswith(displayed):
+                        on_delta(draft[len(displayed) :])
+                        displayed = draft
+                    if chunk.usage_metadata:
+                        self.last_usage = chunk.usage_metadata.model_dump(mode="json")
+            finally:
+                close = getattr(stream, "close", None)
+                if close:
+                    close()
+            checkpoint(cancelled)
+            return dict(json.loads(raw))
+        response = self.client.models.generate_content(
+            model=self.model_name, contents=contents, config=config
         )
         if not response.text:
             raise ValueError("Provider returned no structured answer")
@@ -114,6 +144,16 @@ class GeminiGenerator(BaseVLMGenerator):
             else {}
         )
         return result
+
+    def generate_grounded_stream(
+        self,
+        query: str,
+        evidence: list[dict[str, Any]],
+        images: list[Image.Image],
+        on_delta: Callable[[str], None],
+        cancelled: Cancelled | None = None,
+    ) -> dict[str, Any]:
+        return self.generate_grounded(query, evidence, images, on_delta, cancelled)
 
     def route_query(self, query: str) -> str:
         response = self.client.models.generate_content(
@@ -206,3 +246,18 @@ class GeminiGenerator(BaseVLMGenerator):
         )
 
         return str(response.text)
+
+
+def draft_claims(raw: str) -> str:
+    """Decode only claim text prefixes from partial JSON, never raw HTML or IDs."""
+    parts = []
+    for match in re.finditer(r'"text"\s*:\s*"((?:[^"\\]|\\.)*)', raw):
+        value = match.group(1)
+        # A chunk can end inside an escape or Unicode sequence.
+        while value:
+            try:
+                parts.append(json.loads('"' + value + '"'))
+                break
+            except ValueError:
+                value = value[:-1]
+    return "\n\n".join(parts)

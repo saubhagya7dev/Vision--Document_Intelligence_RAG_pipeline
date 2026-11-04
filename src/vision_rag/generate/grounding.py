@@ -5,6 +5,7 @@ from typing import Any, Callable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from vision_rag.generate.events import Cancelled, Emit, checkpoint
 from vision_rag.ingest.document_loader import DocumentLoader
 from vision_rag.retrieval.engine import TIERS, HybridRetriever
 
@@ -81,6 +82,8 @@ class GroundedSynthesizer:
         previous: str | None = None,
         tier: str = "auto",
         page_range: tuple[int, int] | None = None,
+        emit: Emit | None = None,
+        cancelled: Cancelled | None = None,
     ) -> dict[str, Any]:
         rewritten = followup_query(query, previous)
         start = (
@@ -98,6 +101,9 @@ class GroundedSynthesizer:
         usage: list[dict[str, Any]] = []
         details: dict[str, Any] = {}
         for current in route:
+            checkpoint(cancelled)
+            if emit:
+                emit("progress", {"stage": "retrieving", "tier": current})
             hits, details = self.retriever.retrieve(
                 rewritten, top_k, documents, page_range, current
             )
@@ -106,6 +112,7 @@ class GroundedSynthesizer:
             images, evidence, sources = [], [], []
             try:
                 for hit in hits:
+                    checkpoint(cancelled)
                     payload = hit["payload"]
                     version, path = self.source(payload["version_id"])
                     page = payload["page_number"]
@@ -139,7 +146,32 @@ class GroundedSynthesizer:
                     )
                 calls += 1
                 try:
-                    raw = self.generator.generate_grounded(rewritten, evidence, images)
+                    checkpoint(cancelled)
+                    if emit:
+                        emit("progress", {"stage": "generating", "tier": current})
+                        emit(
+                            "answer-delta",
+                            {"text": "", "reset": True, "provisional": True},
+                        )
+                    if emit and callable(
+                        getattr(type(self.generator), "generate_grounded_stream", None)
+                    ):
+                        raw = self.generator.generate_grounded_stream(
+                            rewritten,
+                            evidence,
+                            images,
+                            lambda text: emit(
+                                "answer-delta", {"text": text, "provisional": True}
+                            ),
+                            cancelled,
+                        )
+                    else:
+                        raw = self.generator.generate_grounded(
+                            rewritten, evidence, images
+                        )
+                    checkpoint(cancelled)
+                    if emit:
+                        emit("progress", {"stage": "validating"})
                     latest = getattr(self.generator, "last_usage", None)
                     if isinstance(latest, dict):
                         usage.append(latest)
