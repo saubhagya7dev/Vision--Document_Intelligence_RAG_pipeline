@@ -1,7 +1,7 @@
 import hashlib
 import json
 from pathlib import Path
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     qdrant_in_memory: bool | None = None
 
     # Models
-    embedding_model_name: str = "vidore/colpali"
+    embedding_model_name: str = "vidore/colpali-v1.3"
     generation_model_name: str = "gemini-3.6-flash"
 
     # API Keys
@@ -43,6 +43,34 @@ class Settings(BaseSettings):
     tesseract_executable: str = "tesseract"
     ocr_language: str = "eng"
     ocr_timeout_seconds: float = Field(default=60, ge=1, le=600)
+    phase4_enabled: bool = True
+    text_model_name: str = "BAAI/bge-small-en-v1.5"
+    text_model_revision: str = "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+    visual_model_revision: str = "b5c6dd62125326e6f0b540c1f7b36e901cdc0a11"
+    visual_base_revision: str = "30ab955d073de4a91dc5a288e8c97226647e3e5a"
+    retrieval_candidates: int = Field(default=30, ge=5, le=100)
+    evidence_char_budget: int = Field(default=14000, ge=1000, le=64000)
+    provider_timeout_ms: int = Field(default=30000, ge=1000, le=120000)
+    provider_attempts: int = Field(default=2, ge=1, le=3)
+    router_path: Path | None = None
+
+    @property
+    def retrieval_specification(self) -> dict[str, Any]:
+        return {
+            "text_model": self.text_model_name,
+            "text_revision": self.text_model_revision,
+            "text_dimensions": 384,
+            "text_pooling": "cls-normalized-v1",
+            "visual_model": self.embedding_model_name,
+            "visual_revision": self.visual_model_revision,
+            "visual_base_revision": self.visual_base_revision,
+            "visual_dimensions": 128,
+            "scoring": "unmasked-dot-maxsim-v1",
+            "dpi": self.render_dpi,
+            "extractor": "native-layout-v1",
+            "chunk_limit": self.text_chunk_limit,
+            "chunk_overlap": self.text_chunk_overlap,
+        }
 
     @model_validator(mode="after")
     def check_chunk_budget(self) -> "Settings":
