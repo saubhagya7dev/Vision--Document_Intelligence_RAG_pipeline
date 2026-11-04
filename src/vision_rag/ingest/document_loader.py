@@ -5,7 +5,7 @@ import math
 import os
 import threading
 from pathlib import Path
-from typing import Generator
+from typing import Generator, cast
 from uuid import uuid4
 
 import pypdfium2 as pdfium
@@ -95,7 +95,7 @@ class DocumentLoader:
             if artifact is not None and artifact.exists():
                 try:
                     with stage("page_cache_read"), Image.open(artifact) as cached:
-                        return cached.convert("RGB")
+                        return cast(Image.Image, cached.convert("RGB"))
                 except (OSError, UnidentifiedImageError):
                     artifact.unlink(missing_ok=True)
             with stage("rendering", page=page_number), PDFIUM_LOCK:

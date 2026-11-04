@@ -1,0 +1,38 @@
+{
+  "tool": "pip-audit",
+  "profile": "installed Windows Python 3.14 environment; CUDA overlay retained",
+  "before_advisories": 62,
+  "after_advisories": 1,
+  "remaining": [
+    {
+      "name": "accelerate",
+      "version": "1.14.0",
+      "vulns": [
+        {
+          "id": "PYSEC-2026-3804",
+          "fix_versions": [],
+          "aliases": [
+            "CVE-2026-69112",
+            "GHSA-4j2p-28q2-5m79"
+          ],
+          "description": "Hugging Face Accelerate through 1.14.0 contains a path traversal vulnerability in load_checkpoint_in_model and load_checkpoint_and_dispatch functions that fail to sanitize weight_map entries from sharded checkpoint indexes. Attackers can supply relative paths with ../ sequences or absolute paths to read arbitrary files, or point shard entries at named pipes to cause indefinite blocking and denial of service."
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "torch",
+      "skip_reason": "Dependency not found on PyPI and could not be audited: torch (2.13.0+cu130)"
+    },
+    {
+      "name": "torchvision",
+      "skip_reason": "Dependency not found on PyPI and could not be audited: torchvision (0.28.0+cu130)"
+    },
+    {
+      "name": "vision-native-rag",
+      "skip_reason": "Dependency not found on PyPI and could not be audited: vision-native-rag (0.1.0)"
+    }
+  ],
+  "limits": "Advisory lookup is not a security audit or proof of exploitability. No listed fix for Accelerate; shared release remains blocked. Python 3.10 may resolve older Pillow; only this Python 3.14 profile was audited."
+}
