@@ -863,6 +863,17 @@ def get_stats() -> dict[str, Any]:
     )[0]["count"]
     return {
         "total_documents": len(documents),
+        "total_pages": library.metadata.rows(
+            "SELECT COALESCE(SUM(v.page_count),0) AS count FROM documents d "
+            "JOIN versions v ON v.id=d.active_version_id "
+            "WHERE d.workspace=? AND d.deleted_at IS NULL",
+            (library.workspace,),
+        )[0]["count"],
+        "completed_queries": library.metadata.rows(
+            "SELECT COUNT(*) AS count FROM messages m JOIN conversations c "
+            "ON c.id=m.conversation_id WHERE c.workspace=? AND m.state='completed'",
+            (library.workspace,),
+        )[0]["count"],
         "total_vectors": count,
         "collection_status": status,
         "pending_jobs": pending,

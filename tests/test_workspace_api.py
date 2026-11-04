@@ -148,3 +148,39 @@ def test_workspace_validates_missing_scope_and_clears_on_reset(client):
         == 200
     )
     assert client.get(f"/api/v1/conversations/{c['id']}").status_code == 404
+
+
+def test_disconnect_requests_cancellation_and_stats_use_saved_turns(
+    client, monkeypatch
+):
+    import asyncio
+
+    entered, release = Event(), Event()
+
+    def delayed(request, emit, cancelled):
+        entered.set()
+        release.wait(5)
+        checkpoint(cancelled)
+        return routes.QueryResponse(answer="completed", sources=[])
+
+    monkeypatch.setattr(routes, "execute_query", delayed)
+    c = client.post("/api/v1/conversations", json={}).json()
+    turn = client.post(
+        f"/api/v1/conversations/{c['id']}/messages", json={"query": "Question"}
+    ).json()
+    assert entered.wait(3)
+
+    class Connection:
+        async def is_disconnected(self):
+            return False
+
+    async def disconnect():
+        response = await workspace.events(turn["id"], Connection(), after=0)
+        await anext(response.body_iterator)
+        await response.body_iterator.aclose()
+
+    asyncio.run(disconnect())
+    release.set()
+    workspace.stop_turns()
+    assert client.get(f"/api/v1/messages/{turn['id']}").json()["state"] == "cancelled"
+    assert client.get("/api/v1/stats").json()["completed_queries"] == 0
