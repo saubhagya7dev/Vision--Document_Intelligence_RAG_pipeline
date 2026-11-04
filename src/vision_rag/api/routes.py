@@ -214,8 +214,8 @@ def warmup_components() -> None:
 def shutdown_components() -> None:
     global _pipeline, _synthesizer, _vdb, _loader, _library, _model_state
     global _retrieval_models
-    from vision_rag.api.workspace import stop_turns
     from vision_rag.api.security import clear_sessions
+    from vision_rag.api.workspace import stop_turns
 
     stop_turns()
     clear_sessions()

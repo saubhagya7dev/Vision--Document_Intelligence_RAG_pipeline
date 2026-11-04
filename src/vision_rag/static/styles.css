@@ -1756,6 +1756,10 @@ h3 {
 #retrieval-index-status { color: var(--text-body); margin-bottom: 12px; }
 
 /* Persistent conversation and evidence workspace */
+.session-dialog { max-width: 440px; width: calc(100% - 32px); background: var(--bg-card); color: var(--text-body); border: 1px solid var(--border-active); border-radius: 16px; padding: 28px; margin: auto; }
+.session-dialog::backdrop { background: rgba(0,0,0,.88); }
+.session-dialog form { display: grid; gap: 14px; }
+.session-dialog input { width: 100%; background: var(--bg-input); color: var(--text-body); border: 1px solid var(--border-active); padding: 12px; }
 .findings-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; }
 .comparison-form { display: grid; gap: 8px; margin: 20px 0; max-width: 720px; }
 .comparison-form input, .comparison-form select, .comparison-form textarea, #finding-title, #finding-list { color: var(--text-body); background: var(--bg-card); border: 1px solid var(--border-active); border-radius: 8px; padding: 9px; max-width: 100%; }

@@ -219,7 +219,8 @@ class RequestBoundary:
                         (
                             b"content-security-policy",
                             b"default-src 'self'; script-src 'self'; "
-                            b"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                            b"style-src 'self' 'unsafe-inline' "
+                            b"https://fonts.googleapis.com; "
                             b"font-src 'self' https://fonts.gstatic.com; "
                             b"img-src 'self' data: blob:; connect-src 'self'; "
                             b"frame-ancestors 'none'; base-uri 'self'; "

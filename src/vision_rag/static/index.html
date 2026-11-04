@@ -64,6 +64,7 @@
                 <a href="#analysis" class="nav-item" data-page="analysis">Findings</a>
             </nav>
             <div class="header-right">
+                <button class="btn btn-secondary btn-sm" id="sign-out" hidden>Sign out</button>
                 <button class="btn btn-secondary btn-sm" id="data-controls-btn">Data &amp; history</button>
                 <div class="status-indicator" id="api-status">
                     <span class="status-dot"></span>
@@ -481,6 +482,17 @@ Operating margin</textarea>
         <p id="processing-warnings" class="job-error"></p>
         <pre id="processing-text" tabindex="0" aria-label="Extracted page text"></pre>
     </dialog>
+    <dialog id="session-dialog" class="session-dialog" aria-labelledby="session-title">
+        <form id="session-form">
+            <h2 id="session-title">Sign in to this workspace</h2>
+            <p>Use the access token configured by the owner. It is not saved in browser storage.</p>
+            <label for="session-token">Access token</label>
+            <input id="session-token" type="password" autocomplete="current-password" required maxlength="512">
+            <button id="session-submit" class="job-action" type="submit">Sign in</button>
+            <p id="session-status" role="status" aria-live="polite"></p>
+        </form>
+    </dialog>
+    <script src="/static/session.js"></script>
     <script src="/static/evidence.js"></script>
     <script src="/static/workspace.js"></script>
     <script src="/static/findings.js"></script>

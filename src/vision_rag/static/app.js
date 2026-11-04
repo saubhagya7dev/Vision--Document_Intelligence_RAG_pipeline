@@ -128,10 +128,11 @@
             el.innerHTML = `
                 <span class="toast-icon">${iconSvg}</span>
                 <span class="toast-message">${escapeHtml(message)}</span>
-                <button class="toast-dismiss" onclick="this.parentElement.classList.add('removing'); setTimeout(() => this.parentElement.remove(), 300)">×</button>
+                <button class="toast-dismiss" aria-label="Dismiss notification">×</button>
             `;
 
             container.appendChild(el);
+            el.querySelector('.toast-dismiss').addEventListener('click', () => el.remove());
 
             setTimeout(() => {
                 if (el.parentElement) {
@@ -856,7 +857,10 @@
     // =========================
     // INITIALIZATION
     // =========================
-    function init() {
+    async function init() {
+        window.VisionSession.setup();
+        try { await window.VisionSession.ready(); }
+        catch { document.getElementById('api-status').textContent = 'Offline — reload after reconnecting'; return; }
         // Setup event listeners
         setupUpload();
         setupChat();
