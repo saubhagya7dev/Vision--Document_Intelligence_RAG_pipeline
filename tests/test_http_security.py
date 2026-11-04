@@ -87,6 +87,14 @@ def test_login_backoff_and_profile_fail_closed(client, monkeypatch):
     config = Settings(_env_file=None, bind_host="0.0.0.0")
     with pytest.raises(ValueError):
         config.check_deployment()
+
+
+def test_chunked_limits_and_network_tls_fail_before_processing(client, monkeypatch):
+    body = (b"x" * 65536 for _ in range(17))
+    assert client.post("/api/v1/query", content=body).status_code == 413
+    monkeypatch.setattr(settings, "bind_host", "0.0.0.0")
+    assert client.get("/api/v1/documents").status_code == 403
+    assert client.get("/health").status_code == 200
     config = Settings(_env_file=None, deployment_profile="authenticated")
     with pytest.raises(ValueError):
         config.check_deployment()

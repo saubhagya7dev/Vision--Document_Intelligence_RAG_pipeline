@@ -175,6 +175,12 @@ class RequestBoundary:
             k in request.query_params for k in ("token", "access_token", "api_key")
         ):
             status, detail = 400, "Credentials must not be placed in URLs"
+        if (
+            sensitive
+            and settings.bind_host not in ("127.0.0.1", "localhost", "::1")
+            and request.url.scheme != "https"
+        ):
+            status, detail = 403, "HTTPS is required for network workspace access"
         upload = request.method == "POST" and (
             path == "/api/v1/ingest" or path.endswith("/versions")
         )
@@ -208,6 +214,16 @@ class RequestBoundary:
 
         async def secured_send(message: Message) -> None:
             nonlocal started
+            # Request parsers may translate a receive error into a generic 400.
+            # Preserve the boundary's 413 without reading the remaining upload.
+            if received > limit:
+                if not started:
+                    started = True
+                    await JSONResponse(
+                        {"detail": "Request body exceeds the configured limit"},
+                        status_code=413,
+                    )(scope, receive, send)
+                return
             if message["type"] == "http.response.start":
                 started = True
                 headers = list(message.get("headers", []))
