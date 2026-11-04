@@ -25,13 +25,14 @@ from vision_rag.api.security import RequestBoundary
 from vision_rag.api.security import router as security_router
 from vision_rag.api.workspace import router as workspace_router
 from vision_rag.config import settings
-from vision_rag.telemetry import stage, trace
+from vision_rag.telemetry import protect_logs, stage, trace
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
         settings.check_deployment()
+        protect_logs()
         await run_in_threadpool(get_library)
         if settings.model_warmup:
             await run_in_threadpool(warmup_components)

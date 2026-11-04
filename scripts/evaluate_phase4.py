@@ -270,7 +270,7 @@ def main():
 
             provider = GeminiGenerator(
                 settings.generation_model_name,
-                settings.google_api_key,
+                settings.provider_api_key,
                 timeout_ms=15000,
                 attempts=2,
             )
@@ -367,7 +367,7 @@ def main():
                 report["provider"]["error_type"] = type(error).__name__
                 report["provider"]["code"] = getattr(error, "code", None)
                 report["provider"]["error_message"] = str(error).replace(
-                    settings.google_api_key or "not-set", "[redacted]"
+                    settings.provider_api_key or "not-set", "[redacted]"
                 )[:1000]
         # Confirm at least one real Qdrant multivector score against the reference.
         allowed = manager.eligible(active)["visual"]

@@ -61,7 +61,7 @@ def main():
                 )
             generator = GeminiGenerator(
                 settings.generation_model_name,
-                settings.google_api_key,
+                settings.provider_api_key,
                 timeout_ms=15000,
                 attempts=1,
             )

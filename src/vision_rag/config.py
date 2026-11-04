@@ -1,7 +1,7 @@
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     generation_model_name: str = "gemini-3.6-flash"
 
     # API Keys
-    google_api_key: Optional[str] = None
+    google_api_key: SecretStr | None = None
     data_dir: Path = Path("data")
     render_dpi: int = Field(default=300, ge=72, le=600)
     ingestion_batch_size: int = Field(default=2, ge=1, le=32)
@@ -64,6 +64,10 @@ class Settings(BaseSettings):
     trusted_tls_proxy: bool = False
     trusted_proxy_ips: list[str] = ["127.0.0.1", "::1"]
     max_request_mb: int = Field(default=102, ge=1, le=1024)
+
+    @property
+    def provider_api_key(self) -> str | None:
+        return self.google_api_key.get_secret_value() if self.google_api_key else None
 
     def check_deployment(self) -> None:
         local = self.bind_host in ("127.0.0.1", "localhost", "::1")

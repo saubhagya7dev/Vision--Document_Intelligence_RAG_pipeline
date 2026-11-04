@@ -177,7 +177,7 @@ def get_components() -> tuple[IngestionPipeline | None, RAGSynthesizer]:
 
             generator = GeminiGenerator(
                 model_name=settings.generation_model_name,
-                api_key=settings.google_api_key,
+                api_key=settings.provider_api_key,
                 timeout_ms=settings.provider_timeout_ms,
                 attempts=settings.provider_attempts,
             )
