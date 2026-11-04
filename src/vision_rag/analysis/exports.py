@@ -173,6 +173,13 @@ def export_finding(
             "| " + " | ".join(markdown_text(v) for v in values) + f" | {citations} |"
         )
     lines.extend(["", "## Source manifest", ""])
+    for context in content.get("comparability", []):
+        if context["different_reported_context"]:
+            lines.append(
+                f"- {markdown_text(context['field'])}: differing reported context: "
+                f"{markdown_text(', '.join(context['different_reported_context']))}. "
+                "No normalization applied."
+            )
     for source in links:
         lines.append(
             f"- {markdown_text(source['evidence_id'])}: "

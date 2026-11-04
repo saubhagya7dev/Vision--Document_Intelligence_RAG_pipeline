@@ -82,6 +82,34 @@ class ComparisonEngine:
             table = validate_table(raw, request, sources)
             cited = {c for cell in table.cells for c in cell.citations}
             missing = sum(cell.status == "missing" for cell in table.cells)
+            comparability = []
+            for field in request.fields:
+                cells = [
+                    c for c in table.cells if c.field == field and c.status != "missing"
+                ]
+                dimensions = ("unit", "currency", "period", "scope")
+                comparability.append(
+                    {
+                        "field": field,
+                        "different_reported_context": [
+                            k
+                            for k in dimensions
+                            if len(
+                                {
+                                    getattr(c, k)
+                                    for c in cells
+                                    if getattr(c, k) is not None
+                                }
+                            )
+                            > 1
+                        ],
+                        "unstated_context": [
+                            k
+                            for k in dimensions
+                            if any(getattr(c, k) is None for c in cells)
+                        ],
+                    }
+                )
             return {
                 "schema_version": 1,
                 "question": request.question,
@@ -89,6 +117,7 @@ class ComparisonEngine:
                 f"{len(versions)} versions. {missing} cells lack supported values "
                 "in retrieved evidence.",
                 "fields": request.fields,
+                "comparability": comparability,
                 "versions": [
                     {
                         k: v[k]
