@@ -51,7 +51,11 @@ window.createEvidenceViewer = function(api, getCurrent, report) {
             viewer = info; el('viewer-controls').hidden = false;
             el('viewer-document').textContent = `${info.filename} · version ${info.id.slice(0, 8)}`;
             el('viewer-original').href = `/api/v1/versions/${encode(info.id)}/file`;
-            el('viewer-zoom').value = String(restore ? current.viewer.zoom || 1 : 1);
+            const zoom = String(restore ? current.viewer.zoom || 1 : 1);
+            if (![...el('viewer-zoom').options].some(option => option.value === zoom)) {
+                el('viewer-zoom').add(new Option(`${Number(zoom) * 100}%`, zoom));
+            }
+            el('viewer-zoom').value = zoom;
             page(source.page, restore);
             if (!restore) el('viewer-controls').scrollIntoView({block: 'nearest'});
         } catch (error) { el('viewer-controls').hidden = true; el('viewer-status').textContent = `Evidence unavailable: ${error.message}. The saved citation is retained.`; }
