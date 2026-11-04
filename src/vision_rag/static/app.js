@@ -647,6 +647,12 @@
     function initChat() {
         renderChatMessages();
         renderSources();
+        const scope = document.getElementById('query-document-scope');
+        const selected = new Set(Array.from(scope.selectedOptions).map(option => option.value));
+        api.get('/documents').then(documents => {
+            scope.innerHTML = documents.filter(doc => doc.active_version_id).map(doc =>
+                `<option value="${escapeHtml(doc.id)}" ${selected.has(doc.id) ? 'selected' : ''}>${escapeHtml(doc.filename)}</option>`).join('');
+        }).catch(() => { document.getElementById('query-scope-help').textContent = 'Document list unavailable. Reopen Chat to retry.'; });
 
         // Focus input
         setTimeout(() => document.getElementById('chat-input').focus(), 100);
@@ -706,7 +712,12 @@
         const topK = parseInt(document.getElementById('topk-slider').value, 10);
 
         try {
-            const result = await api.post('/query', { query, top_k: topK });
+            const documents = Array.from(document.getElementById('query-document-scope').selectedOptions).map(option => option.value);
+            if (documents.length > 6) throw new Error('Select at most six documents.');
+            const previous = chatHistory.slice(0, -1).filter(message => message.role === 'user').at(-1);
+            const result = await api.post('/query', { query, top_k: Math.max(topK, documents.length),
+                document_ids: documents.length ? documents : null,
+                previous_question: previous?.content?.length <= 2000 ? previous.content : null });
 
             // Remove typing indicator
             hideTypingIndicator();

@@ -1747,4 +1747,8 @@ h3 {
 .data-dialog .data-option small { font-size: 0.8rem; }
 .data-dialog .modal-header { margin-bottom: 8px; padding: 0; }
 .data-dialog fieldset { margin: 10px 0; }
+.query-scope-controls { padding: 12px 20px; border-bottom: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 6px; }
+.query-scope-controls label { font-size: 0.8rem; color: var(--text-body); }
+.query-scope-controls select { background: var(--bg-input); color: var(--text-body); border: 1px solid var(--border-active); border-radius: 8px; padding: 6px; max-height: 70px; }
+.query-scope-controls small { color: var(--text-muted); font-size: 0.72rem; }
 #retrieval-index-status { color: var(--text-body); margin-bottom: 12px; }
