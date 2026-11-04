@@ -1,0 +1,267 @@
+{
+  "model": "gemini-3.6-flash",
+  "attempts": 1,
+  "dollar_cost": null,
+  "cost_note": "No verified account billing rate",
+  "stream": {
+    "status": "passed",
+    "first_claim_delta_seconds": 5.528849599999376,
+    "completion_seconds": 5.566178799956106,
+    "delta_count": 1,
+    "result": {
+      "status": "supported",
+      "claims": [
+        {
+          "text": "The reported revenue is 120 million EUR.",
+          "citations": [
+            "E1"
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "cache_tokens_details": null,
+      "cached_content_token_count": null,
+      "candidates_token_count": 27,
+      "candidates_tokens_details": null,
+      "prompt_token_count": 1231,
+      "prompt_tokens_details": [
+        {
+          "modality": "TEXT",
+          "token_count": 131
+        },
+        {
+          "modality": "IMAGE",
+          "token_count": 1100
+        }
+      ],
+      "thoughts_token_count": 245,
+      "tool_use_prompt_token_count": null,
+      "tool_use_prompt_tokens_details": null,
+      "total_token_count": 1503,
+      "traffic_type": null
+    },
+    "scope": "provider adapter; not browser end-to-end latency"
+  },
+  "router": [
+    {
+      "id": "selene-0",
+      "tier": "text",
+      "seconds": 3.2176434999564663
+    },
+    {
+      "id": "selene-1",
+      "tier": "text",
+      "seconds": 4.2607176000019535
+    },
+    {
+      "id": "selene-2",
+      "tier": "visual",
+      "seconds": 3.7222750999499112
+    },
+    {
+      "id": "selene-3",
+      "tier": "visual",
+      "seconds": 5.480398800049443
+    },
+    {
+      "id": "selene-4",
+      "tier": "text",
+      "seconds": 2.640747099998407
+    },
+    {
+      "id": "selene-5",
+      "tier": "text",
+      "seconds": 3.4428770000231452
+    },
+    {
+      "id": "harbor-0",
+      "tier": "text",
+      "seconds": 2.1236552000045776,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 5,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 64,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 64
+          }
+        ],
+        "thoughts_token_count": 157,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 226,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "harbor-1",
+      "tier": "text",
+      "seconds": 3.9998435999732465,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 69,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 69
+          }
+        ],
+        "thoughts_token_count": 232,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 312,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "harbor-2",
+      "tier": "visual",
+      "seconds": 4.191847699927166,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 67,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 67
+          }
+        ],
+        "thoughts_token_count": 254,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 332,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "harbor-3",
+      "tier": "visual",
+      "seconds": 3.4523528000572696,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 66,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 66
+          }
+        ],
+        "thoughts_token_count": 339,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 416,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "harbor-4",
+      "tier": "text",
+      "seconds": 4.124777699937113,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 67,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 67
+          }
+        ],
+        "thoughts_token_count": 360,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 438,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "harbor-5",
+      "tier": "text",
+      "seconds": 4.965265900013037,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 5,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 63,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 63
+          }
+        ],
+        "thoughts_token_count": 192,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 260,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "delta-0",
+      "tier": "text",
+      "seconds": 2.7134316000156105,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 5,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 64,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 64
+          }
+        ],
+        "thoughts_token_count": 167,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 236,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "delta-1",
+      "tier": "text",
+      "seconds": 3.9330836998997256,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 69,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 69
+          }
+        ],
+        "thoughts_token_count": 208,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 288,
+        "traffic_type": null
+      }
+    }
+  ],
+  "status": "partial_or_unavailable",
+  "error": {
+    "type": "ServerError",
+    "code": 503
+  }
+}
