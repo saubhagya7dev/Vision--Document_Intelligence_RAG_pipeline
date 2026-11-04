@@ -19,6 +19,7 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "ingestion_worker_enabled", False)
     monkeypatch.setattr(settings, "import_legacy_pdfs", False)
     monkeypatch.setattr(settings, "model_warmup", False)
+    monkeypatch.setattr(settings, "phase4_enabled", False)
     # Preserve Phase 2's all-page-vector contract in its regression fixtures.
     monkeypatch.setattr(settings, "hybrid_ingestion", False)
     monkeypatch.setattr(settings, "render_dpi", 72)
@@ -299,11 +300,9 @@ def test_unready_query_and_unknown_job_do_not_initialize_models(client, monkeypa
 
 
 def test_startup_warmup_uses_embedding_pipeline_without_provider(client, monkeypatch):
-    from vision_rag.api import main
-
     initialize = MagicMock()
     monkeypatch.setattr(settings, "model_warmup", True)
-    monkeypatch.setattr(main, "get_pipeline", initialize)
+    monkeypatch.setattr(routes, "get_pipeline", initialize)
     with TestClient(app) as warmed:
         initialize.assert_called_once()
         assert warmed.get("/health").status_code == 200

@@ -14,10 +14,13 @@ from pydantic import BaseModel, Field
 from starlette.requests import Request
 
 from vision_rag.config import settings
+from vision_rag.core.embeddings import BaseEmbeddingModel
 from vision_rag.generate.synthesizer import RAGSynthesizer
 from vision_rag.ingest.document_loader import DocumentLoader
 from vision_rag.ingest.ocr import TesseractOCR
 from vision_rag.ingest.pipeline import IngestionPipeline
+from vision_rag.models.retrieval_models import RetrievalModels
+from vision_rag.retrieval.indexes import RetrievalIndexes
 from vision_rag.retrieval.retriever import Retriever
 from vision_rag.storage.library import DocumentLibrary, ResourceLimit
 from vision_rag.storage.metadata import Conflict
@@ -35,6 +38,19 @@ _loader_lock = threading.RLock()
 _store_lock = threading.RLock()
 _library_lock = threading.RLock()
 _model_state = "not_loaded"
+_retrieval_models: RetrievalModels | None = None
+
+
+def get_retrieval_models() -> RetrievalModels:
+    global _retrieval_models
+    with _component_lock:
+        if _retrieval_models is None:
+            _retrieval_models = RetrievalModels(
+                settings.embedding_device,
+                settings.embedding_precision,
+                settings.data_dir.resolve() / "artifacts/visual_tokens",
+            )
+        return _retrieval_models
 
 
 def get_loader() -> DocumentLoader:
@@ -91,6 +107,12 @@ def get_library() -> DocumentLibrary:
             )
             _library = library
             try:
+                if settings.phase4_enabled:
+                    library.retrieval = RetrievalIndexes(
+                        library,
+                        get_retrieval_models(),
+                        settings.retrieval_specification,
+                    )
                 library.start(
                     settings.ingestion_worker_enabled, settings.import_legacy_pdfs
                 )
@@ -109,12 +131,20 @@ def get_pipeline() -> IngestionPipeline:
             try:
                 from vision_rag.models.colpali_embedder import ColPaliEmbeddingModel
 
-                embedder = ColPaliEmbeddingModel(
-                    model_name=settings.embedding_model_name,
-                    device=settings.embedding_device,
-                    precision=settings.embedding_precision,
-                    batch_size=settings.ingestion_batch_size,
-                )
+                embedder: BaseEmbeddingModel
+                if settings.phase4_enabled:
+                    from vision_rag.models.pooled_adapter import PooledAdapter
+
+                    embedder = PooledAdapter(
+                        get_retrieval_models(), settings.retrieval_specification
+                    )
+                else:
+                    embedder = ColPaliEmbeddingModel(
+                        model_name=settings.embedding_model_name,
+                        device=settings.embedding_device,
+                        precision=settings.embedding_precision,
+                        batch_size=settings.ingestion_batch_size,
+                    )
                 _pipeline = IngestionPipeline(
                     get_loader(), embedder, get_store(), settings.ingestion_batch_size
                 )
@@ -145,6 +175,8 @@ def get_components() -> tuple[IngestionPipeline | None, RAGSynthesizer]:
             generator = GeminiGenerator(
                 model_name=settings.generation_model_name,
                 api_key=settings.google_api_key,
+                timeout_ms=settings.provider_timeout_ms,
+                attempts=settings.provider_attempts,
             )
             _synthesizer = RAGSynthesizer(
                 Retriever(
@@ -168,8 +200,17 @@ def get_components() -> tuple[IngestionPipeline | None, RAGSynthesizer]:
         return pipeline, _synthesizer
 
 
+def warmup_components() -> None:
+    get_pipeline()
+    if settings.phase4_enabled:
+        models = get_retrieval_models()
+        models.encode_text(settings.retrieval_specification, ["warmup"], True)
+        models.encode_visual(settings.retrieval_specification, ["warmup"], False)
+
+
 def shutdown_components() -> None:
     global _pipeline, _synthesizer, _vdb, _loader, _library, _model_state
+    global _retrieval_models
     # The worker may need the component lock to finish model initialization.
     if _library is not None:
         _library.close()
@@ -183,6 +224,9 @@ def shutdown_components() -> None:
             _vdb.client.close()
         _pipeline = _synthesizer = _vdb = _loader = None
         _model_state = "not_loaded"
+        if _retrieval_models is not None:
+            _retrieval_models.close()
+            _retrieval_models = None
 
 
 class QueryRequest(BaseModel):
@@ -627,7 +671,11 @@ def diagnostics() -> dict[str, Any]:
 
     return {
         **device_diagnostics(),
-        "model_state": _model_state,
+        "model_state": model_state(),
+        "phase4_enabled": settings.phase4_enabled,
+        "text_model_loaded": bool(
+            _retrieval_models is not None and _retrieval_models.text is not None
+        ),
         "configured_device": settings.embedding_device,
         "configured_precision": settings.embedding_precision,
         "embedding_model": settings.embedding_model_name,
@@ -647,9 +695,18 @@ def diagnostics() -> dict[str, Any]:
 
 @router.get("/ready")
 def readiness() -> dict[str, str]:
-    if _model_state != "ready":
-        raise HTTPException(503, {"model_state": _model_state})
-    return {"model_state": _model_state}
+    state = model_state()
+    if state != "ready":
+        raise HTTPException(503, {"model_state": state})
+    return {"model_state": state}
+
+
+def model_state() -> str:
+    if settings.phase4_enabled:
+        if _retrieval_models is not None and _retrieval_models.visual is not None:
+            return "ready"
+        return "not_loaded" if _model_state == "ready" else _model_state
+    return _model_state
 
 
 @router.delete("/documents/{reference}", response_model=JobResponse, status_code=202)

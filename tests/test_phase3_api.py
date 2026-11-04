@@ -14,6 +14,7 @@ def hybrid_client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "ingestion_worker_enabled", False)
     monkeypatch.setattr(settings, "import_legacy_pdfs", False)
     monkeypatch.setattr(settings, "model_warmup", False)
+    monkeypatch.setattr(settings, "phase4_enabled", False)
     monkeypatch.setattr(settings, "hybrid_ingestion", True)
     monkeypatch.setattr(settings, "render_dpi", 72)
     for name in ("_loader", "_vdb", "_pipeline", "_synthesizer", "_library"):
