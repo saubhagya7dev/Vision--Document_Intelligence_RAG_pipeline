@@ -479,6 +479,7 @@
 
     function setupJobActions() {
         setupProcessingControls();
+        setupIndexControls();
         document.addEventListener('click', async event => {
             const button = event.target.closest('[data-job-action]');
             if (!button) return;
@@ -522,6 +523,47 @@
     // =========================
     // CHAT
     // =========================
+    function setupIndexControls() {
+        const panel = document.getElementById('retrieval-index-panel');
+        const status = document.getElementById('retrieval-index-status');
+        const list = document.getElementById('retrieval-index-list');
+        const rebuild = document.getElementById('rebuild-index-btn');
+        let refreshing = false;
+        const refresh = async () => {
+            if (refreshing) return;
+            refreshing = true;
+            try {
+                const data = await api.get('/indexes');
+                panel.hidden = false;
+                const pending = data.indexes.some(index => ['queued', 'building'].includes(index.state));
+                rebuild.disabled = pending;
+                status.textContent = data.active ? (pending ? 'Updating retrieval. The current index stays active.' : 'Retrieval index ready.') : 'Preparing retrieval. You can ask questions after the index is ready.';
+                list.innerHTML = data.indexes.slice(0, 8).map(index => `<div class="upload-history-item">
+                    <div class="file-details"><div class="file-name">${index.id === data.active ? 'Active index' : 'Saved index'} · ${escapeHtml(index.state)}</div>
+                    <div class="file-meta">${index.pages_done} pages processed · ${timeAgo(index.created_at)}</div>
+                    ${index.error ? `<p class="job-error">${escapeHtml(index.error)}</p>` : ''}</div>
+                    ${index.can_activate && index.id !== data.active ? `<button class="job-action" data-index-id="${escapeHtml(index.id)}" data-index-action="activate">Use this index</button>` : ''}
+                    ${['queued', 'building'].includes(index.state) ? `<button class="job-action" data-index-id="${escapeHtml(index.id)}" data-index-action="cancel">Cancel build</button>` : ''}
+                </div>`).join('');
+            } catch (err) { status.textContent = `Index status unavailable: ${err.message}`; }
+            finally { refreshing = false; }
+        };
+        rebuild.addEventListener('click', async () => {
+            rebuild.disabled = true;
+            try { await api.post('/indexes', {activate_when_ready: true}); await refresh(); }
+            catch (err) { toast.show(err.message, 'error'); rebuild.disabled = false; }
+        });
+        document.addEventListener('click', async event => {
+            const button = event.target.closest('[data-index-action]');
+            if (!button) return;
+            button.disabled = true;
+            try { await api.post(`/indexes/${encodeURIComponent(button.dataset.indexId)}/${button.dataset.indexAction}`, {}); await refresh(); }
+            catch (err) { toast.show(err.message, 'error'); button.disabled = false; }
+        });
+        refresh();
+        setInterval(() => { if (!document.hidden) refresh(); }, 3000);
+    }
+
     let processingVersion = null;
     let processingTimer = null;
     let processingGeneration = 0;

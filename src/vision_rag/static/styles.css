@@ -1747,3 +1747,4 @@ h3 {
 .data-dialog .data-option small { font-size: 0.8rem; }
 .data-dialog .modal-header { margin-bottom: 8px; padding: 0; }
 .data-dialog fieldset { margin: 10px 0; }
+#retrieval-index-status { color: var(--text-body); margin-bottom: 12px; }
