@@ -1,7 +1,8 @@
 /* Version-specific evidence viewer. All labels are rendered as text. */
-window.createEvidenceViewer = function(api, getCurrent, report) {
+window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
     'use strict';
-    const el = id => document.getElementById(id);
+    prefix = prefix || '';
+    const el = id => document.getElementById(prefix + id);
     const encode = encodeURIComponent;
     let viewer = null, viewerToken = 0, savedScroll = null, saveTimer;
     function button(text, action) {

@@ -82,6 +82,12 @@
             if (turn.result) {
                 richText(answer, turn.result.answer, turn.result.sources || []);
                 article.append(button('Inspect evidence', () => sources(turn.result.sources || [])));
+                article.append(button('Save finding', async () => {
+                    try {
+                        await api(`/findings/from-message/${encode(turn.id)}`, 'POST', {});
+                        status('Answer saved as a finding. Open Findings to review or export it.');
+                    } catch (error) { report(error); }
+                }));
             } else {
                 answer.textContent = turn.error || (terminal.has(turn.state) ? turn.state : 'Waiting for an answer…');
                 if (terminal.has(turn.state)) article.append(button('Retry question', () => ask(false, turn.question, turn.request)));
