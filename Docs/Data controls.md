@@ -13,6 +13,13 @@ This implementation does not automatically clear the user's library.
 | Clear page cache | Rendered page images and thumbnails in the managed artifacts directory | PDFs, indexes, text, jobs, browser chat |
 | Start fresh | Managed originals, pre-upgrade PDFs/staging uploads in the data folder, rendered artifacts, extracted text/chunks, vector points, versions, jobs and app history | Configuration, API credentials, downloaded models, OCR runtime, unrelated files |
 
+Phase 5 follow-up: Clear history also removes the workspace's persisted
+conversations, questions, answers, viewer positions and stream events. Start
+fresh removes those records too, together with Phase 4 retrieval revisions.
+Cache clearing preserves saved conversations. Active answers check cancellation
+at their next safe boundary; a provider/GPU call may finish before cleanup can
+release the existing evidence-reader lock.
+
 Start fresh requires selecting the option and typing **DELETE**. The action is
 permanent. Clear history keeps the internal job records required for document
 state and retries; Start fresh removes those records too. Clearing history/reset

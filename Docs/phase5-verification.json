@@ -1,0 +1,50 @@
+{
+  "phase": 5,
+  "scope": "single-process local workspace; stopped before Phase 6",
+  "regression": {
+    "passed": 115,
+    "warnings": 2,
+    "duration_seconds": 68.97,
+    "models_and_paid_calls": false
+  },
+  "static": {
+    "ruff": "passed",
+    "format": "passed",
+    "mypy_source_files": 36,
+    "python_compilation": "passed",
+    "javascript_syntax": [
+      "app.js",
+      "workspace.js",
+      "evidence.js"
+    ],
+    "whitespace": "passed"
+  },
+  "browser": {
+    "fixture": "tests/browser_phase5_fixture.py",
+    "provider": "simulated streaming only",
+    "storage": "real SQLite and local Qdrant",
+    "rendering": "real PDFium",
+    "checks": [
+      "saved scope and answers",
+      "immutable citation page",
+      "page navigation and keyboard activation",
+      "saved page 2 and 150% zoom restoration",
+      "Stop and retry",
+      "HTTP disconnect cancellation on reload",
+      "provider failure state",
+      "provider-free Find pages",
+      "desktop split pane",
+      "narrow stacked workspace"
+    ],
+    "narrow_css_width": 384,
+    "narrow_content_width": 384,
+    "desktop_css_width": 1274,
+    "desktop_content_width": 1274
+  },
+  "limits": [
+    "Live Gemini streaming not exercised; prior quota blocker remains external.",
+    "No new model-quality, latency or dollar-cost claims.",
+    "Cancellation is cooperative at model/provider boundaries.",
+    "Prior session-only browser chats are not imported into authoritative storage."
+  ]
+}
