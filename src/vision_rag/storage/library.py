@@ -61,6 +61,7 @@ class DocumentLibrary:
         self.maintenance_lock = Lock()
         self.maintenance_requested = Event()
         self.generation = 0
+        self.retrieval: Any = None
         self.processing = ProcessingMetadata(self.metadata)
         self.hybrid = (
             HybridProcessor(
@@ -166,6 +167,7 @@ class DocumentLibrary:
                         version_id=version_id,
                         replace_document=replace_document,
                         legacy_path=legacy_path,
+                        reuse_other_profile=self.retrieval is not None,
                     )
                 except BaseException:
                     target.unlink(missing_ok=True)
@@ -211,9 +213,12 @@ class DocumentLibrary:
                 "SELECT v.*,j.id AS job_id,j.state AS job_state,"
                 "j.pages_done,j.total_pages,j.error,j.cancel_requested "
                 "FROM versions v JOIN builds b ON b.version_id=v.id "
-                "JOIN jobs j ON j.build_id=b.id WHERE v.document_id=? AND b.profile=? "
-                "ORDER BY v.ordinal DESC LIMIT 1",
-                (doc["id"], self.profile),
+                "JOIN jobs j ON j.build_id=b.id WHERE v.document_id=? "
+                + ("" if self.retrieval is not None else "AND b.profile=? ")
+                + "ORDER BY v.ordinal DESC LIMIT 1",
+                (doc["id"],)
+                if self.retrieval is not None
+                else (doc["id"], self.profile),
             )
             if not latest:
                 result.append(
@@ -260,6 +265,8 @@ class DocumentLibrary:
             except Exception:
                 logger.exception("Library reset recovery failed; retry Start fresh")
                 return
+        if self.retrieval is not None:
+            self.retrieval.recover()
         self.metadata.recover()
         self.processing.recover()
         self.reconcile()
@@ -412,6 +419,9 @@ class DocumentLibrary:
         self.metadata.progress(job["id"], "cleaning", 0)
         with self.access:
             self.store.delete_by_payload_filter("document_id", job["document_id"])
+            retrieval = self.stored_retrieval()
+            if retrieval is not None:
+                retrieval.remove_document(job["document_id"])
             for build in self.metadata.rows(
                 "SELECT b.id FROM builds b JOIN versions v ON v.id=b.version_id "
                 "WHERE v.document_id=?",
@@ -476,7 +486,13 @@ class DocumentLibrary:
     def _process_one(self) -> bool:
         job = self.metadata.claim()
         if job is None:
-            return self._process_page_task()
+            if self._process_page_task():
+                return True
+            return (
+                bool(self.retrieval.process_one())
+                if self.retrieval is not None
+                else False
+            )
         with trace(job["id"]), stage("ingestion_job", kind=job["kind"]):
             try:
                 if job["kind"] == "delete":
@@ -570,6 +586,18 @@ class DocumentLibrary:
         # Keep durable jobs needed for retry/publication; hide completed history.
         self.metadata.set_setting("history_cleared_at", now())
 
+    def stored_retrieval(self) -> Any:
+        if self.retrieval is not None:
+            return self.retrieval
+        if self.metadata.rows(
+            "SELECT 1 FROM retrieval_indexes WHERE workspace=? LIMIT 1",
+            (self.workspace,),
+        ):
+            from vision_rag.retrieval.indexes import RetrievalIndexes
+
+            return RetrievalIndexes(self, None, {})
+        return None
+
     def clear_page_cache(self) -> None:
         if not self.maintenance_lock.acquire(blocking=False):
             raise Conflict("Library maintenance is already running")
@@ -617,6 +645,9 @@ class DocumentLibrary:
                 self.generation += 1
                 self.metadata.set_setting("reset_pending", "true")
             with self.operation, self.access:
+                retrieval = self.stored_retrieval()
+                if retrieval is not None:
+                    retrieval.clear()
                 self.store.clear_collection()
                 for folder in ("artifacts", "originals", "incoming"):
                     target = self.path(folder)
