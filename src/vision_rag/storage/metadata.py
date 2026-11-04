@@ -101,6 +101,11 @@ CREATE TABLE IF NOT EXISTS message_events (
  message_id TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
  sequence INTEGER NOT NULL, type TEXT NOT NULL, data TEXT NOT NULL,
  PRIMARY KEY(message_id,sequence));
+CREATE TABLE IF NOT EXISTS findings (
+ id TEXT PRIMARY KEY, workspace TEXT NOT NULL, title TEXT NOT NULL,
+ kind TEXT NOT NULL, state TEXT NOT NULL, content TEXT NOT NULL,
+ content_hash TEXT NOT NULL, reviewed INTEGER NOT NULL DEFAULT 0,
+ created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
 """
 
 
@@ -122,13 +127,13 @@ class Metadata:
         path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1, 2, 3, 4, 5):
+            if version not in (0, 1, 2, 3, 4, 5, 6):
                 raise RuntimeError(
                     "Unsupported metadata schema; restore compatible code"
                 )
             db.execute("PRAGMA journal_mode=WAL")
             db.executescript(
-                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=5; COMMIT;"
+                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=6; COMMIT;"
             )
 
     @contextmanager
