@@ -19,9 +19,11 @@ dependencies = [
     "pillow>=10.0",
     "python-multipart>=0.0.9",
     "colpali-engine>=0.3.0",
+    "numpy>=1.26",
 ]
 
 [project.optional-dependencies]
+evaluation = ["matplotlib>=3.9"]
 dev = [
     "pytest>=7.0",
     "ruff>=0.1",
