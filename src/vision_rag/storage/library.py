@@ -591,9 +591,10 @@ class DocumentLibrary:
         from vision_rag.storage.findings import Findings
 
         Conversations(self.metadata).clear()
-        Findings(self.metadata).clear_drafts()
         # Keep durable jobs needed for retry/publication; hide completed history.
-        self.metadata.set_setting("history_cleared_at", now())
+        with self.access:
+            Findings(self.metadata).clear_drafts()
+            self.metadata.set_setting("history_cleared_at", now())
 
     def stored_retrieval(self) -> Any:
         if self.retrieval is not None:

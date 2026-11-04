@@ -778,7 +778,7 @@
             document.getElementById('data-description').textContent = action === 'reset'
                 ? 'This permanently deletes library data. Running work will stop at its next safe boundary; an active model call may need time to finish.'
                 : action === 'cache' ? 'Only derived page images and thumbnails are removed. Running ingestion may pause briefly.'
-                : 'Your documents and active jobs stay available. Browser history is cleared across open tabs of this app.';
+                : 'Chats and draft comparisons are cleared. Saved findings, documents and active jobs stay available. Browser history is cleared across open tabs of this app.';
         };
         const clearBrowserHistory = () => {
             for (const storage of [sessionStorage, localStorage]) {
