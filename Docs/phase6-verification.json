@@ -1,0 +1,70 @@
+{
+  "phase": 6,
+  "scope": "core comparison workflow; optional analysis extensions and Phase 7 deferred",
+  "regression": {
+    "passed": 123,
+    "warnings": 2,
+    "seconds": 90.75,
+    "model_downloads_or_paid_calls": false
+  },
+  "static": {
+    "ruff_lint": "passed",
+    "ruff_format_files": 79,
+    "mypy_source_files": 42,
+    "python_compilation": "passed",
+    "javascript_syntax": [
+      "app.js",
+      "workspace.js",
+      "evidence.js",
+      "findings.js"
+    ],
+    "whitespace": "passed"
+  },
+  "browser": {
+    "fixture": "tests/browser_phase6_fixture.py",
+    "inference": "simulated encoders/provider",
+    "storage": "real SQLite and local Qdrant",
+    "pdf_rendering": "real PDFium",
+    "selection": "older Alpha v1 plus Beta v1; Alpha v2 excluded",
+    "cells": 4,
+    "missing_cells": 2,
+    "checks": [
+      "cell citations open selected historical version",
+      "reported context preserved and differing contexts flagged",
+      "separate user review flag",
+      "save and reload/reopen",
+      "real JSON/CSV/Markdown browser downloads",
+      "downloaded artifacts parsed and source URLs matched"
+    ],
+    "narrow_viewport_css_pixels": 384,
+    "narrow_document_css_pixels": 384
+  },
+  "provider": {
+    "record": "phase6-provider-smoke.json",
+    "status": "passed",
+    "attempts": 1,
+    "fixture": "two fictional PDF pages",
+    "seconds": 11.194556800066493,
+    "tokens": 4108,
+    "checks": [
+      "full matrix and same-version IDs valid",
+      "120 and 150 values preserved",
+      "million units, EUR/USD, FY2024/FY2025 and scopes preserved",
+      "undisclosed operating margins marked missing"
+    ],
+    "limits": "single provider adapter smoke, not broad end-to-end retrieval quality or cost validation"
+  },
+  "boundaries": [
+    "workspace and source checks on all exports",
+    "unavailable-source content blocked, owned finding deletion allowed",
+    "mixed-workspace reset guard includes conversations and findings",
+    "chat history clears drafts and retains saved findings",
+    "full reset removes findings"
+  ],
+  "not_done": [
+    "optional calculations, regions and automated version-diff analysis",
+    "representative quality and shared deployment/authentication",
+    "earlier Phase 4 prompted-router completion",
+    "Phase 5 real-provider streaming validation"
+  ]
+}
