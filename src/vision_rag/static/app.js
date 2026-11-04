@@ -170,7 +170,7 @@
         return `${Math.floor(diff / 86400)}d ago`;
     }
 
-    function parseMarkdown(text) {
+    function parseMarkdown(text, sources = []) {
         if (!text) return '';
         let html = escapeHtml(text);
 
@@ -191,6 +191,10 @@
         html = html.replace(/\n\n/g, '</p><p>');
         // Single newlines (within paragraphs)
         html = html.replace(/\n/g, '<br>');
+        html = html.replace(/\[(E[a-f0-9]{16})\]/g, (match, id) => {
+            const index = sources.findIndex(source => source.evidence_id === id);
+            return index < 0 ? match : `<button class="citation-link" data-citation-index="${index}" aria-label="Open source ${index + 1}">[${index + 1}]</button>`;
+        });
 
         return `<p>${html}</p>`;
     }
@@ -659,6 +663,15 @@
     }
 
     function setupChat() {
+        document.addEventListener('click', event => {
+            const citation = event.target.closest('[data-citation-index]');
+            if (!citation) return;
+            const message = citation.closest('[data-message-index]');
+            const record = chatHistory[Number(message.dataset.messageIndex)];
+            lastSources = record.sources || [];
+            renderSources();
+            window.__previewSource(Number(citation.dataset.citationIndex));
+        });
         const input = document.getElementById('chat-input');
         const sendBtn = document.getElementById('send-btn');
         const topkSlider = document.getElementById('topk-slider');
@@ -820,7 +833,7 @@
 
         // Build messages HTML
         let html = '';
-        chatHistory.forEach(msg => {
+        chatHistory.forEach((msg, messageIndex) => {
             if (msg.role === 'user') {
                 html += `
                     <div class="message user">
@@ -830,12 +843,12 @@
             } else {
                 const labelColor = msg.isError ? 'color: #ef4444' : '';
                 html += `
-                    <div class="message ai">
+                    <div class="message ai" data-message-index="${messageIndex}">
                         <div class="message-bubble" ${msg.isError ? 'style="border-color: rgba(239,68,68,0.3)"' : ''}>
                             <div class="message-label" style="${labelColor}">
                                 <span>✦</span> Vision RAG AI <span class="ai-dot"></span>
                             </div>
-                            ${parseMarkdown(msg.content)}
+                            ${parseMarkdown(msg.content, msg.sources || [])}
                         </div>
                     </div>
                 `;
@@ -877,7 +890,7 @@
                         <div class="source-page-label">Page ${page}</div>
                         <div class="source-file-name" title="${escapeHtml(filename)}">${escapeHtml(filename)}</div>
                         ${src.version_id ? '' : '<span class="source-score">Legacy source — ask again to resolve its version.</span>'}
-                        <span class="source-score">Score: ${score}</span>
+                        <span class="source-score">${src.score_kind ? 'Rank score' : 'Score'}: ${score}</span>
                     </div>
                 </div>
             `;

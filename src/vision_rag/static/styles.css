@@ -1751,4 +1751,6 @@ h3 {
 .query-scope-controls label { font-size: 0.8rem; color: var(--text-body); }
 .query-scope-controls select { background: var(--bg-input); color: var(--text-body); border: 1px solid var(--border-active); border-radius: 8px; padding: 6px; max-height: 70px; }
 .query-scope-controls small { color: var(--text-muted); font-size: 0.72rem; }
+.citation-link { color: #34d399; background: transparent; border: 1px solid var(--accent); border-radius: 5px; padding: 0 4px; cursor: pointer; font: inherit; }
+.citation-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 #retrieval-index-status { color: var(--text-body); margin-bottom: 12px; }
