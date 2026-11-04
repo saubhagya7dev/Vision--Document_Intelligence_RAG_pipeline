@@ -687,6 +687,7 @@
         });
 
         sendBtn.addEventListener('click', sendQuery);
+        document.getElementById('find-pages-btn').addEventListener('click', () => sendQuery(true));
 
         // Top-K slider
         topkSlider.addEventListener('input', () => {
@@ -703,7 +704,8 @@
         });
     }
 
-    async function sendQuery() {
+    async function sendQuery(evidenceOnly = false) {
+        evidenceOnly = evidenceOnly === true;
         const input = document.getElementById('chat-input');
         const sendBtn = document.getElementById('send-btn');
         const query = input.value.trim();
@@ -730,6 +732,7 @@
             const previous = chatHistory.slice(0, -1).filter(message => message.role === 'user').at(-1);
             const result = await api.post('/query', { query, top_k: Math.max(topK, documents.length),
                 document_ids: documents.length ? documents : null,
+                evidence_only: evidenceOnly,
                 previous_question: previous?.content?.length <= 2000 ? previous.content : null });
 
             // Remove typing indicator
