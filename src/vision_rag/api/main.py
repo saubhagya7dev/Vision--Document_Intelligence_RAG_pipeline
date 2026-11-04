@@ -6,14 +6,16 @@ from typing import AsyncIterator, Awaitable, Callable
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 from starlette.requests import Request
 from starlette.responses import Response
 
 from vision_rag.api.findings import router as findings_router
+from vision_rag.api.security import RequestBoundary, router as security_router
 from vision_rag.api.routes import (
     get_library,
     router,
@@ -28,6 +30,7 @@ from vision_rag.telemetry import stage, trace
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
+        settings.check_deployment()
         await run_in_threadpool(get_library)
         if settings.model_warmup:
             await run_in_threadpool(warmup_components)
@@ -43,18 +46,36 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware for development convenience
+# Same-origin browser use is the default. Explicit cross-origin bearer clients
+# never get ambient cookie credentials through CORS.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 app.include_router(router, prefix="/api/v1")
 app.include_router(workspace_router, prefix="/api/v1")
 app.include_router(findings_router, prefix="/api/v1")
+app.include_router(security_router, prefix="/api/v1")
+
+
+@app.exception_handler(RequestValidationError)
+async def invalid_request(
+    request: Request, error: RequestValidationError
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": "Invalid request",
+            "errors": [
+                {"field": list(e["loc"]), "message": e["msg"], "type": e["type"]}
+                for e in error.errors()
+            ],
+        },
+    )
 
 
 @app.middleware("http")
@@ -112,7 +133,20 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
 def start() -> None:
     """Entry point for the application."""
     logging.basicConfig(level=logging.INFO)
-    uvicorn.run("vision_rag.api.main:app", host="127.0.0.1", port=8000, reload=False)
+    settings.check_deployment()
+    uvicorn.run(
+        "vision_rag.api.main:app",
+        host=settings.bind_host,
+        port=settings.bind_port,
+        reload=False,
+        proxy_headers=False,
+        access_log=False,
+    )
+
+
+# Added last so credentials/origin/body checks run before request tracing can
+# initialize the library, and before uploads reach the multipart parser.
+app.add_middleware(RequestBoundary)
 
 
 if __name__ == "__main__":

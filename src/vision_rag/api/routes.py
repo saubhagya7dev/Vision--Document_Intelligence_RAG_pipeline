@@ -215,8 +215,10 @@ def shutdown_components() -> None:
     global _pipeline, _synthesizer, _vdb, _loader, _library, _model_state
     global _retrieval_models
     from vision_rag.api.workspace import stop_turns
+    from vision_rag.api.security import clear_sessions
 
     stop_turns()
+    clear_sessions()
     # The worker may need the component lock to finish model initialization.
     if _library is not None:
         _library.close()

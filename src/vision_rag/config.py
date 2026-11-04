@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Any, Literal, Optional
 
-from pydantic import Field, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -53,6 +53,33 @@ class Settings(BaseSettings):
     provider_timeout_ms: int = Field(default=30000, ge=1000, le=120000)
     provider_attempts: int = Field(default=2, ge=1, le=3)
     router_path: Path | None = None
+    deployment_profile: Literal["local", "authenticated"] = "local"
+    bind_host: str = "127.0.0.1"
+    bind_port: int = Field(default=8000, ge=1, le=65535)
+    access_token: SecretStr | None = None
+    allowed_hosts: list[str] = ["127.0.0.1", "localhost", "::1"]
+    cors_origins: list[str] = []
+    session_seconds: int = Field(default=28800, ge=60, le=86400)
+    session_cookie_secure: bool = False
+    trusted_tls_proxy: bool = False
+    max_request_mb: int = Field(default=102, ge=1, le=1024)
+
+    def check_deployment(self) -> None:
+        local = self.bind_host in ("127.0.0.1", "localhost", "::1")
+        if not self.allowed_hosts or any("*" in host for host in self.allowed_hosts):
+            raise ValueError("Configure explicit ALLOWED_HOSTS without wildcards")
+        if any(origin == "*" for origin in self.cors_origins):
+            raise ValueError("Configure explicit CORS_ORIGINS without wildcards")
+        if self.access_token and len(self.access_token.get_secret_value()) < 32:
+            raise ValueError("ACCESS_TOKEN must contain at least 32 characters")
+        if self.deployment_profile == "local" and not local:
+            raise ValueError("The local profile must bind to a loopback address")
+        if self.deployment_profile == "authenticated" and not self.access_token:
+            raise ValueError("The authenticated profile requires ACCESS_TOKEN")
+        if not local and not (self.session_cookie_secure and self.trusted_tls_proxy):
+            raise ValueError(
+                "Network binding requires secure cookies and an explicit TLS proxy"
+            )
 
     @property
     def retrieval_specification(self) -> dict[str, Any]:
