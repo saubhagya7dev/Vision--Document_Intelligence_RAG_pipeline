@@ -73,7 +73,8 @@ def test_compare_save_reopen_and_export_links_in_every_format(
     assert json.loads(rows[0]["source_links"])[0]["version_id"] == jobs[0]["version_id"]
     markdown = client.get(f"/api/v1/findings/{key}/export?format=md").text
     assert "semantic support remains unverified" in markdown
-    assert jobs[0]["version_id"] in markdown and "#page=1" in markdown
+    assert jobs[0]["version_id"] in markdown
+    assert all(s["original_url"] in markdown for s in data["source_links"])
     assert (
         client.post(
             "/api/v1/maintenance", json={"action": "history", "confirmation": "CLEAR"}
@@ -110,3 +111,72 @@ def test_deleted_sources_and_other_workspaces_cannot_be_exported(
         )
     assert client.get(f"/api/v1/findings/{key}").status_code == 409
     assert client.delete(f"/api/v1/findings/{key}").status_code == 200
+
+
+def test_invalid_cells_do_not_create_drafts_and_unindexed_versions_need_no_provider(
+    client, tmp_path, monkeypatch
+):
+    path = create_pdf(tmp_path / "report.pdf", ("text", "table"))
+    jobs = []
+    for suffix in (b"first", b"second"):
+        jobs.append(
+            client.post(
+                "/api/v1/ingest",
+                files={"file": (suffix.decode() + ".pdf", path.read_bytes() + suffix)},
+            ).json()
+        )
+        routes.get_library().process_one()
+    request = {
+        "question": "Compare ALPHA42",
+        "version_ids": [j["version_id"] for j in jobs],
+        "fields": ["Revenue"],
+    }
+
+    def no_provider():
+        raise AssertionError("No indexed evidence must not contact the provider")
+
+    monkeypatch.setattr(routes, "get_components", no_provider)
+    result = client.post("/api/v1/comparisons", json=request)
+    assert result.status_code == 201
+    assert all(
+        c["status"] == "missing" for c in result.json()["content"]["table"]["cells"]
+    )
+    library = routes.get_library()
+    library.retrieval.queue()
+    library.process_one()
+
+    class Invalid:
+        def generate_comparison(self, *args):
+            return {"cells": []}
+
+    from types import SimpleNamespace
+
+    monkeypatch.setattr(
+        routes, "get_components", lambda: (None, SimpleNamespace(generator=Invalid()))
+    )
+    count = len(library.metadata.rows("SELECT * FROM findings"))
+    assert client.post("/api/v1/comparisons", json=request).status_code == 422
+    assert len(library.metadata.rows("SELECT * FROM findings")) == count
+
+
+def test_save_completed_answer_as_finding_and_export_its_citations(client, tmp_path):
+    path = create_pdf(tmp_path / "report.pdf", ("text", "table"))
+    client.post("/api/v1/ingest", files={"file": ("report.pdf", path.read_bytes())})
+    library = routes.get_library()
+    library.process_one()
+    library.retrieval.queue()
+    library.process_one()
+    c = client.post("/api/v1/conversations", json={}).json()
+    turn = client.post(
+        f"/api/v1/conversations/{c['id']}/messages", json={"query": "ALPHA42"}
+    ).json()
+    client.get(f"/api/v1/messages/{turn['id']}/events")
+    finding = client.post(f"/api/v1/findings/from-message/{turn['id']}")
+    assert finding.status_code == 201
+    key = finding.json()["id"]
+    exported = client.get(f"/api/v1/findings/{key}/export?format=json").json()
+    assert exported["content"]["claims"]
+    assert (
+        exported["source_links"][0]["version_id"]
+        == exported["content"]["sources"][0]["version_id"]
+    )
