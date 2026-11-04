@@ -27,4 +27,36 @@
 - Phase 6: cited multi-document comparison and reproducible exports.
 - Phase 7: held-out evaluation, security, backup/restore, accurate release claims.
 
-Stop after Phase 3 in this task. Preserve the original README and user research.
+## Phase 4 — 2026-11-04
+
+- Keep the existing local SQLite/Qdrant worker boundary. Add UUID-isolated
+  retrieval revisions with pinned encoder, scoring and rendering profiles.
+  Activate only completed current-snapshot builds; retain the previous revision
+  and filter deleted/superseded evidence immediately.
+- Use BGE-small normalized CLS text vectors on CPU and ColPali-v1.3 original
+  token matrices on CUDA. Pin the adapter and base snapshots independently.
+  Reuse derived image-token artifacts to avoid a second image forward pass.
+- Keep an exact NumPy MaxSim reference, Qdrant DOT/MaxSim original tokens and a
+  centroid candidate/rerank path. Do not infer ANN scaling from embedded exact
+  search measurements.
+- Select Borda rank fusion using development data (20/20 versus RRF 16/20).
+  The held-out synthetic test also scored 20/20; the faster scoped all-page
+  pooled baseline matched it. No overall retrieval improvement is established.
+- Train a cheap local router on disjoint development families and keep it off
+  by default. Cached tier comparisons measure starting policy, not full answer
+  escalation cost. Its 150 DPI profile is intentionally incompatible with the
+  default 300 DPI index.
+- Validate structured claim references and selected-document coverage before
+  returning citations. Separate reference validity from semantic entailment.
+  Same-model support estimates are explicitly not independent verification.
+- Use a flat provider JSON schema for compatibility, followed by strict local
+  validation. Preserve deadline/retry bounds and expose quota errors. Add local
+  Find pages so source discovery needs no provider request.
+- The configured provider hit its daily free-tier quota after six held-out LLM
+  routes. Six sampled answer checks and three support estimates passed; the
+  remaining routing comparison is pending reset. No billing/key/model changes
+  were made to bypass the quota, and no dollar-cost conclusion is drawn.
+- The final suite passes 107 tests. Browser verification used isolated fictional
+  PDFs and fake inference; real CUDA/provider checks are separate saved reports.
+
+Stop after Phase 4 in this task. Preserve the original README and user research.

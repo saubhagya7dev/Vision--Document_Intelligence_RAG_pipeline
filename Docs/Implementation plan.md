@@ -1,6 +1,6 @@
 # Vision implementation checklist
 
-Current scope: Phase 3 is implemented. Stop before Phase 4. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
+Current scope: Phase 4 is implemented. Stop before Phase 5. The full prompted LLM routing comparison remains pending provider quota reset. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
 
 ## Phase 1 — diagnosis and performance foundations
 
@@ -69,9 +69,32 @@ clearing and confirmed, recoverable local resets. The current suite has 87 tests
 The optional OCR adapter and fallback are implemented and a real scan smoke check passed; broad recognition quality and
 held-out product quality are not claimed as validated.
 
+## Phase 4 — retrieval and grounding
+
+- [x] Pinned CPU dense text encoder and keyword retrieval, with document/page scope.
+- [x] Original ColPali token matrices and exact masked MaxSim reference checks.
+- [x] Coarse centroid candidates reranked against original tokens; isolated profiles.
+- [x] RRF/Borda comparison, bounded evidence and requested-document coverage.
+- [x] Durable staged index builds, activation, rollback, restart and cleanup.
+- [x] Strict claims/citations contract, reference validation and abstention.
+- [x] Original/rewritten follow-ups, bounded provider attempts and actionable quota errors.
+- [x] Local provider-free Find pages; index controls and message-specific citations.
+- [x] Learned cheap router experiment with disjoint train/test families and tier cache.
+- [x] Fixed-tier, heuristic and learned-policy cost/quality comparisons and plot.
+- [x] Real CUDA/Qdrant MaxSim check and six sampled provider answer checks.
+- [x] Three sampled same-model support estimates, labeled as estimates.
+- [x] 107 tests, lint/format, strict types, compilation, JS syntax and browser checks.
+- [ ] Complete the prompted LLM router baseline: 6/24 test routes completed before daily quota.
+- [ ] Representative real-document quality and independent semantic support evaluation.
+
+See [Phase 4 guide](Phase%204%20guide.md) for setup, migration, measurements,
+limits and provider resume instructions. Hybrid and learned policies match the
+scoped pooled baseline's coverage on the toy corpus but are slower; learned
+routing remains experimental and disabled by default. Phase 4 implementation
+is finished; the external comparison above is not reported as completed.
+
 ## Later phases — not started
 
-4. Retrieval/grounding: dense/lexical/visual fusion, exact multivector reference, versioned reindex, document scope and validated citations. Exit: held-out quality tradeoffs measured; evidence resolves to correct versions.
 5. Workspace: persistent conversations, evidence viewer, streaming, real progress/errors and accessibility. Exit: upload, ask, inspect, revisit and recover work end to end.
 6. Analysis: cited comparisons, deterministic numerical calculations, regions/version review, findings and exports. Exit: one complete reproducible multi-document workflow.
 7. Evaluation/release: held-out document tasks, quality and hardware comparisons, access controls, security, deployment/restore and accurate release documentation. Exit: measured release gates, no unsupported production claims.
