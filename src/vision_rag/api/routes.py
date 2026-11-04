@@ -239,6 +239,61 @@ class QueryResponse(BaseModel):
     sources: list[dict[str, Any]]
 
 
+class ReindexRequest(BaseModel):
+    activate_when_ready: bool = True
+
+
+def index_manager() -> RetrievalIndexes:
+    manager: RetrievalIndexes | None = get_library().retrieval
+    if manager is None:
+        raise HTTPException(409, "Enable PHASE4_ENABLED to use retrieval indexes")
+    return manager
+
+
+@router.get("/indexes")
+def retrieval_indexes() -> dict[str, Any]:
+    manager = index_manager()
+    snapshot = manager.snapshot()
+    return {
+        "active": manager.meta.setting("retrieval_active"),
+        "previous": manager.meta.setting("retrieval_previous"),
+        "indexes": [
+            {
+                **row,
+                "can_activate": row["state"] == "ready" and row["snapshot"] == snapshot,
+            }
+            for row in manager.revisions()
+        ],
+    }
+
+
+@router.post("/indexes", status_code=202)
+def reindex(request: ReindexRequest) -> dict[str, Any]:
+    try:
+        with get_library().access:
+            return index_manager().queue(request.activate_when_ready)
+    except Conflict as error:
+        raise HTTPException(409, str(error)) from None
+
+
+@router.post("/indexes/{index_id}/{action}")
+def change_index(
+    index_id: str, action: Literal["activate", "cancel"]
+) -> dict[str, Any]:
+    manager = index_manager()
+    try:
+        with get_library().access:
+            if action == "activate":
+                manager.activate(index_id)
+            else:
+                manager.cancel(index_id)
+            return manager.row(index_id)
+    except KeyError:
+        raise HTTPException(404, "Index not found") from None
+    except Conflict as error:
+        raise HTTPException(409, str(error)) from None
+
+
 class PageOverride(BaseModel):
     mode: Literal["auto", "text", "visual", "ocr", "skip"] = "auto"
 
