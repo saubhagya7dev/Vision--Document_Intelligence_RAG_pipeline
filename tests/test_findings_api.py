@@ -103,6 +103,16 @@ def test_deleted_sources_and_other_workspaces_cannot_be_exported(
     )
     assert client.get(f"/api/v1/findings/{foreign['id']}").status_code == 404
     assert client.get(f"/api/v1/findings/{foreign['id']}/export").status_code == 404
+    assert (
+        client.post(
+            "/api/v1/maintenance", json={"action": "reset", "confirmation": "DELETE"}
+        ).status_code
+        == 409
+    )
+    assert (
+        Findings(Metadata(metadata.path, "other-workspace")).get(foreign["id"])["title"]
+        == "Private"
+    )
     client.delete(f"/api/v1/documents/{jobs[0]['document_id']}")
     for format in ("json", "csv", "md"):
         assert (

@@ -646,8 +646,10 @@ class DocumentLibrary:
                         "Start fresh is supported only for local vector storage"
                     )
                 others = self.metadata.rows(
-                    "SELECT 1 FROM documents WHERE workspace!=? LIMIT 1",
-                    (self.workspace,),
+                    "SELECT 1 FROM documents WHERE workspace!=? UNION ALL "
+                    "SELECT 1 FROM conversations WHERE workspace!=? UNION ALL "
+                    "SELECT 1 FROM findings WHERE workspace!=? LIMIT 1",
+                    (self.workspace, self.workspace, self.workspace),
                 )
                 if others:
                     raise Conflict("Start fresh requires a library with one workspace")
