@@ -13,6 +13,7 @@ from starlette.concurrency import run_in_threadpool
 from starlette.requests import Request
 from starlette.responses import Response
 
+from vision_rag.api.findings import router as findings_router
 from vision_rag.api.routes import (
     get_library,
     router,
@@ -53,6 +54,7 @@ app.add_middleware(
 
 app.include_router(router, prefix="/api/v1")
 app.include_router(workspace_router, prefix="/api/v1")
+app.include_router(findings_router, prefix="/api/v1")
 
 
 @app.middleware("http")

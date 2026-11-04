@@ -588,8 +588,10 @@ class DocumentLibrary:
 
     def clear_history(self) -> None:
         from vision_rag.storage.conversations import Conversations
+        from vision_rag.storage.findings import Findings
 
         Conversations(self.metadata).clear()
+        Findings(self.metadata).clear_drafts()
         # Keep durable jobs needed for retry/publication; hide completed history.
         self.metadata.set_setting("history_cleared_at", now())
 
@@ -669,6 +671,7 @@ class DocumentLibrary:
                     db.execute("PRAGMA secure_delete=ON")
                     for table in (
                         "message_events",
+                        "findings",
                         "messages",
                         "conversations",
                         "chunk_search",
