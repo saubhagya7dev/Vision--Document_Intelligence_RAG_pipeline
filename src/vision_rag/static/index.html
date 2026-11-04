@@ -61,6 +61,7 @@
                     </svg>
                     Documents
                 </a>
+                <a href="#analysis" class="nav-item" data-page="analysis">Findings</a>
             </nav>
             <div class="header-right">
                 <button class="btn btn-secondary btn-sm" id="data-controls-btn">Data &amp; history</button>
@@ -317,6 +318,61 @@
             </div>
         </section>
 
+        <!-- ========== FINDINGS PAGE ========== -->
+        <section id="page-analysis" class="page">
+            <h1 class="page-title">Compare and save findings</h1>
+            <p>Compare reported values and inspect each factual cell's evidence. Units, currencies, periods and scopes are preserved, not normalized.</p>
+            <div class="findings-toolbar">
+                <label>Saved findings <select id="finding-list"><option value="">Choose a saved finding</option></select></label>
+                <button id="refresh-findings" class="job-action">Refresh findings and versions</button>
+            </div>
+            <p id="finding-status" role="status" aria-live="polite">Open Findings to load document versions.</p>
+            <form id="comparison-form" class="comparison-form">
+                <label for="comparison-versions">Reports or versions to compare</label>
+                <select id="comparison-versions" multiple size="4" aria-describedby="comparison-help"></select>
+                <small id="comparison-help">Select two to four distinct ready versions. Older versions use retained retrieval indexes; unavailable evidence is shown explicitly.</small>
+                <label for="comparison-fields">Fields to compare (one per line, up to eight)</label>
+                <textarea id="comparison-fields" rows="3" required maxlength="808">Revenue
+Operating margin</textarea>
+                <label for="comparison-question">Comparison question</label>
+                <input id="comparison-question" required maxlength="2000" value="Compare the reported values and their context.">
+                <button id="compare-submit" class="job-action" type="submit">Build comparison</button>
+            </form>
+            <div class="findings-layout">
+                <div>
+                    <div id="comparison-result" class="comparison-result" tabindex="0" aria-label="Comparison result"><p>No comparison yet.</p></div>
+                    <div id="finding-actions" hidden>
+                        <label>Finding title <input id="finding-title" maxlength="160" required></label>
+                        <label><input type="checkbox" id="finding-reviewed"> I reviewed the cited evidence (user review, not independent verification)</label>
+                        <div class="findings-toolbar">
+                            <button id="save-finding" class="job-action">Save finding</button>
+                            <button id="delete-finding" class="job-action">Delete finding</button>
+                        </div>
+                        <div id="finding-exports" class="findings-toolbar" aria-label="Finding exports"></div>
+                    </div>
+                </div>
+                <aside class="source-panel evidence-panel" aria-label="Finding evidence viewer">
+                    <h2>Inspect comparison evidence</h2>
+                    <p id="finding-viewer-status" role="status" aria-live="polite">Choose a cell citation.</p>
+                    <div id="finding-viewer-controls" hidden>
+                        <p id="finding-viewer-document"></p>
+                        <div class="viewer-tools">
+                            <button id="finding-viewer-prev" class="job-action" aria-label="Previous finding evidence page">Previous</button>
+                            <label>Page <input id="finding-viewer-page" type="number" min="1" value="1"></label>
+                            <span id="finding-viewer-pages"></span>
+                            <button id="finding-viewer-next" class="job-action" aria-label="Next finding evidence page">Next</button>
+                            <label>Zoom <select id="finding-viewer-zoom"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1" selected>100%</option><option value="1.5">150%</option><option value="2">200%</option><option value="3">300%</option></select></label>
+                            <a id="finding-viewer-original" class="job-action" target="_blank" rel="noopener">Open cited original PDF</a>
+                        </div>
+                        <div id="finding-viewer-thumbnails" class="viewer-thumbnails" aria-label="Finding page thumbnails"></div>
+                        <div id="finding-viewer-scroll" class="finding-page-scroll" tabindex="0" aria-label="Finding evidence page">
+                            <img id="finding-viewer-image" alt="Selected comparison evidence page">
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
         <!-- ========== DOCUMENTS PAGE ========== -->
         <section id="page-documents" class="page">
             <div class="page-header">
@@ -427,6 +483,7 @@
     </dialog>
     <script src="/static/evidence.js"></script>
     <script src="/static/workspace.js"></script>
+    <script src="/static/findings.js"></script>
     <script src="/static/app.js"></script>
 </body>
 

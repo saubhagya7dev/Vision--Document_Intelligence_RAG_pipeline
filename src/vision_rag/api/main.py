@@ -96,7 +96,13 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
     index_file = STATIC_DIR / "index.html"
     if index_file.exists():
         html = index_file.read_text(encoding="utf-8")
-        for asset in ("styles.css", "app.js", "workspace.js", "evidence.js"):
+        for asset in (
+            "styles.css",
+            "app.js",
+            "workspace.js",
+            "evidence.js",
+            "findings.js",
+        ):
             digest = hashlib.sha256((STATIC_DIR / asset).read_bytes()).hexdigest()[:12]
             html = html.replace(f'/static/{asset}"', f'/static/{asset}?v={digest}"')
         return HTMLResponse(html, headers={"Cache-Control": "no-store"})

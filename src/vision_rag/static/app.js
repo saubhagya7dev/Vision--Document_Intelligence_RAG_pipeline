@@ -10,7 +10,7 @@
     // CONFIG
     // =========================
     const API_BASE = '/api/v1';
-    const PAGES = ['dashboard', 'upload', 'chat', 'documents'];
+    const PAGES = ['dashboard', 'upload', 'chat', 'documents', 'analysis'];
 
     // Session state
     let queryCount = parseInt(sessionStorage.getItem('vr_query_count') || '0', 10);
@@ -210,6 +210,7 @@
         if (page === 'dashboard') initDashboard();
         if (page === 'documents') initDocuments();
         if (page === 'chat') initChat();
+        if (page === 'analysis') window.VisionFindings.open();
         if (page === 'upload') initUpload();
     }
 
@@ -859,6 +860,7 @@
         // Setup event listeners
         setupUpload();
         setupChat();
+        window.VisionFindings.setup();
         setupDeleteModal();
         setupDashboardControls();
         setupJobActions();

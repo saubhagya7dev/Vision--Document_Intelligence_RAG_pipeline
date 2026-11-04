@@ -1756,6 +1756,30 @@ h3 {
 #retrieval-index-status { color: var(--text-body); margin-bottom: 12px; }
 
 /* Persistent conversation and evidence workspace */
+.findings-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; }
+.comparison-form { display: grid; gap: 8px; margin: 20px 0; max-width: 720px; }
+.comparison-form input, .comparison-form select, .comparison-form textarea, #finding-title, #finding-list { color: var(--text-body); background: var(--bg-card); border: 1px solid var(--border-active); border-radius: 8px; padding: 9px; max-width: 100%; }
+.comparison-form small, .finding-verification { color: var(--text-muted); line-height: 1.6; }
+.findings-layout { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.findings-layout > div { min-width: 0; }
+.comparison-result { overflow-x: auto; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px; }
+.comparison-result h2 { font-size: 1.2rem; overflow-wrap: anywhere; }
+.comparison-result p { margin: 10px 0; }
+.comparison-result table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+.comparison-result caption { text-align: left; color: var(--text-muted); margin: 10px 0; }
+.comparison-result th, .comparison-result td { text-align: left; vertical-align: top; border: 1px solid var(--border-subtle); padding: 10px; min-width: 150px; max-width: 300px; overflow-wrap: anywhere; }
+.comparison-result td[data-status="missing"] { color: var(--text-muted); }
+.comparison-result td[data-status="conflicting"] { border-color: #b58943; }
+.comparison-result dt { color: var(--text-muted); font-size: .75rem; }
+.comparison-result dd { margin: 0 0 8px; }
+.finding-hash { font-size: .7rem; overflow-wrap: anywhere; color: var(--text-muted); }
+#finding-actions { display: grid; gap: 12px; padding: 16px 0; }
+#finding-status { min-height: 1.5em; color: var(--text-muted); margin-top: 12px; }
+.finding-page-scroll { overflow: auto; height: 480px; background: #252525; }
+#finding-viewer-image { display: block; max-width: none; height: auto; }
+#finding-viewer-page { width: 65px; }
+#finding-viewer-document { font-size: .8rem; overflow-wrap: anywhere; margin: 8px 0; }
+@media (max-width: 1000px) { .findings-layout { grid-template-columns: minmax(0, 1fr); } }
 .skip-link { position: fixed; top: -80px; left: 12px; z-index: 9999; background: var(--bg-card); color: var(--text-body); padding: 12px; }
 .skip-link:focus { top: 8px; }
 .live-library-summary { color: var(--text-muted); line-height: 1.8; padding: 32px 0; }
