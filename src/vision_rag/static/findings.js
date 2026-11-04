@@ -128,6 +128,7 @@
         viewer.reset(); status('Opening saved finding…');
         try {
             current = await api(`/findings/${encode(id)}`); render();
+            if (current.state === 'saved') el('finding-list').value = current.id;
             localStorage.setItem('vr_finding', id); status(`${current.state === 'saved' ? 'Saved finding' : 'Draft comparison'} ready. Inspect citations before marking reviewed.`);
         } catch (error) { current = null; render(); report(error); }
     }
