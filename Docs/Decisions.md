@@ -59,4 +59,29 @@
 - The final suite passes 107 tests. Browser verification used isolated fictional
   PDFs and fake inference; real CUDA/provider checks are separate saved reports.
 
-Stop after Phase 4 in this task. Preserve the original README and user research.
+## Phase 5 — 2026-11-04
+
+- Keep the existing framework-free frontend and local SQLite boundary. Persist
+  conversations, request scope, answers, viewer state and ordered turn events
+  rather than treating browser session storage as authoritative chat history.
+- Emit real provider chunk text as visibly provisional. Validate the final
+  structured response before publishing authoritative citations. Never interpret
+  question, filename, excerpt or answer HTML in the workspace.
+- Use replayable SSE and cooperative cancellation with a bounded local queue.
+  Stream disconnect cancels unfinished work; restart marks it interrupted.
+  Provider deadlines and GPU boundaries limit how promptly cancellation stops
+  underlying work; do not promise immediate compute or billing cancellation.
+- Reuse the existing library access lock for consistency with deletion and
+  immutable evidence. The verified profile remains one local process, not
+  concurrent shared deployment.
+- Preserve the last evidence version/page/zoom/scroll state per conversation.
+  Use a split pane on desktop and a stacked layout with visible navigation on
+  narrow screens. Keep source handlers free of inline filename JavaScript.
+- Remove invented dashboard analytics. Count document pages and completed saved
+  questions from live metadata; these are retained records, not lifetime usage.
+- Browser verification uses generated PDFs and simulated streamed inference;
+  real HTTP disconnect, cancellation/retry, viewer restore and narrow-screen
+  checks passed. Live Gemini streaming and remaining Phase 4 provider comparisons
+  are still externally unverified; no additional paid requests were made.
+
+Stop after Phase 5 in this task. Preserve the original README and user research.

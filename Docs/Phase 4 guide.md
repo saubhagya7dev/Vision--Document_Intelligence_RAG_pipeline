@@ -202,6 +202,6 @@ The final regression run passed **107 tests**, with two upstream deprecation
 warnings. Ruff lint/format, strict mypy (33 source files), compilation,
 JavaScript syntax and whitespace checks passed.
 
-Phase 5 persistent conversations, streaming and the broader evidence workspace
-have not been started. Broader held-out real-document quality, hardware scaling,
+Phase 5 conversations, streaming and the evidence workspace are now documented
+in the [Phase 5 guide](Phase%205%20guide.md). Broader held-out real-document quality, hardware scaling,
 retention policies and release/security gates remain later work.

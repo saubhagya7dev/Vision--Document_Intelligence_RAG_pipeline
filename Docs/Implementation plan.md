@@ -1,6 +1,6 @@
 # Vision implementation checklist
 
-Current scope: Phase 4 is implemented. Stop before Phase 5. The full prompted LLM routing comparison remains pending provider quota reset. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
+Current scope: Phase 5 is implemented. Stop before Phase 6. The full prompted LLM routing comparison remains pending provider quota reset. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
 
 ## Phase 1 — diagnosis and performance foundations
 
@@ -93,9 +93,29 @@ scoped pooled baseline's coverage on the toy corpus but are slower; learned
 routing remains experimental and disabled by default. Phase 4 implementation
 is finished; the external comparison above is not reported as completed.
 
+## Phase 5 — evidence workspace and conversations
+
+- [x] Persist workspace conversations, immutable turn scope, results and events.
+- [x] Reopen, rename and delete chats; clear conversation data with history/reset.
+- [x] Typed conversation/query contracts and ordered replayable SSE events.
+- [x] Stream provisional claim text; final validated citations are authoritative.
+- [x] Cooperative cancellation, disconnect recovery and restart interruption states.
+- [x] Split evidence pane with version-specific pages, thumbnails, zoom and position.
+- [x] Narrow-screen navigation, keyboard controls and visible progress/failures.
+- [x] Text-node rendering, safe citation actions and removal of inline source handlers.
+- [x] Replace invented dashboard bars with persisted page/job/answer metrics.
+- [x] Browser checks for reopen, citations, navigation, cancel/retry and disconnect.
+- [x] Regression tests and static checks; see Phase 5 guide for final results.
+- [ ] Live provider streaming validation after account quota availability.
+- [ ] Broad accessibility audit and real-provider performance measurements.
+
+See [Phase 5 guide](Phase%205%20guide.md). No Phase 6 analytical findings or
+exports were added. Routine verification uses isolated fictional documents and
+simulated inference; existing Phase 4 quality limits still apply.
+
 ## Later phases — not started
 
-5. Workspace: persistent conversations, evidence viewer, streaming, real progress/errors and accessibility. Exit: upload, ask, inspect, revisit and recover work end to end.
+
 6. Analysis: cited comparisons, deterministic numerical calculations, regions/version review, findings and exports. Exit: one complete reproducible multi-document workflow.
 7. Evaluation/release: held-out document tasks, quality and hardware comparisons, access controls, security, deployment/restore and accurate release documentation. Exit: measured release gates, no unsupported production claims.
 
