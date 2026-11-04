@@ -193,8 +193,9 @@
             finally { busy(false); }
         });
         el('delete-finding').addEventListener('click', async () => {
-            if (!current || working || !confirm('Delete this finding? Original documents remain in the library.')) return;
-            try { await api(`/findings/${encode(current.id)}`, 'DELETE'); current = null; localStorage.removeItem('vr_finding'); viewer.reset(); await list(); render(); status('Finding deleted.'); }
+            const id = current?.id || el('finding-list').value;
+            if (!id || working || !confirm('Delete this finding? Original documents remain in the library.')) return;
+            try { await api(`/findings/${encode(id)}`, 'DELETE'); current = null; localStorage.removeItem('vr_finding'); viewer.reset(); await list(); render(); status('Finding deleted.'); }
             catch (error) { report(error); }
         });
         window.addEventListener('online', () => { if (opened && !working) open(); });
