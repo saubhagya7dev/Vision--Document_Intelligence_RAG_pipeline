@@ -17,6 +17,8 @@ class ColPaliEmbeddingModel(BaseEmbeddingModel):
         device: str | None = "auto",
         precision: str = "auto",
         batch_size: int = 2,
+        revision: str | None = None,
+        base_revision: str | None = None,
     ) -> None:
         # Heavy dependencies are loaded only during explicit initialization.
         with stage("model_imports"):
@@ -28,10 +30,35 @@ class ColPaliEmbeddingModel(BaseEmbeddingModel):
         self.batch_size = batch_size
         self._lock = threading.Lock()
         with stage("model_loading", device=self.device, precision=str(dtype)):
-            self.model: Any = ColPali.from_pretrained(
-                model_name, torch_dtype=dtype, device_map=self.device
-            ).eval()
-            self.processor: Any = ColPaliProcessor.from_pretrained(model_name)
+            pinned = {"revision": revision} if revision else {}
+            if base_revision:
+                import json
+
+                from huggingface_hub import hf_hub_download
+
+                config_path = hf_hub_download(
+                    model_name, "adapter_config.json", revision=revision
+                )
+                with open(config_path, encoding="utf-8") as stream:
+                    base_name = json.load(stream)["base_model_name_or_path"]
+                self.model: Any = ColPali.from_pretrained(
+                    base_name,
+                    revision=base_revision,
+                    torch_dtype=dtype,
+                    device_map=self.device,
+                )
+                from pathlib import Path
+
+                adapter_path = hf_hub_download(
+                    model_name, "adapter_model.safetensors", revision=revision
+                )
+                self.model.load_adapter(str(Path(adapter_path).parent))
+                self.model.eval()
+            else:
+                self.model = ColPali.from_pretrained(
+                    model_name, torch_dtype=dtype, device_map=self.device, **pinned
+                ).eval()
+            self.processor: Any = ColPaliProcessor.from_pretrained(model_name, **pinned)
             if self.device == "cuda":
                 import torch
 
@@ -90,6 +117,41 @@ class ColPaliEmbeddingModel(BaseEmbeddingModel):
 
     def encode_queries(self, queries: list[str]) -> list[Any]:
         return self._encode(queries, False)
+
+    def encode_multivectors(self, items: list[Any], images: bool) -> list[Any]:
+        import torch
+
+        output = []
+        # Single-item bounds avoid padding and keep the laptop memory profile.
+        with self._lock, torch.inference_mode():
+            for item in items:
+                batch = embeddings = None
+                try:
+                    batch = (
+                        self.processor.process_images([item])
+                        if images
+                        else self.processor.process_queries([item])
+                    ).to(self.device)
+                    if not images and batch["input_ids"].shape[1] > 256:
+                        raise ValueError(
+                            "Question exceeds the visual encoder token limit"
+                        )
+                    embeddings = self.model(**batch)[0].float()
+                    mask = batch["attention_mask"][0].bool()
+                    if mask.shape[0] != embeddings.shape[0]:
+                        raise ValueError("Encoder attention mask shape mismatch")
+                    mask &= embeddings.norm(dim=-1) > 0
+                    tokens = embeddings[mask]
+                    if not len(tokens) or not torch.isfinite(tokens).all():
+                        raise ValueError("Invalid multivector output")
+                    output.append(tokens.cpu().tolist())
+                except torch.OutOfMemoryError:
+                    raise RuntimeError(
+                        "Visual page exceeds memory; select the CPU profile"
+                    ) from None
+                finally:
+                    del embeddings, batch
+        return output
 
     def close(self) -> None:
         import torch
