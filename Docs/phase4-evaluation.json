@@ -1,0 +1,7435 @@
+{
+  "hardware": {
+    "torch_version": "2.13.0+cu130",
+    "cuda_build": "13.0",
+    "cuda_available": true,
+    "mps_available": false,
+    "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+    "accelerator": {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "total_memory_bytes": 6438846464,
+      "free_memory_bytes": 5329911808,
+      "compute_capability": [
+        8,
+        9
+      ],
+      "bfloat16_supported": true,
+      "compiled_architectures": [
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_90",
+        "sm_100",
+        "sm_120"
+      ]
+    },
+    "recommended_device": "cuda",
+    "action": null
+  },
+  "model_profile": {
+    "text_model": "BAAI/bge-small-en-v1.5",
+    "text_revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "text_dimensions": 384,
+    "text_pooling": "cls-normalized-v1",
+    "visual_model": "vidore/colpali-v1.3",
+    "visual_revision": "b5c6dd62125326e6f0b540c1f7b36e901cdc0a11",
+    "visual_base_revision": "30ab955d073de4a91dc5a288e8c97226647e3e5a",
+    "visual_dimensions": 128,
+    "scoring": "unmasked-dot-maxsim-v1",
+    "dpi": 150,
+    "extractor": "native-layout-v1",
+    "chunk_limit": 1200,
+    "chunk_overlap": 120
+  },
+  "dpi": 150,
+  "dataset": {
+    "kind": "fictional synthetic",
+    "questions": 48,
+    "families": [
+      {
+        "split": "train",
+        "family": "orion"
+      },
+      {
+        "split": "train",
+        "family": "kepler"
+      },
+      {
+        "split": "train",
+        "family": "cedar"
+      },
+      {
+        "split": "train",
+        "family": "morrow"
+      },
+      {
+        "split": "test",
+        "family": "selene"
+      },
+      {
+        "split": "test",
+        "family": "harbor"
+      },
+      {
+        "split": "test",
+        "family": "delta"
+      },
+      {
+        "split": "test",
+        "family": "tundra"
+      }
+    ],
+    "ocr": "disabled consistently; scan retrieval requires visual evidence",
+    "limits": "small generated corpus, not real-world held-out answer quality"
+  },
+  "provider": {
+    "status": "unavailable_or_partial",
+    "answer_policy": "borda",
+    "model": "gemini-3.6-flash",
+    "dollar_cost": null,
+    "usage": [
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 5,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 65,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 65
+          }
+        ],
+        "thoughts_token_count": 260,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 330,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 70,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 70
+          }
+        ],
+        "thoughts_token_count": 224,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 305,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 68,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 68
+          }
+        ],
+        "thoughts_token_count": 254,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 333,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 67,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 67
+          }
+        ],
+        "thoughts_token_count": 450,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 528,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 68,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 68
+          }
+        ],
+        "thoughts_token_count": 231,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 310,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 5,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 64,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 64
+          }
+        ],
+        "thoughts_token_count": 269,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 338,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 51,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 3610,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 3192
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 418
+          }
+        ],
+        "thoughts_token_count": 306,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 3967,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 38,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 1127,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 63
+          },
+          {
+            "modality": "IMAGE",
+            "token_count": 1064
+          }
+        ],
+        "thoughts_token_count": 249,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 1414,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 80,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 3615,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 3192
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 423
+          }
+        ],
+        "thoughts_token_count": 212,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 3907,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 36,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 1130,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 66
+          },
+          {
+            "modality": "IMAGE",
+            "token_count": 1064
+          }
+        ],
+        "thoughts_token_count": 339,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 1505,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 45,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 3613,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 3192
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 421
+          }
+        ],
+        "thoughts_token_count": 448,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 4106,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 42,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 1126,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 1064
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 62
+          }
+        ],
+        "thoughts_token_count": 148,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 1316,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 80,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 3588,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 3192
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 396
+          }
+        ],
+        "thoughts_token_count": 282,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 3950,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 85,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 3622,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 430
+          },
+          {
+            "modality": "IMAGE",
+            "token_count": 3192
+          }
+        ],
+        "thoughts_token_count": 833,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 4540,
+        "traffic_type": null
+      },
+      {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 18,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 3609,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 3192
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 417
+          }
+        ],
+        "thoughts_token_count": 193,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 3820,
+        "traffic_type": null
+      }
+    ],
+    "router": [
+      {
+        "id": "selene-0",
+        "tier": "text",
+        "seconds": 3.2176434999564663
+      },
+      {
+        "id": "selene-1",
+        "tier": "text",
+        "seconds": 4.2607176000019535
+      },
+      {
+        "id": "selene-2",
+        "tier": "visual",
+        "seconds": 3.7222750999499112
+      },
+      {
+        "id": "selene-3",
+        "tier": "visual",
+        "seconds": 5.480398800049443
+      },
+      {
+        "id": "selene-4",
+        "tier": "text",
+        "seconds": 2.640747099998407
+      },
+      {
+        "id": "selene-5",
+        "tier": "text",
+        "seconds": 3.4428770000231452
+      }
+    ],
+    "answers": [
+      {
+        "id": "selene-0",
+        "expected": "19",
+        "expected_value_check": true,
+        "result": {
+          "answer": "The approved operating limit for Selene equipment identifier PV86 is 19 volts. [E8605700c19db5dab]",
+          "sources": [
+            {
+              "evidence_id": "E8605700c19db5dab",
+              "source": "selene-report.pdf",
+              "document_id": "873a727d-7a83-4b1f-a042-b3178060eea4",
+              "version_id": "743ba334-a2e6-4df8-bb45-f9d2652b27f6",
+              "page": 1,
+              "build_id": "b9c42e7f-ebc9-5eb8-b852-4cbdb0f0a2b7",
+              "score": 2.0,
+              "score_kind": "borda",
+              "channels": [
+                "text"
+              ]
+            }
+          ],
+          "claims": [
+            {
+              "text": "The approved operating limit for Selene equipment identifier PV86 is 19 volts.",
+              "citations": [
+                "E8605700c19db5dab"
+              ]
+            }
+          ],
+          "grounding_status": "supported",
+          "original_query": "What is the approved operating limit of selene PV86?",
+          "retrieval_query": "What is the approved operating limit of selene PV86?",
+          "retrieval": {
+            "index_id": "12adcae8-c427-4f75-afe6-3b129004e237",
+            "profile": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+            "tier": "hybrid",
+            "fusion": "borda",
+            "missing_documents": [],
+            "index_stale": false
+          },
+          "provider_calls": 1,
+          "support_validation": "reference IDs checked; semantic support unverified"
+        }
+      },
+      {
+        "id": "selene-1",
+        "expected": "18",
+        "expected_value_check": true,
+        "result": {
+          "answer": "In the Selene parts table, item PV86 has a replacement interval of 18 months. [Ec4886dc4b8d45afb]",
+          "sources": [
+            {
+              "evidence_id": "Ec4886dc4b8d45afb",
+              "source": "selene-report.pdf",
+              "document_id": "873a727d-7a83-4b1f-a042-b3178060eea4",
+              "version_id": "743ba334-a2e6-4df8-bb45-f9d2652b27f6",
+              "page": 2,
+              "build_id": "b9c42e7f-ebc9-5eb8-b852-4cbdb0f0a2b7",
+              "score": 2.0,
+              "score_kind": "borda",
+              "channels": [
+                "text",
+                "visual"
+              ]
+            }
+          ],
+          "claims": [
+            {
+              "text": "In the Selene parts table, item PV86 has a replacement interval of 18 months.",
+              "citations": [
+                "Ec4886dc4b8d45afb"
+              ]
+            }
+          ],
+          "grounding_status": "supported",
+          "original_query": "For item PV86, what is the replacement interval in the selene parts table?",
+          "retrieval_query": "For item PV86, what is the replacement interval in the selene parts table?",
+          "retrieval": {
+            "index_id": "12adcae8-c427-4f75-afe6-3b129004e237",
+            "profile": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+            "tier": "hybrid",
+            "fusion": "borda",
+            "missing_documents": [],
+            "index_stale": false
+          },
+          "provider_calls": 1,
+          "support_validation": "reference IDs checked; semantic support unverified"
+        }
+      },
+      {
+        "id": "selene-2",
+        "expected": "blue",
+        "expected_value_check": true,
+        "result": {
+          "answer": "In the Selene comparison chart, the blue bar is taller than the red bar. [Ed26aa388e6255bf1]",
+          "sources": [
+            {
+              "evidence_id": "Ed26aa388e6255bf1",
+              "source": "selene-report.pdf",
+              "document_id": "873a727d-7a83-4b1f-a042-b3178060eea4",
+              "version_id": "743ba334-a2e6-4df8-bb45-f9d2652b27f6",
+              "page": 3,
+              "build_id": "b9c42e7f-ebc9-5eb8-b852-4cbdb0f0a2b7",
+              "score": 2.0,
+              "score_kind": "borda",
+              "channels": [
+                "text",
+                "visual"
+              ]
+            }
+          ],
+          "claims": [
+            {
+              "text": "In the Selene comparison chart, the blue bar is taller than the red bar.",
+              "citations": [
+                "Ed26aa388e6255bf1"
+              ]
+            }
+          ],
+          "grounding_status": "supported",
+          "original_query": "In the selene comparison chart, is the blue bar or red bar taller?",
+          "retrieval_query": "In the selene comparison chart, is the blue bar or red bar taller?",
+          "retrieval": {
+            "index_id": "12adcae8-c427-4f75-afe6-3b129004e237",
+            "profile": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+            "tier": "hybrid",
+            "fusion": "borda",
+            "missing_documents": [],
+            "index_stale": false
+          },
+          "provider_calls": 1,
+          "support_validation": "reference IDs checked; semantic support unverified"
+        }
+      },
+      {
+        "id": "selene-3",
+        "expected": "PV86ZX9",
+        "expected_value_check": true,
+        "result": {
+          "answer": "The registration code for equipment PV86 on the Selene scanned registration is PV86ZX9. [E0dcfa8fe60525975]",
+          "sources": [
+            {
+              "evidence_id": "E0dcfa8fe60525975",
+              "source": "selene-report.pdf",
+              "document_id": "873a727d-7a83-4b1f-a042-b3178060eea4",
+              "version_id": "743ba334-a2e6-4df8-bb45-f9d2652b27f6",
+              "page": 4,
+              "build_id": "b9c42e7f-ebc9-5eb8-b852-4cbdb0f0a2b7",
+              "score": 1.0,
+              "score_kind": "borda",
+              "channels": [
+                "visual"
+              ]
+            }
+          ],
+          "claims": [
+            {
+              "text": "The registration code for equipment PV86 on the Selene scanned registration is PV86ZX9.",
+              "citations": [
+                "E0dcfa8fe60525975"
+              ]
+            }
+          ],
+          "grounding_status": "supported",
+          "original_query": "Read the registration code for PV86 on the selene scanned registration.",
+          "retrieval_query": "Read the registration code for PV86 on the selene scanned registration.",
+          "retrieval": {
+            "index_id": "12adcae8-c427-4f75-afe6-3b129004e237",
+            "profile": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+            "tier": "hybrid",
+            "fusion": "borda",
+            "missing_documents": [],
+            "index_stale": false
+          },
+          "provider_calls": 1,
+          "support_validation": "reference IDs checked; semantic support unverified"
+        }
+      },
+      {
+        "id": "selene-4",
+        "expected": "19,21",
+        "expected_value_check": true,
+        "result": {
+          "answer": "In the Selene solar report, the approved operating limit is 19 volts. [E8605700c19db5dab]\n\nIn the Selene solar annex, the revised operating limit is 21 volts. [E71f142739c145972]",
+          "sources": [
+            {
+              "evidence_id": "E8605700c19db5dab",
+              "source": "selene-report.pdf",
+              "document_id": "873a727d-7a83-4b1f-a042-b3178060eea4",
+              "version_id": "743ba334-a2e6-4df8-bb45-f9d2652b27f6",
+              "page": 1,
+              "build_id": "b9c42e7f-ebc9-5eb8-b852-4cbdb0f0a2b7",
+              "score": 1.5,
+              "score_kind": "borda",
+              "channels": [
+                "text"
+              ]
+            },
+            {
+              "evidence_id": "E71f142739c145972",
+              "source": "selene-annex.pdf",
+              "document_id": "8704d5c3-db31-48f2-83b1-4418c33439f9",
+              "version_id": "8fc15bc4-01d0-4276-8155-505c38b76edf",
+              "page": 1,
+              "build_id": "1fe831a3-e6dc-515e-8c16-6eaded5efac8",
+              "score": 1.75,
+              "score_kind": "borda",
+              "channels": [
+                "text"
+              ]
+            }
+          ],
+          "claims": [
+            {
+              "text": "In the Selene solar report, the approved operating limit is 19 volts.",
+              "citations": [
+                "E8605700c19db5dab"
+              ]
+            },
+            {
+              "text": "In the Selene solar annex, the revised operating limit is 21 volts.",
+              "citations": [
+                "E71f142739c145972"
+              ]
+            }
+          ],
+          "grounding_status": "supported",
+          "original_query": "Compare the approved limit in selene report with its annex; cite both documents.",
+          "retrieval_query": "Compare the approved limit in selene report with its annex; cite both documents.",
+          "retrieval": {
+            "index_id": "12adcae8-c427-4f75-afe6-3b129004e237",
+            "profile": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+            "tier": "hybrid",
+            "fusion": "borda",
+            "missing_documents": [],
+            "index_stale": false
+          },
+          "provider_calls": 1,
+          "support_validation": "reference IDs checked; semantic support unverified"
+        }
+      },
+      {
+        "id": "selene-5",
+        "expected": "abstain",
+        "expected_value_check": true,
+        "result": {
+          "answer": "The available evidence is insufficient to answer this question reliably.",
+          "sources": [],
+          "claims": [],
+          "grounding_status": "insufficient",
+          "original_query": "What is the private passport number of the selene inspector?",
+          "retrieval_query": "What is the private passport number of the selene inspector?",
+          "retrieval": {
+            "index_id": "12adcae8-c427-4f75-afe6-3b129004e237",
+            "profile": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+            "tier": "rerank",
+            "fusion": "borda",
+            "missing_documents": [],
+            "index_stale": false
+          },
+          "provider_calls": 2,
+          "support_validation": "no factual answer published"
+        }
+      }
+    ],
+    "support_estimates": [
+      {
+        "id": "selene-0",
+        "same_model_judge": {
+          "supported": true,
+          "reason": "The image titled 'Selene solar report' references 'Equipment identifier PV86' and states 'The approved operating limit is 19 volts.'"
+        }
+      },
+      {
+        "id": "selene-1",
+        "same_model_judge": {
+          "supported": true,
+          "reason": "The text under the title 'Selene parts table' explicitly states 'Item PV86 has replacement interval 18 months.'"
+        }
+      },
+      {
+        "id": "selene-2",
+        "same_model_judge": {
+          "supported": true,
+          "reason": "The image shows a title 'Selene comparison chart' with two vertical bars, where the blue bar on the left is significantly taller than the red bar on the right."
+        }
+      }
+    ],
+    "error_type": "ClientError",
+    "code": 429,
+    "error_message": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://ai.google.dev/gemini-api/docs/rate-limits.\\nPlease retry in 9h25m42.294844037s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://ai.googl"
+  },
+  "samples": [
+    {
+      "id": "orion-0",
+      "split": "train",
+      "family": "orion",
+      "query": "What is the approved operating limit of orion AX17?",
+      "gold": [
+        [
+          "orion-report.pdf",
+          1
+        ]
+      ],
+      "expected": "73",
+      "documents": [
+        "orion-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.2278041000245139,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.5092329999897629,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              4
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.1896249000565149,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.15201570000499487,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.14012010005535558,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.06342580000637099,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.08366369997384027,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ],
+          [
+            "orion-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.048275700013618916,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "orion-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "orion-1",
+      "split": "train",
+      "family": "orion",
+      "query": "For item AX17, what is the replacement interval in the orion parts table?",
+      "gold": [
+        [
+          "orion-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "orion-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.07074229995487258,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14502439997158945,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              4
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.155064599995967,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.15094620001036674,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.14339619997190312,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.053640900005120784,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.050377999956253916,
+        "pages": [
+          [
+            "orion-report.pdf",
+            2
+          ],
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04777149995788932,
+        "pages": [
+          [
+            "orion-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "orion-2",
+      "split": "train",
+      "family": "orion",
+      "query": "In the orion comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "orion-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "orion-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.07755380001617596,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              3
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15579489996889606,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              3
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.19300899998052046,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              3
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18790349998744205,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              3
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.19014869997045025,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.06962199998088181,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.044699399964883924,
+        "pages": [
+          [
+            "orion-report.pdf",
+            3
+          ],
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04602000000886619,
+        "pages": [
+          [
+            "orion-report.pdf",
+            3
+          ],
+          [
+            "tundra-report.pdf",
+            3
+          ],
+          [
+            "kepler-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "orion-3",
+      "split": "train",
+      "family": "orion",
+      "query": "Read the registration code for AX17 on the orion scanned registration.",
+      "gold": [
+        [
+          "orion-report.pdf",
+          4
+        ]
+      ],
+      "expected": "AX17ZX9",
+      "documents": [
+        "orion-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1036415999988094,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14844250003807247,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              4
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.20540790003724396,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18790620000800118,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.17457779997494072,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.0615504999877885,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.05152689997339621,
+        "pages": [
+          [
+            "orion-report.pdf",
+            4
+          ],
+          [
+            "orion-report.pdf",
+            2
+          ],
+          [
+            "orion-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.047141099988948554,
+        "pages": [
+          [
+            "orion-report.pdf",
+            4
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "orion-4",
+      "split": "train",
+      "family": "orion",
+      "query": "Compare the approved limit in orion report with its annex; cite both documents.",
+      "gold": [
+        [
+          "orion-report.pdf",
+          1
+        ],
+        [
+          "orion-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "73,75",
+      "documents": [
+        "orion-report.pdf",
+        "orion-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.08835430000908673,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-annex.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1661342000006698,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              4
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": [
+            "114db2f9-1959-47ba-97c4-a1ae05c676f4"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.20847389998380095,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-annex.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.190441099985037,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-annex.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.17789270001230761,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.06530960003146902,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.05172869999660179,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "orion-annex.pdf",
+            1
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04673409997485578,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "orion-5",
+      "split": "train",
+      "family": "orion",
+      "query": "What is the private passport number of the orion inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "orion-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1022703000344336,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15746229997603223,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              4
+            ],
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.17856879997998476,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.16557239997200668,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "orion-report.pdf",
+              2
+            ],
+            [
+              "orion-report.pdf",
+              1
+            ],
+            [
+              "orion-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.1812336000148207,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.07487579999724403,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.062278600002173334,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ],
+          [
+            "orion-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04691530001582578,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "orion-annex.pdf",
+            1
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "kepler-0",
+      "split": "train",
+      "family": "kepler",
+      "query": "What is the approved operating limit of kepler FX52?",
+      "gold": [
+        [
+          "kepler-report.pdf",
+          1
+        ]
+      ],
+      "expected": "240",
+      "documents": [
+        "kepler-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.14706950000254437,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14134470000863075,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              4
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.18636809999588877,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18607389996759593,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.174708999984432,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.072323200001847,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04798450000816956,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            1
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04549450002377853,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            1
+          ],
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "kepler-1",
+      "split": "train",
+      "family": "kepler",
+      "query": "For item FX52, what is the replacement interval in the kepler parts table?",
+      "gold": [
+        [
+          "kepler-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "kepler-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.10990410001249984,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14679160004016012,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              4
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.1904103000415489,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.165668600006029,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.18144329998176545,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.062253099982626736,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04256640002131462,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.05789420002838597,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            2
+          ],
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "kepler-2",
+      "split": "train",
+      "family": "kepler",
+      "query": "In the kepler comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "kepler-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "kepler-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1023024000460282,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              3
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15404499997384846,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              3
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.2052842999692075,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              3
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18998040002770722,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              3
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.19732570002088323,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.06345790001796558,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.05178459995659068,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            3
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04845870001008734,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            3
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ],
+          [
+            "orion-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "kepler-3",
+      "split": "train",
+      "family": "kepler",
+      "query": "Read the registration code for FX52 on the kepler scanned registration.",
+      "gold": [
+        [
+          "kepler-report.pdf",
+          4
+        ]
+      ],
+      "expected": "FX52ZX9",
+      "documents": [
+        "kepler-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.09528349997708574,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14589509996585548,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              4
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.16741150000598282,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.16852139995899051,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.17877749999752268,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07121319998987019,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04771800001617521,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04547810001531616,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "morrow-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "kepler-4",
+      "split": "train",
+      "family": "kepler",
+      "query": "Compare the approved limit in kepler report with its annex; cite both documents.",
+      "gold": [
+        [
+          "kepler-report.pdf",
+          1
+        ],
+        [
+          "kepler-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "240,242",
+      "documents": [
+        "kepler-report.pdf",
+        "kepler-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11444340000161901,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-annex.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1390780999790877,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              4
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": [
+            "467212a6-12c4-4599-b87f-19f401576a4b"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.2369747000047937,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-annex.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18792900000698864,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-annex.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.19060249999165535,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.06378289998974651,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.044678699981886894,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            1
+          ],
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.046117199992295355,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            1
+          ],
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "morrow-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "kepler-5",
+      "split": "train",
+      "family": "kepler",
+      "query": "What is the private passport number of the kepler inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "kepler-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.09370660001877695,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14413749997038394,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              4
+            ],
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.21857720002299175,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.27801569999428466,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "kepler-report.pdf",
+              2
+            ],
+            [
+              "kepler-report.pdf",
+              1
+            ],
+            [
+              "kepler-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.1960837000515312,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.07643040001858026,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.0415814999723807,
+        "pages": [
+          [
+            "kepler-report.pdf",
+            1
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04184530000202358,
+        "pages": [
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "kepler-report.pdf",
+            1
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "cedar-0",
+      "split": "train",
+      "family": "cedar",
+      "query": "What is the approved operating limit of cedar LT29?",
+      "gold": [
+        [
+          "cedar-report.pdf",
+          1
+        ]
+      ],
+      "expected": "42",
+      "documents": [
+        "cedar-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1335454999934882,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15633260004688054,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              4
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.20323799998732284,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.226674199977424,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.17077949998201802,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08095650002360344,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.0518210000009276,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            1
+          ],
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04678480001166463,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ],
+          [
+            "cedar-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "cedar-1",
+      "split": "train",
+      "family": "cedar",
+      "query": "For item LT29, what is the replacement interval in the cedar parts table?",
+      "gold": [
+        [
+          "cedar-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "cedar-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.14974359999177977,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15885680000064895,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              4
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.19195890001719818,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18279270001221448,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.18889369996031746,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08493449998786673,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04903260001447052,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            2
+          ],
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.0464034000178799,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            2
+          ],
+          [
+            "harbor-report.pdf",
+            2
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "cedar-2",
+      "split": "train",
+      "family": "cedar",
+      "query": "In the cedar comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "cedar-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "cedar-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11157000000821427,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              3
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15986710001016036,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              3
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22133980004582554,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              3
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.1966149000218138,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              3
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.19090909999795258,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08074859995394945,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.052255299990065396,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            3
+          ],
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04229969996958971,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            3
+          ],
+          [
+            "tundra-report.pdf",
+            3
+          ],
+          [
+            "harbor-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "cedar-3",
+      "split": "train",
+      "family": "cedar",
+      "query": "Read the registration code for LT29 on the cedar scanned registration.",
+      "gold": [
+        [
+          "cedar-report.pdf",
+          4
+        ]
+      ],
+      "expected": "LT29ZX9",
+      "documents": [
+        "cedar-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.13527289999183267,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14306119998218492,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              4
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.2018038000096567,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.17304369999328628,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.18561580003006384,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07357339997543022,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04274570004781708,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.0553022000240162,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ],
+          [
+            "tundra-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "cedar-4",
+      "split": "train",
+      "family": "cedar",
+      "query": "Compare the approved limit in cedar report with its annex; cite both documents.",
+      "gold": [
+        [
+          "cedar-report.pdf",
+          1
+        ],
+        [
+          "cedar-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "42,44",
+      "documents": [
+        "cedar-report.pdf",
+        "cedar-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11330589995486662,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-annex.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1430378999793902,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              4
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": [
+            "692d5852-4faf-48d9-87d6-31a4c524e732"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.19510960002662614,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-annex.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.1671471000299789,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-annex.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.17398860002867877,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07247860002098605,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.0509508999530226,
+        "pages": [
+          [
+            "cedar-annex.pdf",
+            1
+          ],
+          [
+            "cedar-report.pdf",
+            1
+          ],
+          [
+            "cedar-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.0439261999563314,
+        "pages": [
+          [
+            "delta-annex.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ],
+          [
+            "harbor-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "cedar-5",
+      "split": "train",
+      "family": "cedar",
+      "query": "What is the private passport number of the cedar inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "cedar-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.10347459994954988,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14405129995429888,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              4
+            ],
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.17184699996141717,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.18625490000704303,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "cedar-report.pdf",
+              2
+            ],
+            [
+              "cedar-report.pdf",
+              1
+            ],
+            [
+              "cedar-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.1965399999753572,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.08600140002090484,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.046859599999152124,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            1
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.043651700019836426,
+        "pages": [
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "cedar-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "morrow-0",
+      "split": "train",
+      "family": "morrow",
+      "query": "What is the approved operating limit of morrow VX31?",
+      "gold": [
+        [
+          "morrow-report.pdf",
+          1
+        ]
+      ],
+      "expected": "15",
+      "documents": [
+        "morrow-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.09625969995977357,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15864109998801723,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              4
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.17272090003825724,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.1894857999868691,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.18406930001219735,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07396489998791367,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.044820799957960844,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            2
+          ],
+          [
+            "morrow-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.044247499958146363,
+        "pages": [
+          [
+            "orion-report.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "morrow-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "morrow-1",
+      "split": "train",
+      "family": "morrow",
+      "query": "For item VX31, what is the replacement interval in the morrow parts table?",
+      "gold": [
+        [
+          "morrow-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "morrow-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11832939996384084,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.13676190003752708,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              4
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.1952082000207156,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.25256350002018735,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.21823290002066642,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.06709969998337328,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04248229996301234,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            2
+          ],
+          [
+            "morrow-report.pdf",
+            4
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04396049998467788,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            2
+          ],
+          [
+            "orion-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "morrow-2",
+      "split": "train",
+      "family": "morrow",
+      "query": "In the morrow comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "morrow-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "morrow-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1144518000073731,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              3
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1541706999996677,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              3
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22188009996898472,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              3
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.21372479997808114,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              3
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.21010249998653308,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08136269997339696,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.043206000002101064,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            3
+          ],
+          [
+            "morrow-report.pdf",
+            4
+          ],
+          [
+            "morrow-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04276659997412935,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            3
+          ],
+          [
+            "orion-report.pdf",
+            3
+          ],
+          [
+            "tundra-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "morrow-3",
+      "split": "train",
+      "family": "morrow",
+      "query": "Read the registration code for VX31 on the morrow scanned registration.",
+      "gold": [
+        [
+          "morrow-report.pdf",
+          4
+        ]
+      ],
+      "expected": "VX31ZX9",
+      "documents": [
+        "morrow-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.12541560002136976,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.20266429998446256,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              4
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22375889995601028,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.22044939995976165,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.2425115000223741,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.0803540000342764,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04515750001883134,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            4
+          ],
+          [
+            "morrow-report.pdf",
+            2
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04841170000145212,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "morrow-4",
+      "split": "train",
+      "family": "morrow",
+      "query": "Compare the approved limit in morrow report with its annex; cite both documents.",
+      "gold": [
+        [
+          "morrow-report.pdf",
+          1
+        ],
+        [
+          "morrow-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "15,17",
+      "documents": [
+        "morrow-report.pdf",
+        "morrow-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.09581810003146529,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-annex.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.16686580004170537,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              4
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": [
+            "14d736f4-a0d2-433d-8642-01ad7d30b7b6"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.23524050001287833,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-annex.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.20132809999631718,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-annex.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.20151959999930114,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08662170002935454,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04651029995875433,
+        "pages": [
+          [
+            "morrow-annex.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04359009995823726,
+        "pages": [
+          [
+            "morrow-annex.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "delta-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "morrow-5",
+      "split": "train",
+      "family": "morrow",
+      "query": "What is the private passport number of the morrow inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "morrow-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.12023559998488054,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15751200000522658,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              4
+            ],
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.2509587000240572,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.24122189998161048,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "morrow-report.pdf",
+              2
+            ],
+            [
+              "morrow-report.pdf",
+              1
+            ],
+            [
+              "morrow-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.208182200032752,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.09032409999053925,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04508789995452389,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            4
+          ],
+          [
+            "morrow-report.pdf",
+            1
+          ],
+          [
+            "morrow-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.047770600009243935,
+        "pages": [
+          [
+            "morrow-report.pdf",
+            4
+          ],
+          [
+            "orion-annex.pdf",
+            1
+          ],
+          [
+            "morrow-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "selene-0",
+      "split": "test",
+      "family": "selene",
+      "query": "What is the approved operating limit of selene PV86?",
+      "gold": [
+        [
+          "selene-report.pdf",
+          1
+        ]
+      ],
+      "expected": "19",
+      "documents": [
+        "selene-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11058919999049976,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1861979000386782,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              4
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22409690002677962,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.22804509999696165,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.24908480001613498,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08961339999223128,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04996610002126545,
+        "pages": [
+          [
+            "selene-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.0497610000311397,
+        "pages": [
+          [
+            "selene-report.pdf",
+            1
+          ],
+          [
+            "selene-annex.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "selene-1",
+      "split": "test",
+      "family": "selene",
+      "query": "For item PV86, what is the replacement interval in the selene parts table?",
+      "gold": [
+        [
+          "selene-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "selene-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.12089259998174384,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.16255390003789216,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              4
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22215270000742748,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.26045339996926486,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.24116869998397306,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.0749035999760963,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04215789999580011,
+        "pages": [
+          [
+            "selene-report.pdf",
+            2
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04202160000568256,
+        "pages": [
+          [
+            "selene-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ],
+          [
+            "delta-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "selene-2",
+      "split": "test",
+      "family": "selene",
+      "query": "In the selene comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "selene-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "selene-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.13017299998318776,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              3
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.22018319997005165,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              3
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.2486951999599114,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              3
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.2408280000090599,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              3
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.23421110003255308,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.0820897999801673,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04975659999763593,
+        "pages": [
+          [
+            "selene-report.pdf",
+            3
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.05460199998924509,
+        "pages": [
+          [
+            "selene-report.pdf",
+            3
+          ],
+          [
+            "kepler-report.pdf",
+            3
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "selene-3",
+      "split": "test",
+      "family": "selene",
+      "query": "Read the registration code for PV86 on the selene scanned registration.",
+      "gold": [
+        [
+          "selene-report.pdf",
+          4
+        ]
+      ],
+      "expected": "PV86ZX9",
+      "documents": [
+        "selene-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11706899997079745,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.19992579997051507,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              4
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22235940000973642,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.23676790000172332,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.24543570005334914,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08875639998586848,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.047822499996982515,
+        "pages": [
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.0511139000300318,
+        "pages": [
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ],
+          [
+            "morrow-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "selene-4",
+      "split": "test",
+      "family": "selene",
+      "query": "Compare the approved limit in selene report with its annex; cite both documents.",
+      "gold": [
+        [
+          "selene-report.pdf",
+          1
+        ],
+        [
+          "selene-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "19,21",
+      "documents": [
+        "selene-report.pdf",
+        "selene-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.13046839996241033,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-annex.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.18359369999961928,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              4
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": [
+            "8704d5c3-db31-48f2-83b1-4418c33439f9"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.23743179999291897,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-annex.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.22975309996400028,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-annex.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.2357697999686934,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.0901451000245288,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04775979998521507,
+        "pages": [
+          [
+            "selene-annex.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.041847300017252564,
+        "pages": [
+          [
+            "selene-annex.pdf",
+            1
+          ],
+          [
+            "delta-annex.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "selene-5",
+      "split": "test",
+      "family": "selene",
+      "query": "What is the private passport number of the selene inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "selene-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11826739995740354,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.17329299997072667,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              4
+            ],
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22961939999368042,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.2573217999888584,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "selene-report.pdf",
+              2
+            ],
+            [
+              "selene-report.pdf",
+              1
+            ],
+            [
+              "selene-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.2402270000311546,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.09098830004222691,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04567139997379854,
+        "pages": [
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04737159999785945,
+        "pages": [
+          [
+            "selene-annex.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "harbor-0",
+      "split": "test",
+      "family": "harbor",
+      "query": "What is the approved operating limit of harbor RA64?",
+      "gold": [
+        [
+          "harbor-report.pdf",
+          1
+        ]
+      ],
+      "expected": "9",
+      "documents": [
+        "harbor-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.13185589999193326,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.17914289998589084,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              4
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.21993690001545474,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.23899589997017756,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.23048080003354698,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07646870001917705,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04294859996298328,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-report.pdf",
+            2
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04452329996274784,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-annex.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "harbor-1",
+      "split": "test",
+      "family": "harbor",
+      "query": "For item RA64, what is the replacement interval in the harbor parts table?",
+      "gold": [
+        [
+          "harbor-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "harbor-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.12633749999804422,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.2864558000001125,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              4
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.24520240002311766,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.2039191999938339,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.22630390000995249,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07770000002346933,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04847510001854971,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            2
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ],
+          [
+            "harbor-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04697249998571351,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            2
+          ],
+          [
+            "orion-report.pdf",
+            2
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "harbor-2",
+      "split": "test",
+      "family": "harbor",
+      "query": "In the harbor comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "harbor-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "harbor-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11085779999848455,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              3
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.18613739998545498,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              3
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22592990001430735,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              3
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.24304039997514337,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              3
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.26498640002682805,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.1414068999583833,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.046779500029515475,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            3
+          ],
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.05381469998974353,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            3
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ],
+          [
+            "morrow-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "harbor-3",
+      "split": "test",
+      "family": "harbor",
+      "query": "Read the registration code for RA64 on the harbor scanned registration.",
+      "gold": [
+        [
+          "harbor-report.pdf",
+          4
+        ]
+      ],
+      "expected": "RA64ZX9",
+      "documents": [
+        "harbor-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.24030110001331195,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.26247740001417696,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              4
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.26622520003002137,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.22216650005429983,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.21408000000519678,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.09192440001061186,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04507150000426918,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            4
+          ],
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.043699299974832684,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            4
+          ],
+          [
+            "orion-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "harbor-4",
+      "split": "test",
+      "family": "harbor",
+      "query": "Compare the approved limit in harbor report with its annex; cite both documents.",
+      "gold": [
+        [
+          "harbor-report.pdf",
+          1
+        ],
+        [
+          "harbor-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "9,11",
+      "documents": [
+        "harbor-report.pdf",
+        "harbor-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1349783000187017,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-annex.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15804120001848787,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              4
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": [
+            "72a31958-a732-4747-a34a-8f273c6f02e6"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.22011279995786026,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-annex.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.2163670000154525,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-annex.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.20650729996850714,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.09262630000011995,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04356319998623803,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-annex.pdf",
+            1
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.040944699954707175,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-annex.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "harbor-5",
+      "split": "test",
+      "family": "harbor",
+      "query": "What is the private passport number of the harbor inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "harbor-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.17317170003661886,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15693900000769645,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              4
+            ],
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.20226560003357008,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.204887600033544,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "harbor-report.pdf",
+              2
+            ],
+            [
+              "harbor-report.pdf",
+              1
+            ],
+            [
+              "harbor-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.21765489998506382,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.08270560001255944,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04619480000110343,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ],
+          [
+            "harbor-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.05134840001119301,
+        "pages": [
+          [
+            "harbor-report.pdf",
+            1
+          ],
+          [
+            "harbor-annex.pdf",
+            1
+          ],
+          [
+            "harbor-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "delta-0",
+      "split": "test",
+      "family": "delta",
+      "query": "What is the approved operating limit of delta WL58?",
+      "gold": [
+        [
+          "delta-report.pdf",
+          1
+        ]
+      ],
+      "expected": "27",
+      "documents": [
+        "delta-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.10720410000067204,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14811930002178997,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              4
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.18812189996242523,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.1946957999607548,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.18973410001490265,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08190340001601726,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04781599994748831,
+        "pages": [
+          [
+            "delta-report.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            2
+          ],
+          [
+            "delta-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04514190001646057,
+        "pages": [
+          [
+            "delta-annex.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "delta-1",
+      "split": "test",
+      "family": "delta",
+      "query": "For item WL58, what is the replacement interval in the delta parts table?",
+      "gold": [
+        [
+          "delta-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "delta-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1184343000059016,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15738899999996647,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              4
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.19757130002835765,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.21386219997657463,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.218141499964986,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.09232009999686852,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04902819998096675,
+        "pages": [
+          [
+            "delta-report.pdf",
+            2
+          ],
+          [
+            "delta-report.pdf",
+            4
+          ],
+          [
+            "delta-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04992989997845143,
+        "pages": [
+          [
+            "delta-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "delta-2",
+      "split": "test",
+      "family": "delta",
+      "query": "In the delta comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "delta-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "delta-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.11399619997246191,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              3
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.16416439996100962,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              3
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.23274120001588017,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              3
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.19539100001566112,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              3
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.19770659995265305,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.0863783999811858,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04783550003776327,
+        "pages": [
+          [
+            "delta-report.pdf",
+            3
+          ],
+          [
+            "delta-report.pdf",
+            4
+          ],
+          [
+            "delta-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04433679999783635,
+        "pages": [
+          [
+            "delta-report.pdf",
+            3
+          ],
+          [
+            "tundra-report.pdf",
+            3
+          ],
+          [
+            "cedar-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "delta-3",
+      "split": "test",
+      "family": "delta",
+      "query": "Read the registration code for WL58 on the delta scanned registration.",
+      "gold": [
+        [
+          "delta-report.pdf",
+          4
+        ]
+      ],
+      "expected": "WL58ZX9",
+      "documents": [
+        "delta-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.131197799986694,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.14923490001820028,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              4
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.2265981999807991,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.23042669997084886,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.2598030000226572,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.09067180001875386,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.046669899951666594,
+        "pages": [
+          [
+            "delta-report.pdf",
+            4
+          ],
+          [
+            "delta-report.pdf",
+            2
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04488220001803711,
+        "pages": [
+          [
+            "delta-report.pdf",
+            4
+          ],
+          [
+            "selene-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "delta-4",
+      "split": "test",
+      "family": "delta",
+      "query": "Compare the approved limit in delta report with its annex; cite both documents.",
+      "gold": [
+        [
+          "delta-report.pdf",
+          1
+        ],
+        [
+          "delta-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "27,29",
+      "documents": [
+        "delta-report.pdf",
+        "delta-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.14422169997124,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-annex.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15070439997361973,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              4
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": [
+            "5b6a7c1b-a0cd-4765-b07f-df72bed3a884"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.20831690001068637,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-annex.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.21511800005100667,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-annex.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.21530570002505556,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07849679997889325,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04615919996285811,
+        "pages": [
+          [
+            "delta-annex.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.043522699968889356,
+        "pages": [
+          [
+            "delta-annex.pdf",
+            1
+          ],
+          [
+            "morrow-annex.pdf",
+            1
+          ],
+          [
+            "selene-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "delta-5",
+      "split": "test",
+      "family": "delta",
+      "query": "What is the private passport number of the delta inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "delta-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.10736210003960878,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1527755000279285,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              4
+            ],
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.19702830002643168,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.2097827999969013,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "delta-report.pdf",
+              2
+            ],
+            [
+              "delta-report.pdf",
+              1
+            ],
+            [
+              "delta-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.20670779998181388,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.06594639999093488,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.0448447999660857,
+        "pages": [
+          [
+            "delta-report.pdf",
+            4
+          ],
+          [
+            "delta-report.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04412819998105988,
+        "pages": [
+          [
+            "kepler-annex.pdf",
+            1
+          ],
+          [
+            "delta-report.pdf",
+            4
+          ],
+          [
+            "selene-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "tundra-0",
+      "split": "test",
+      "family": "tundra",
+      "query": "What is the approved operating limit of tundra TS92?",
+      "gold": [
+        [
+          "tundra-report.pdf",
+          1
+        ]
+      ],
+      "expected": "64",
+      "documents": [
+        "tundra-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.14863729994976893,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1475928000290878,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              4
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.18610130000161007,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.17971539997961372,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.17770339996786788,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.07639139995444566,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04218889999901876,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ],
+          [
+            "tundra-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04468570003518835,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            1
+          ],
+          [
+            "tundra-annex.pdf",
+            1
+          ],
+          [
+            "selene-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "tundra-1",
+      "split": "test",
+      "family": "tundra",
+      "query": "For item TS92, what is the replacement interval in the tundra parts table?",
+      "gold": [
+        [
+          "tundra-report.pdf",
+          2
+        ]
+      ],
+      "expected": "18",
+      "documents": [
+        "tundra-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.1005521000479348,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1585905000101775,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              4
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.2324494999484159,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.22103990003233775,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.1959507999708876,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08384370000567287,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04137559997616336,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            2
+          ],
+          [
+            "tundra-report.pdf",
+            4
+          ],
+          [
+            "tundra-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.040482699987478554,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            2
+          ],
+          [
+            "cedar-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "tundra-2",
+      "split": "test",
+      "family": "tundra",
+      "query": "In the tundra comparison chart, is the blue bar or red bar taller?",
+      "gold": [
+        [
+          "tundra-report.pdf",
+          3
+        ]
+      ],
+      "expected": "blue",
+      "documents": [
+        "tundra-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.17480489995796233,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              3
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.16654549998929724,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              3
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              4
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.18148770002881065,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              3
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.19246599997859448,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              3
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.2021631000097841,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08742369996616617,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.042193800036329776,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            3
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ],
+          [
+            "tundra-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.044014699989929795,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            3
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ],
+          [
+            "kepler-report.pdf",
+            3
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "tundra-3",
+      "split": "test",
+      "family": "tundra",
+      "query": "Read the registration code for TS92 on the tundra scanned registration.",
+      "gold": [
+        [
+          "tundra-report.pdf",
+          4
+        ]
+      ],
+      "expected": "TS92ZX9",
+      "documents": [
+        "tundra-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.12140510004246607,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.1625495000043884,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              4
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.21182840003166348,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.2076893999474123,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.21798980003222823,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.09454700001515448,
+        "gold_coverage": true
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04101869999431074,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            4
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ],
+          [
+            "tundra-report.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.04362190002575517,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            4
+          ],
+          [
+            "cedar-report.pdf",
+            4
+          ],
+          [
+            "kepler-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": true
+      }
+    },
+    {
+      "id": "tundra-4",
+      "split": "test",
+      "family": "tundra",
+      "query": "Compare the approved limit in tundra report with its annex; cite both documents.",
+      "gold": [
+        [
+          "tundra-report.pdf",
+          1
+        ],
+        [
+          "tundra-annex.pdf",
+          1
+        ]
+      ],
+      "expected": "64,66",
+      "documents": [
+        "tundra-report.pdf",
+        "tundra-annex.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.14912050002021715,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-annex.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.16524040000513196,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              3
+            ],
+            [
+              "tundra-report.pdf",
+              4
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ]
+          ],
+          "missing_documents": [
+            "75cc2561-6195-424a-adc3-7957aa177449"
+          ]
+        },
+        "hybrid": {
+          "seconds": 0.22947140003088862,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-annex.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.19919799995841458,
+          "gold_coverage": true,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-annex.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.24853810004424304,
+        "gold_coverage": true
+      },
+      "pooled_baseline": {
+        "seconds": 0.08661260001827031,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.04524270002730191,
+        "pages": [
+          [
+            "tundra-annex.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": true
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.0480229000095278,
+        "pages": [
+          [
+            "delta-annex.pdf",
+            1
+          ],
+          [
+            "tundra-annex.pdf",
+            1
+          ],
+          [
+            "morrow-annex.pdf",
+            1
+          ]
+        ],
+        "gold_coverage": false
+      }
+    },
+    {
+      "id": "tundra-5",
+      "split": "test",
+      "family": "tundra",
+      "query": "What is the private passport number of the tundra inspector?",
+      "gold": [],
+      "expected": "abstain",
+      "documents": [
+        "tundra-report.pdf"
+      ],
+      "tiers": {
+        "text": {
+          "seconds": 0.16463880002265796,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "visual": {
+          "seconds": 0.15625500003807247,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              4
+            ],
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "hybrid": {
+          "seconds": 0.22832769999513403,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        },
+        "rerank": {
+          "seconds": 0.21505170001182705,
+          "gold_coverage": false,
+          "pages": [
+            [
+              "tundra-report.pdf",
+              2
+            ],
+            [
+              "tundra-report.pdf",
+              1
+            ],
+            [
+              "tundra-report.pdf",
+              3
+            ]
+          ],
+          "missing_documents": []
+        }
+      },
+      "borda": {
+        "seconds": 0.20176260004518554,
+        "gold_coverage": false
+      },
+      "pooled_baseline": {
+        "seconds": 0.08807930001057684,
+        "gold_coverage": false
+      },
+      "all_visual_pooled_scoped": {
+        "seconds": 0.045177599997259676,
+        "pages": [
+          [
+            "tundra-report.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            4
+          ],
+          [
+            "tundra-report.pdf",
+            2
+          ]
+        ],
+        "gold_coverage": false
+      },
+      "all_visual_pooled_unscoped": {
+        "seconds": 0.044976299977861345,
+        "pages": [
+          [
+            "tundra-annex.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            1
+          ],
+          [
+            "tundra-report.pdf",
+            4
+          ]
+        ],
+        "gold_coverage": false
+      }
+    }
+  ],
+  "policies": {
+    "always_text": {
+      "gold_coverage": 0.8,
+      "mean_retrieval_ms": 133.15483999322169,
+      "provider_calls_per_query": 0
+    },
+    "always_visual": {
+      "gold_coverage": 0.6,
+      "mean_retrieval_ms": 179.74199500167742,
+      "provider_calls_per_query": 0
+    },
+    "always_hybrid": {
+      "gold_coverage": 0.8,
+      "mean_retrieval_ms": 221.34155000385363,
+      "provider_calls_per_query": 0
+    },
+    "always_rerank": {
+      "gold_coverage": 0.8,
+      "mean_retrieval_ms": 218.4969449910568,
+      "provider_calls_per_query": 0
+    },
+    "learned_starting_tier": {
+      "gold_coverage": 1.0,
+      "mean_retrieval_ms": 141.36556999292225,
+      "provider_calls_per_query": 0
+    },
+    "heuristic": {
+      "gold_coverage": 1.0,
+      "mean_retrieval_ms": 151.7254999926081,
+      "provider_calls_per_query": 0
+    },
+    "borda_hybrid": {
+      "gold_coverage": 1.0,
+      "mean_retrieval_ms": 223.55323000520002,
+      "provider_calls_per_query": 0
+    },
+    "selective_pooled_visual_unscoped": {
+      "gold_coverage": 0.6,
+      "mean_retrieval_ms": 88.21117499610409,
+      "provider_calls_per_query": 0
+    },
+    "all_visual_pooled_scoped": {
+      "gold_coverage": 1.0,
+      "mean_retrieval_ms": 45.691464995616116,
+      "provider_calls_per_query": 0
+    },
+    "all_visual_pooled_unscoped": {
+      "gold_coverage": 0.9,
+      "mean_retrieval_ms": 45.89708499843255,
+      "provider_calls_per_query": 0
+    }
+  },
+  "ingestion_seconds": 149.82126120000612,
+  "index_seconds": 5.4307840000255965,
+  "profile_hash": "188002cf1f894a7b20cff0e15ad97db7696a230967379091302192cc075d379c",
+  "exact_reference_error": 1.5799719221831765e-07,
+  "text_points": 32,
+  "visual_points": 24,
+  "peak_cuda_allocated_bytes": 8706371584,
+  "status": "completed",
+  "all_visual_baseline_build_seconds": 100.90470219997223,
+  "all_visual_baseline_points": 40,
+  "baseline_note": "All 40 pages use mean token vectors, cosine-equivalent to the historical single-page pooled representation; scoped and unscoped baselines are separate.",
+  "limitations": [
+    "Fictional templates shared across disjoint families; no real-document quality claim.",
+    "Cached retrieval latencies exclude generation, escalation, and cheap router decision overhead.",
+    "Learned router disabled by default; scoped all-page pooled baseline matches coverage at lower latency.",
+    "Provider comparison partial: 6/24 LLM routes before daily free-tier quota. Six sampled answer checks and three same-model support estimates passed.",
+    "Recorded provider token usage omits one escalation response; no exact dollar cost established."
+  ]
+}
