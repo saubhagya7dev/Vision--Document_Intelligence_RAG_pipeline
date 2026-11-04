@@ -14,8 +14,6 @@
 
     // Session state
     let queryCount = parseInt(sessionStorage.getItem('vr_query_count') || '0', 10);
-    let chatHistory = JSON.parse(sessionStorage.getItem('vr_chat_history') || '[]');
-    let lastSources = JSON.parse(sessionStorage.getItem('vr_last_sources') || '[]');
     let uploadHistory = JSON.parse(sessionStorage.getItem('vr_upload_history') || '[]');
     let activityLog = JSON.parse(sessionStorage.getItem('vr_activity') || '[]');
     let durableJobs = [];
@@ -170,40 +168,9 @@
         return `${Math.floor(diff / 86400)}d ago`;
     }
 
-    function parseMarkdown(text, sources = []) {
-        if (!text) return '';
-        let html = escapeHtml(text);
-
-        // Code blocks (```)
-        html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-        // Inline code
-        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-        // Bold
-        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-        // Italic
-        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-        // Unordered lists
-        html = html.replace(/^[\s]*[-•]\s+(.+)$/gm, '<li>$1</li>');
-        html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-        // Ordered lists
-        html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
-        // Paragraphs (double newline)
-        html = html.replace(/\n\n/g, '</p><p>');
-        // Single newlines (within paragraphs)
-        html = html.replace(/\n/g, '<br>');
-        html = html.replace(/\[(E[a-f0-9]{16})\]/g, (match, id) => {
-            const index = sources.findIndex(source => source.evidence_id === id);
-            return index < 0 ? match : `<button class="citation-link" data-citation-index="${index}" aria-label="Open source ${index + 1}">[${index + 1}]</button>`;
-        });
-
-        return `<p>${html}</p>`;
-    }
-
     function saveSessionState() {
         if (clearingData) return;
         sessionStorage.setItem('vr_query_count', queryCount.toString());
-        sessionStorage.setItem('vr_chat_history', JSON.stringify(chatHistory));
-        sessionStorage.setItem('vr_last_sources', JSON.stringify(lastSources));
         sessionStorage.setItem('vr_upload_history', JSON.stringify(uploadHistory));
         sessionStorage.setItem('vr_activity', JSON.stringify(activityLog));
     }
@@ -269,7 +236,7 @@
     // =========================
     async function initDashboard() {
         // Update session query count
-        document.getElementById('stat-queries-count').textContent = queryCount;
+        document.getElementById('stat-queries-count').textContent = '—';
 
         // Render activity
         renderActivity();
@@ -278,8 +245,10 @@
         try {
             const stats = await api.get('/stats');
             document.getElementById('stat-doc-count').textContent = stats.total_documents || 0;
-            document.getElementById('stat-pages-count').textContent = stats.total_vectors || 0;
-            document.getElementById('hero-total-pages').textContent = stats.total_vectors || 0;
+            document.getElementById('stat-queries-count').textContent = stats.completed_queries || 0;
+            document.getElementById('live-library-summary').textContent = `${stats.total_documents} documents · ${stats.pending_jobs} jobs in progress · ${stats.completed_queries} saved answers`;
+            document.getElementById('stat-pages-count').textContent = stats.total_pages || 0;
+            document.getElementById('hero-total-pages').textContent = stats.total_pages || 0;
 
             const statusEl = document.getElementById('stat-system-status');
             const status = stats.collection_status || 'unknown';
@@ -648,275 +617,8 @@
         });
     }
 
-    function initChat() {
-        renderChatMessages();
-        renderSources();
-        const scope = document.getElementById('query-document-scope');
-        const selected = new Set(Array.from(scope.selectedOptions).map(option => option.value));
-        api.get('/documents').then(documents => {
-            scope.innerHTML = documents.filter(doc => doc.active_version_id).map(doc =>
-                `<option value="${escapeHtml(doc.id)}" ${selected.has(doc.id) ? 'selected' : ''}>${escapeHtml(doc.filename)}</option>`).join('');
-        }).catch(() => { document.getElementById('query-scope-help').textContent = 'Document list unavailable. Reopen Chat to retry.'; });
-
-        // Focus input
-        setTimeout(() => document.getElementById('chat-input').focus(), 100);
-    }
-
-    function setupChat() {
-        document.addEventListener('click', event => {
-            const citation = event.target.closest('[data-citation-index]');
-            if (!citation) return;
-            const message = citation.closest('[data-message-index]');
-            const record = chatHistory[Number(message.dataset.messageIndex)];
-            lastSources = record.sources || [];
-            renderSources();
-            window.__previewSource(Number(citation.dataset.citationIndex));
-        });
-        const input = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const topkSlider = document.getElementById('topk-slider');
-        const topkValue = document.getElementById('topk-value');
-        const clearBtn = document.getElementById('clear-chat-btn');
-
-        // Send on Enter
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendQuery();
-            }
-        });
-
-        sendBtn.addEventListener('click', sendQuery);
-        document.getElementById('find-pages-btn').addEventListener('click', () => sendQuery(true));
-
-        // Top-K slider
-        topkSlider.addEventListener('input', () => {
-            topkValue.textContent = topkSlider.value;
-        });
-
-        // Clear chat
-        clearBtn.addEventListener('click', () => {
-            chatHistory = [];
-            lastSources = [];
-            saveSessionState();
-            renderChatMessages();
-            renderSources();
-        });
-    }
-
-    async function sendQuery(evidenceOnly = false) {
-        evidenceOnly = evidenceOnly === true;
-        const input = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const query = input.value.trim();
-
-        if (!query) return;
-
-        // Add user message
-        chatHistory.push({ role: 'user', content: query });
-        saveSessionState();
-        renderChatMessages();
-
-        // Clear input
-        input.value = '';
-        sendBtn.disabled = true;
-
-        // Show typing indicator
-        showTypingIndicator();
-
-        const topK = parseInt(document.getElementById('topk-slider').value, 10);
-
-        try {
-            const documents = Array.from(document.getElementById('query-document-scope').selectedOptions).map(option => option.value);
-            if (documents.length > 6) throw new Error('Select at most six documents.');
-            const previous = chatHistory.slice(0, -1).filter(message => message.role === 'user').at(-1);
-            const result = await api.post('/query', { query, top_k: Math.max(topK, documents.length),
-                document_ids: documents.length ? documents : null,
-                evidence_only: evidenceOnly,
-                previous_question: previous?.content?.length <= 2000 ? previous.content : null });
-
-            // Remove typing indicator
-            hideTypingIndicator();
-
-            // Add AI response
-            chatHistory.push({
-                role: 'ai',
-                content: result.answer,
-                sources: result.sources
-            });
-
-            // Update sources
-            lastSources = result.sources || [];
-
-            // Track query
-            queryCount++;
-            addActivity('query', `Queried: "${query.substring(0, 50)}${query.length > 50 ? '...' : ''}"`);
-            saveSessionState();
-
-            renderChatMessages();
-            renderSources();
-
-            // Update dashboard query count if visible
-            const qcEl = document.getElementById('stat-queries-count');
-            if (qcEl) qcEl.textContent = queryCount;
-
-        } catch (err) {
-            hideTypingIndicator();
-
-            chatHistory.push({
-                role: 'ai',
-                content: `Error: ${err.message}`,
-                isError: true
-            });
-            saveSessionState();
-            renderChatMessages();
-
-            toast.show(`Query failed: ${err.message}`, 'error');
-        }
-
-        sendBtn.disabled = false;
-        input.focus();
-    }
-
-    function showTypingIndicator() {
-        const container = document.getElementById('chat-messages');
-        const emptyState = document.getElementById('chat-empty');
-        if (emptyState) emptyState.style.display = 'none';
-
-        const indicator = document.createElement('div');
-        indicator.id = 'typing-indicator';
-        indicator.className = 'message ai';
-        indicator.innerHTML = `
-            <div class="message-bubble">
-                <div class="message-label">
-                    <span>✦</span> Vision RAG AI <span class="ai-dot"></span>
-                </div>
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            </div>
-        `;
-        container.appendChild(indicator);
-        container.scrollTop = container.scrollHeight;
-    }
-
-    function hideTypingIndicator() {
-        const indicator = document.getElementById('typing-indicator');
-        if (indicator) indicator.remove();
-    }
-
-    function renderChatMessages() {
-        const container = document.getElementById('chat-messages');
-        const emptyState = document.getElementById('chat-empty');
-
-        if (chatHistory.length === 0) {
-            // Reset: clear everything and re-add empty state
-            container.innerHTML = '';
-            if (emptyState) {
-                emptyState.style.display = '';
-                container.appendChild(emptyState);
-            } else {
-                container.innerHTML = `
-                    <div class="chat-empty-state" id="chat-empty">
-                        <div class="empty-icon">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                        </div>
-                        <h2>Ask your first question</h2>
-                        <p>Query your uploaded documents using natural language. Vision RAG understands tables, charts, and diagrams.</p>
-                    </div>
-                `;
-            }
-            return;
-        }
-
-        // Remove empty state reference before rebuilding
-        const existingEmpty = container.querySelector('#chat-empty');
-
-        // Build messages HTML
-        let html = '';
-        chatHistory.forEach((msg, messageIndex) => {
-            if (msg.role === 'user') {
-                html += `
-                    <div class="message user">
-                        <div class="message-bubble">${escapeHtml(msg.content)}</div>
-                    </div>
-                `;
-            } else {
-                const labelColor = msg.isError ? 'color: #ef4444' : '';
-                html += `
-                    <div class="message ai" data-message-index="${messageIndex}">
-                        <div class="message-bubble" ${msg.isError ? 'style="border-color: rgba(239,68,68,0.3)"' : ''}>
-                            <div class="message-label" style="${labelColor}">
-                                <span>✦</span> Vision RAG AI <span class="ai-dot"></span>
-                            </div>
-                            ${parseMarkdown(msg.content, msg.sources || [])}
-                        </div>
-                    </div>
-                `;
-            }
-        });
-
-        container.innerHTML = html;
-
-        // Scroll to bottom
-        requestAnimationFrame(() => {
-            container.scrollTop = container.scrollHeight;
-        });
-    }
-
-    function renderSources() {
-        const list = document.getElementById('source-list');
-        const countEl = document.getElementById('source-count');
-
-        if (!lastSources || lastSources.length === 0) {
-            countEl.textContent = '0 pages';
-            list.innerHTML = '<div class="empty-state small"><p>Source pages will appear here after querying.</p></div>';
-            return;
-        }
-
-        countEl.textContent = `${lastSources.length} page${lastSources.length !== 1 ? 's' : ''}`;
-
-        list.innerHTML = lastSources.map((src, i) => {
-            const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
-            const page = src.page || '?';
-            const score = typeof src.score === 'number' ? src.score.toFixed(2) : '—';
-            const imgUrl = src.version_id ? api.getPageImageUrl(filename, page, true, src.version_id) : '';
-
-            return `
-                <div class="source-card" data-src-index="${i}" onclick="window.__previewSource(${i})">
-                    <div class="source-thumb">
-                        ${imgUrl ? `<img src="${imgUrl}" alt="Page ${page}" loading="lazy" onerror="this.style.display='none'">` : ''}
-                    </div>
-                    <div class="source-info">
-                        <div class="source-page-label">Page ${page}</div>
-                        <div class="source-file-name" title="${escapeHtml(filename)}">${escapeHtml(filename)}</div>
-                        ${src.version_id ? '' : '<span class="source-score">Legacy source — ask again to resolve its version.</span>'}
-                        <span class="source-score">${src.score_kind ? 'Rank score' : 'Score'}: ${score}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // Preview source page in modal
-    window.__previewSource = function (index) {
-        const src = lastSources[index];
-        if (!src) return;
-        if (!src.version_id) {
-            toast.show('This older answer has no recorded source version. Ask again to inspect its evidence.', 'info');
-            return;
-        }
-
-        const filename = src.source ? src.source.replace(/^.*[\\\/]/, '') : 'Unknown';
-        const page = src.page || '?';
-        const imgUrl = src.source ? api.getPageImageUrl(filename, page, false, src.version_id) : '';
-
-        document.getElementById('preview-modal-title').textContent = `${filename} — Page ${page}`;
-        document.getElementById('preview-image').src = imgUrl;
-        document.getElementById('preview-modal').style.display = 'flex';
-    };
+    function initChat() { window.VisionWorkspace.open(); }
+    function setupChat() { window.VisionWorkspace.setup(); }
 
     // =========================
     // DOCUMENTS
@@ -983,8 +685,11 @@
 
         } catch (err) {
             grid.innerHTML = '';
-            grid.appendChild(createEmptyDocsState());
-            toast.show(`Failed to load documents: ${err.message}`, 'error');
+            const failure = document.createElement('p');
+            failure.textContent = `Library unavailable: ${err.message}. Your documents have not been removed.`;
+            failure.setAttribute('role', 'status');
+            const retry = document.createElement('button'); retry.className = 'job-action'; retry.textContent = 'Retry loading library';
+            retry.addEventListener('click', initDocuments); grid.append(failure, retry);
         }
     }
 
@@ -1080,7 +785,7 @@
                     if (key.startsWith('vr_') && key !== 'vr_reset_epoch') storage.removeItem(key);
                 }
             }
-            chatHistory = []; lastSources = []; activityLog = []; uploadHistory = []; queryCount = 0;
+            activityLog = []; uploadHistory = []; queryCount = 0;
         };
         window.addEventListener('storage', event => {
             if (event.key === 'vr_reset_epoch' && event.newValue) {
