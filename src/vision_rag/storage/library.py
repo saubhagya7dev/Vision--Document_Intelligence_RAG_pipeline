@@ -259,6 +259,10 @@ class DocumentLibrary:
         return job
 
     def start(self, worker_enabled: bool = True, import_legacy: bool = True) -> None:
+        from vision_rag.storage.conversations import Conversations
+
+        if self.thread is None:
+            Conversations(self.metadata).recover()
         if self.reset_pending():
             try:
                 self.reset()
@@ -583,6 +587,9 @@ class DocumentLibrary:
         return True
 
     def clear_history(self) -> None:
+        from vision_rag.storage.conversations import Conversations
+
+        Conversations(self.metadata).clear()
         # Keep durable jobs needed for retry/publication; hide completed history.
         self.metadata.set_setting("history_cleared_at", now())
 
@@ -661,6 +668,9 @@ class DocumentLibrary:
                 with self.metadata.connection(True) as db:
                     db.execute("PRAGMA secure_delete=ON")
                     for table in (
+                        "message_events",
+                        "messages",
+                        "conversations",
                         "chunk_search",
                         "text_chunks",
                         "page_tasks",

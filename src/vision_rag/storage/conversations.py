@@ -18,7 +18,8 @@ class Conversations:
         return [
             self.decode(r)
             for r in self.meta.rows(
-                "SELECT * FROM conversations WHERE workspace=? ORDER BY updated_at DESC,id",
+                "SELECT * FROM conversations WHERE workspace=? "
+                "ORDER BY updated_at DESC,id",
                 (self.meta.workspace,),
             )
         ]
@@ -42,7 +43,8 @@ class Conversations:
         result["messages"] = [
             self.message(r["id"])
             for r in self.meta.rows(
-                "SELECT id FROM messages WHERE conversation_id=? ORDER BY created_at,id",
+                "SELECT id FROM messages WHERE conversation_id=? "
+                "ORDER BY created_at,id",
                 (key,),
             )
         ]
@@ -215,7 +217,8 @@ class Conversations:
 
     def recover(self) -> None:
         for row in self.meta.rows(
-            "SELECT m.id FROM messages m JOIN conversations c ON c.id=m.conversation_id "
+            "SELECT m.id FROM messages m JOIN conversations c "
+            "ON c.id=m.conversation_id "
             "WHERE c.workspace=? AND m.state IN ('queued','running')",
             (self.meta.workspace,),
         ):

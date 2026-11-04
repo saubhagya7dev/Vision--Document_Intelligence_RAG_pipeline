@@ -19,6 +19,7 @@ from vision_rag.api.routes import (
     shutdown_components,
     warmup_components,
 )
+from vision_rag.api.workspace import router as workspace_router
 from vision_rag.config import settings
 from vision_rag.telemetry import stage, trace
 
@@ -51,6 +52,7 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix="/api/v1")
+app.include_router(workspace_router, prefix="/api/v1")
 
 
 @app.middleware("http")

@@ -15,6 +15,7 @@ from starlette.requests import Request
 
 from vision_rag.config import settings
 from vision_rag.core.embeddings import BaseEmbeddingModel
+from vision_rag.generate.events import Cancelled, Emit, checkpoint
 from vision_rag.generate.grounding import GroundedSynthesizer
 from vision_rag.generate.synthesizer import RAGSynthesizer
 from vision_rag.ingest.document_loader import DocumentLoader
@@ -213,6 +214,9 @@ def warmup_components() -> None:
 def shutdown_components() -> None:
     global _pipeline, _synthesizer, _vdb, _loader, _library, _model_state
     global _retrieval_models
+    from vision_rag.api.workspace import stop_turns
+
+    stop_turns()
     # The worker may need the component lock to finish model initialization.
     if _library is not None:
         _library.close()
@@ -596,6 +600,13 @@ def cancel_job(job_id: str) -> dict[str, Any]:
 
 @router.post("/query", response_model=QueryResponse)
 def query_pipeline(request: QueryRequest) -> QueryResponse:
+    return execute_query(request)
+
+
+def execute_query(
+    request: QueryRequest, emit: Emit | None = None, cancelled: Cancelled | None = None
+) -> QueryResponse:
+    checkpoint(cancelled)
     if not request.query.strip():
         raise HTTPException(422, "Question must not be blank")
     library = get_library()
@@ -612,6 +623,9 @@ def query_pipeline(request: QueryRequest) -> QueryResponse:
     try:
         # Deletion cannot remove source artifacts while a response uses them.
         with library.access:
+            checkpoint(cancelled)
+            if emit:
+                emit("progress", {"stage": "retrieving"})
             if not library.ready_builds() and not (
                 library.retrieval is not None and library.retrieval.source_builds()
             ):
@@ -704,6 +718,8 @@ def query_pipeline(request: QueryRequest) -> QueryResponse:
                     request.previous_question,
                     request.tier,
                     (request.page_start, request.page_end),
+                    emit,
+                    cancelled,
                 )
                 return QueryResponse(**result)
             _, synthesizer = get_components()
@@ -718,6 +734,10 @@ def query_pipeline(request: QueryRequest) -> QueryResponse:
     except ValueError as error:
         raise HTTPException(422, str(error)) from None
     except Exception as error:
+        from vision_rag.generate.events import QuestionCancelled
+
+        if isinstance(error, QuestionCancelled):
+            raise
         if getattr(error, "code", None) == 429:
             raise HTTPException(
                 429,
