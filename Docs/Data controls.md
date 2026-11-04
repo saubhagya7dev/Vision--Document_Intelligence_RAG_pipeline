@@ -9,9 +9,9 @@ This implementation does not automatically clear the user's library.
 
 | Option | Clears | Keeps |
 | --- | --- | --- |
-| Clear history | This app's browser chat, sources, activity, counters; completed upload/cleanup history is hidden on the server | PDFs, versions, indexes, extracted text, active jobs |
-| Clear page cache | Rendered page images and thumbnails in the managed artifacts directory | PDFs, indexes, text, jobs, browser chat |
-| Start fresh | Managed originals, pre-upgrade PDFs/staging uploads in the data folder, rendered artifacts, extracted text/chunks, vector points, versions, jobs and app history | Configuration, API credentials, downloaded models, OCR runtime, unrelated files |
+| Clear history | Saved conversations/messages/events, draft comparisons and browser activity/counters; completed upload/cleanup history is hidden | Saved findings, PDFs, versions, indexes, extracted text, active jobs |
+| Clear page cache | Derived rendered pages, thumbnails and token artifacts in the managed artifacts directory | PDFs, indexes, text, jobs, saved conversations and findings |
+| Start fresh | Managed originals, pre-upgrade PDFs/staging uploads, artifacts, extracted text/chunks, vectors, versions, jobs, conversations and findings | Configuration, API credentials, downloaded models, OCR runtime, unrelated files |
 
 Phase 5 follow-up: Clear history also removes the workspace's persisted
 conversations, questions, answers, viewer positions and stream events. Start
@@ -19,6 +19,12 @@ fresh removes those records too, together with Phase 4 retrieval revisions.
 Cache clearing preserves saved conversations. Active answers check cancellation
 at their next safe boundary; a provider/GPU call may finish before cleanup can
 release the existing evidence-reader lock.
+
+Phase 6 follow-up: Clear history removes draft comparisons but **keeps saved
+findings**, including saved chat answers. Start fresh deletes all findings.
+Mixed-workspace reset protection also checks conversation/finding records.
+Unavailable-source findings can be removed from Findings; exporting them is
+blocked until their sources are accessible again.
 
 Start fresh requires selecting the option and typing **DELETE**. The action is
 permanent. Clear history keeps the internal job records required for document
