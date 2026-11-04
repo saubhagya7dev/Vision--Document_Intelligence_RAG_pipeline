@@ -73,6 +73,8 @@ class RemoteFile(io.RawIOBase):
 
 
 def metrics(ranking, gold, k=3):
+    gold = {str(key): value for key, value in gold.items()}
+    ranking = [str(key) for key in ranking]
     top = ranking[:k]
     relevant = {key for key, score in gold.items() if score > 0}
     dcg = sum(

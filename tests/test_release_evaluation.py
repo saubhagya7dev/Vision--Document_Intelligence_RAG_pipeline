@@ -12,6 +12,7 @@ def test_ranking_metrics_distinguish_partial_and_complete_coverage():
     assert value["mrr"] == 0.5
     assert 0 < value["ndcg_at_3"] < 1
     assert metrics(["a"], {"a": 2})["ndcg_at_3"] == 1
+    assert metrics(["157"], {157: 2})["recall_at_3"] == 1
 
 
 def test_demo_sources_and_gold_pages_are_reproducible_and_resolvable(tmp_path):
