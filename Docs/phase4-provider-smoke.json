@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "answer": {
+    "status": "supported",
+    "claims": [
+      {
+        "text": "Revenue is 120 units.",
+        "citations": [
+          "E1"
+        ]
+      }
+    ]
+  },
+  "usage": {
+    "cache_tokens_details": null,
+    "cached_content_token_count": null,
+    "candidates_token_count": 24,
+    "candidates_tokens_details": null,
+    "prompt_token_count": 1184,
+    "prompt_tokens_details": [
+      {
+        "modality": "IMAGE",
+        "token_count": 1064
+      },
+      {
+        "modality": "TEXT",
+        "token_count": 120
+      }
+    ],
+    "thoughts_token_count": 343,
+    "tool_use_prompt_token_count": null,
+    "tool_use_prompt_tokens_details": null,
+    "total_token_count": 1551,
+    "traffic_type": null
+  }
+}
