@@ -85,6 +85,22 @@ CREATE TABLE IF NOT EXISTS retrieval_items (
  PRIMARY KEY(index_id,id));
 CREATE VIRTUAL TABLE IF NOT EXISTS retrieval_search
  USING fts5(index_id UNINDEXED,point_id UNINDEXED,text);
+CREATE TABLE IF NOT EXISTS conversations (
+ id TEXT PRIMARY KEY, workspace TEXT NOT NULL, title TEXT NOT NULL,
+ document_ids TEXT, viewer TEXT NOT NULL DEFAULT '{}',
+ created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS messages (
+ id TEXT PRIMARY KEY, conversation_id TEXT NOT NULL
+ REFERENCES conversations(id) ON DELETE CASCADE,
+ question TEXT NOT NULL, request TEXT NOT NULL, state TEXT NOT NULL,
+ result TEXT, error TEXT, cancel_requested INTEGER NOT NULL DEFAULT 0,
+ created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS one_conversation_turn ON messages(conversation_id)
+ WHERE state IN ('queued','running');
+CREATE TABLE IF NOT EXISTS message_events (
+ message_id TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
+ sequence INTEGER NOT NULL, type TEXT NOT NULL, data TEXT NOT NULL,
+ PRIMARY KEY(message_id,sequence));
 """
 
 
@@ -106,13 +122,13 @@ class Metadata:
         path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1, 2, 3, 4):
+            if version not in (0, 1, 2, 3, 4, 5):
                 raise RuntimeError(
                     "Unsupported metadata schema; restore compatible code"
                 )
             db.execute("PRAGMA journal_mode=WAL")
             db.executescript(
-                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=4; COMMIT;"
+                "BEGIN IMMEDIATE;" + SCHEMA + "PRAGMA user_version=5; COMMIT;"
             )
 
     @contextmanager
