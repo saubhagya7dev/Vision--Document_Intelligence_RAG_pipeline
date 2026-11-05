@@ -205,6 +205,12 @@ def main():
         "profile": {**settings.retrieval_specification, "dpi": 150},
         "samples": [],
         "status": "running",
+        "visual_cache_files_before": len(
+            list((args.work_dir / "tokens").glob("*.npz"))
+        ),
+        "timing_note": "Preparation reuses available visual token caches. Query 1 may "
+        "include lazy model loading. Text timing excludes keyword fusion; "
+        "reranking is simulated from cached exact scores, not a speed benchmark.",
         "not_measured": [
             "answer quality",
             "semantic support",
@@ -254,7 +260,7 @@ def main():
             with loader.load_page(path, number) as image:
                 tokens.append(np.asarray(models.encode_visual(spec, [image], True)[0]))
             print("embedded page", row["corpus_id"], flush=True)
-        report["build_seconds_including_cold_models"] = perf_counter() - started
+        report["subset_preparation_seconds"] = perf_counter() - started
         centers = np.asarray([centroid(t) for t in tokens])
         report["raw_token_bytes_per_page"] = sum(t.nbytes for t in tokens) / len(tokens)
         for query in manifest["queries"]:

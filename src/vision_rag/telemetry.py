@@ -25,9 +25,7 @@ class SecretFilter(logging.Filter):
             message += "\n" + logging.Formatter().formatException(record.exc_info)
         for secret in (settings.provider_api_key, settings.access_token):
             value = (
-                secret.get_secret_value()
-                if isinstance(secret, SecretStr)
-                else secret
+                secret.get_secret_value() if isinstance(secret, SecretStr) else secret
             )
             if value:
                 message = message.replace(str(value), "[redacted]")
