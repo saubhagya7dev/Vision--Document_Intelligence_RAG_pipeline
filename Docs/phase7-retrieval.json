@@ -1,0 +1,1125 @@
+{
+  "dataset": {
+    "repository": "vidore/vidore_v3_computer_science",
+    "revision": "d5cc75883d92e294f0c0fc2662551c9708a06ebc",
+    "license": "CC-BY-4.0",
+    "attribution": "ViDoRe V3 contributors; OpenStax textbook authors",
+    "selection": "first 8 English queries with 1-3 positive pages; all gold pages plus every 170th corpus ID (8 distractors)",
+    "split": "held-out evaluation; never router training",
+    "limits": "Gold-enriched candidate pool; not official full-corpus scores",
+    "pages": [
+      {
+        "corpus_id": 0,
+        "doc_id": "Introduction_to_Python_Programming",
+        "page_number_in_doc": 1,
+        "dataset_page_index": 0
+      },
+      {
+        "corpus_id": 157,
+        "doc_id": "Introduction_to_Python_Programming",
+        "page_number_in_doc": 25,
+        "dataset_page_index": 24
+      },
+      {
+        "corpus_id": 170,
+        "doc_id": "Introduction_to_Python_Programming",
+        "page_number_in_doc": 252,
+        "dataset_page_index": 251
+      },
+      {
+        "corpus_id": 321,
+        "doc_id": "Introduction_to_Python_Programming",
+        "page_number_in_doc": 389,
+        "dataset_page_index": 388
+      },
+      {
+        "corpus_id": 333,
+        "doc_id": "Introduction_to_Python_Programming",
+        "page_number_in_doc": 400,
+        "dataset_page_index": 399
+      },
+      {
+        "corpus_id": 340,
+        "doc_id": "Introduction_to_Python_Programming",
+        "page_number_in_doc": 405,
+        "dataset_page_index": 404
+      },
+      {
+        "corpus_id": 490,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 167,
+        "dataset_page_index": 166
+      },
+      {
+        "corpus_id": 510,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 185,
+        "dataset_page_index": 184
+      },
+      {
+        "corpus_id": 511,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 186,
+        "dataset_page_index": 185
+      },
+      {
+        "corpus_id": 645,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 306,
+        "dataset_page_index": 305
+      },
+      {
+        "corpus_id": 680,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 338,
+        "dataset_page_index": 337
+      },
+      {
+        "corpus_id": 767,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 416,
+        "dataset_page_index": 415
+      },
+      {
+        "corpus_id": 768,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 417,
+        "dataset_page_index": 416
+      },
+      {
+        "corpus_id": 819,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 463,
+        "dataset_page_index": 462
+      },
+      {
+        "corpus_id": 820,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 464,
+        "dataset_page_index": 463
+      },
+      {
+        "corpus_id": 850,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 491,
+        "dataset_page_index": 490
+      },
+      {
+        "corpus_id": 868,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 507,
+        "dataset_page_index": 506
+      },
+      {
+        "corpus_id": 1020,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 644,
+        "dataset_page_index": 643
+      },
+      {
+        "corpus_id": 1190,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 798,
+        "dataset_page_index": 797
+      },
+      {
+        "corpus_id": 1298,
+        "doc_id": "Introduction_to_Computer_Science",
+        "page_number_in_doc": 895,
+        "dataset_page_index": 894
+      }
+    ],
+    "queries": [
+      {
+        "id": 0,
+        "query": "Is a variable name starting with a digit allowed in Python according to the document's content on naming conventions?",
+        "content_type": [
+          "Text"
+        ],
+        "gold": {
+          "157": 2,
+          "321": 2
+        }
+      },
+      {
+        "id": 2,
+        "query": "two factor authentication vs single factor security mechanisms",
+        "content_type": [
+          "Text"
+        ],
+        "gold": {
+          "645": 2
+        }
+      },
+      {
+        "id": 3,
+        "query": "What are the key distinctions between high-level design and detail-level design in software engineering, and how do they contribute to system architecture?",
+        "content_type": [
+          "Infographic",
+          "Text"
+        ],
+        "gold": {
+          "819": 1,
+          "820": 1,
+          "868": 1
+        }
+      },
+      {
+        "id": 5,
+        "query": "Compare the data storage methodologies of traditional data warehouses and modern data lakes, focusing on schema application timing and data structure requirements.",
+        "content_type": [
+          "Infographic",
+          "Table",
+          "Text"
+        ],
+        "gold": {
+          "767": 1,
+          "768": 2
+        }
+      },
+      {
+        "id": 10,
+        "query": "Describe the sequence of steps in the TCP three-way handshake mechanism as explained in the document.",
+        "content_type": [
+          "Chart",
+          "Text"
+        ],
+        "gold": {
+          "490": 1,
+          "1298": 1
+        }
+      },
+      {
+        "id": 11,
+        "query": "What is the effect of using an underscore prefix in Python function names, and how does it influence what is displayed when using the help() function on a module?",
+        "content_type": [
+          "Text"
+        ],
+        "gold": {
+          "333": 2
+        }
+      },
+      {
+        "id": 14,
+        "query": "Summarize the primary advantage of parallel computing over traditional serial computing as described in the text.",
+        "content_type": [
+          "Chart",
+          "Text"
+        ],
+        "gold": {
+          "510": 1,
+          "511": 2
+        }
+      },
+      {
+        "id": 15,
+        "query": "List three examples of invalid variable names that violate the naming rules described in the Python programming guide.",
+        "content_type": [
+          "Text"
+        ],
+        "gold": {
+          "157": 2
+        }
+      }
+    ],
+    "sources": {
+      "Introduction_to_Python_Programming": {
+        "sha256": "ca60aa86a3066f8504eb6e177d16303fcb3e38ff9bd6b07326f4eced94c2f6fc",
+        "bytes": 11572327
+      },
+      "Introduction_to_Computer_Science": {
+        "sha256": "1003e2a5484f0ef1604fa83cf8176066b156ae686560f72ee48376e341395272",
+        "bytes": 53398130
+      }
+    }
+  },
+  "hardware": {
+    "torch_version": "2.13.0+cu130",
+    "cuda_build": "13.0",
+    "cuda_available": true,
+    "mps_available": false,
+    "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+    "accelerator": {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "total_memory_bytes": 6438846464,
+      "free_memory_bytes": 5329911808,
+      "compute_capability": [
+        8,
+        9
+      ],
+      "bfloat16_supported": true,
+      "compiled_architectures": [
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_90",
+        "sm_100",
+        "sm_120"
+      ]
+    },
+    "recommended_device": "cuda",
+    "action": null
+  },
+  "dpi": 150,
+  "profile": {
+    "text_model": "BAAI/bge-small-en-v1.5",
+    "text_revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "text_dimensions": 384,
+    "text_pooling": "cls-normalized-v1",
+    "visual_model": "vidore/colpali-v1.3",
+    "visual_revision": "b5c6dd62125326e6f0b540c1f7b36e901cdc0a11",
+    "visual_base_revision": "30ab955d073de4a91dc5a288e8c97226647e3e5a",
+    "visual_dimensions": 128,
+    "scoring": "unmasked-dot-maxsim-v1",
+    "dpi": 150,
+    "extractor": "native-layout-v1",
+    "chunk_limit": 1200,
+    "chunk_overlap": 120
+  },
+  "samples": [
+    {
+      "query_id": 0,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.020781700033694506,
+      "visual_encode_seconds": 12.713581700110808,
+      "exact_scoring_seconds": 0.09184750006534159,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 2,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.1546925000147894,
+      "visual_encode_seconds": 0.07335630001034588,
+      "exact_scoring_seconds": 0.011804100009612739,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "511",
+            "850"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "1298",
+            "850"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "850",
+            "170"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "1298",
+            "850"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "1298",
+            "850"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "850",
+            "1298"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "511",
+            "850"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "645",
+            "511",
+            "850"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 3,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.029601700021885335,
+      "visual_encode_seconds": 0.06656090007163584,
+      "exact_scoring_seconds": 0.017203600029461086,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "820",
+            "868"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "868",
+            "820"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "820",
+            "868"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "868",
+            "820"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "820",
+            "868"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "820",
+            "868"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "820",
+            "868"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "819",
+            "820",
+            "868"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 5,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.021720100077800453,
+      "visual_encode_seconds": 0.07865979999769479,
+      "exact_scoring_seconds": 0.015285800094716251,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "819"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "820"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "820"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "820"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "820"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "820"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "819"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "767",
+            "768",
+            "819"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 10,
+      "candidate_recall_at_10": 0.5,
+      "text_seconds": 0.017129900050349534,
+      "visual_encode_seconds": 0.05404560000170022,
+      "exact_scoring_seconds": 0.014056400046683848,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "1298",
+            "490",
+            "645"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.9197207891481876,
+          "top_3": [
+            "1298",
+            "645",
+            "490"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 0.5,
+          "complete_coverage_at_3": 0.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.6131471927654584,
+          "top_3": [
+            "1298",
+            "1020",
+            "1190"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 0.5,
+          "complete_coverage_at_3": 0.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.6131471927654584,
+          "top_3": [
+            "1298",
+            "645",
+            "333"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "1298",
+            "490",
+            "645"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "1298",
+            "490",
+            "645"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "1298",
+            "490",
+            "645"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "1298",
+            "490",
+            "645"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 11,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.01954850007314235,
+      "visual_encode_seconds": 0.0632016999879852,
+      "exact_scoring_seconds": 0.016840899945236742,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "321",
+            "157"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "170",
+            "321"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "170",
+            "157"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "170",
+            "321"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "321",
+            "170"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "321",
+            "170"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "321",
+            "157"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "333",
+            "321",
+            "157"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 14,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.01697589992545545,
+      "visual_encode_seconds": 0.05993970006238669,
+      "exact_scoring_seconds": 0.014603000017814338,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "645"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "645"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 0.7967075809905066,
+          "top_3": [
+            "510",
+            "511",
+            "490"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "490"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "645"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "645"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "645"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "511",
+            "510",
+            "645"
+          ]
+        }
+      }
+    },
+    {
+      "query_id": 15,
+      "candidate_recall_at_10": 1.0,
+      "text_seconds": 0.01695290009956807,
+      "visual_encode_seconds": 0.060513800010085106,
+      "exact_scoring_seconds": 0.0167420000070706,
+      "policies": {
+        "text_dense_keyword": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "pooled_baseline": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "hybrid_borda": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0,
+          "top_3": [
+            "157",
+            "321",
+            "333"
+          ]
+        }
+      }
+    }
+  ],
+  "status": "measured_smoke_only",
+  "visual_cache_files_before": 20,
+  "timing_note": "Preparation reuses available visual token caches. Query 1 may include lazy model loading. Text timing excludes keyword fusion; reranking is simulated from cached exact scores, not a speed benchmark.",
+  "not_measured": [
+    "answer quality",
+    "semantic support",
+    "provider cost",
+    "user verification time",
+    "RTX 3050",
+    "shared deployment"
+  ],
+  "subset_preparation_seconds": 10.022885099984705,
+  "raw_token_bytes_per_page": 1055744.0,
+  "learned_note": "Unmodified synthetic Phase 4 router evaluated out of domain; starting tier only, no generation or escalation",
+  "metrics": {
+    "text_dense_keyword": {
+      "recall_at_3": 1.0,
+      "complete_coverage_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9745884476238134
+    },
+    "exact_visual": {
+      "recall_at_3": 1.0,
+      "complete_coverage_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9645535462673368
+    },
+    "pooled_baseline": {
+      "recall_at_3": 0.9375,
+      "complete_coverage_at_3": 0.875,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.900820294343309
+    },
+    "coarse_10_rerank": {
+      "recall_at_3": 0.9375,
+      "complete_coverage_at_3": 0.875,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9262318467194957
+    },
+    "hybrid_rrf": {
+      "recall_at_3": 1.0,
+      "complete_coverage_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9745884476238134
+    },
+    "hybrid_borda": {
+      "recall_at_3": 1.0,
+      "complete_coverage_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9745884476238134
+    },
+    "heuristic_start": {
+      "recall_at_3": 1.0,
+      "complete_coverage_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9745884476238134
+    },
+    "learned_start_cross_domain": {
+      "recall_at_3": 1.0,
+      "complete_coverage_at_3": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_3": 0.9745884476238134
+    }
+  },
+  "peak_cuda_allocated_bytes": 6016260608,
+  "mean_candidate_recall_at_10": 0.9375,
+  "sampled_peak_process_rss_bytes": 4461375488,
+  "cached_token_bytes_per_page": 304671.05
+}
