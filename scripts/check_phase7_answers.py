@@ -30,6 +30,8 @@ def main():
             "dollar_cost": None,
         }
     )
+    if report.get("model") != settings.generation_model_name:
+        raise ValueError("Use a separate report when changing the provider model")
     provider = GeminiGenerator(
         settings.generation_model_name,
         settings.provider_api_key,

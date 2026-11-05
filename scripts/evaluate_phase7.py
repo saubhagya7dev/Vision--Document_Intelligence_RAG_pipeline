@@ -319,7 +319,7 @@ def main():
             rankings["heuristic_start"] = tiers[heuristic(query["query"])]
             router = CostRouter.load(Path("docs/phase4-router.json"))
             rankings["learned_start_cross_domain"] = tiers[
-                router.choose(query["query"], 2)
+                router.choose(query["query"], len(sources))
             ]
             report["learned_note"] = (
                 "Unmodified synthetic Phase 4 router evaluated "
@@ -327,6 +327,10 @@ def main():
             )
             sample = {
                 "query_id": query["id"],
+                "candidate_recall_at_10": len(
+                    candidate_ids & {str(key) for key in query["gold"]}
+                )
+                / len(query["gold"]),
                 "text_seconds": text_seconds,
                 "visual_encode_seconds": visual_encode_seconds,
                 "exact_scoring_seconds": scoring_seconds,
@@ -351,6 +355,9 @@ def main():
             for name in rankings
         }
         report["peak_cuda_allocated_bytes"] = torch.cuda.max_memory_allocated()
+        report["mean_candidate_recall_at_10"] = sum(
+            s["candidate_recall_at_10"] for s in report["samples"]
+        ) / len(report["samples"])
         report["sampled_peak_process_rss_bytes"] = rss[0]
         report["cached_token_bytes_per_page"] = sum(
             p.stat().st_size for p in (args.work_dir / "tokens").glob("*.npz")
