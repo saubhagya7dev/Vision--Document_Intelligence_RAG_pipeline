@@ -1,0 +1,43 @@
+{
+  "recorded_on": "2026-11-06",
+  "source_revision": "728f2b95838be176c98c3d13d6dbe0e333cfd9c9",
+  "source_fingerprint": "544028cbd5d4adba08e952fc09cc8e9eb2c3025650f12e23cd1fe7ca94e661b2",
+  "profile": "Windows / Python 3.14 / RTX 4050 Laptop / local SQLite and embedded Qdrant",
+  "routine_checks_passed": true,
+  "routine_tests": {
+    "full_suite_passed": 133,
+    "seconds": 87.76,
+    "warnings": 2,
+    "followup_release_evaluation_tests_passed": 3,
+    "note": "Full application suite passed; later evaluation/reporting changes checked with targeted release tests and static checks."
+  },
+  "static_checks": [
+    "ruff check src scripts tests",
+    "ruff format --check src scripts tests",
+    "mypy src (44 modules)",
+    "compileall src scripts",
+    "node --check (all static JavaScript)",
+    "git diff --check",
+    "uv pip check"
+  ],
+  "backup_restore_passed": true,
+  "owner_browser_passed": true,
+  "browser_evidence": "phase7-sign-in.png",
+  "wheel_smoke_passed": true,
+  "wheel_source_files_match": true,
+  "wheel_record": "phase7-wheel.json",
+  "container_runtime_passed": false,
+  "container_blocker": "Docker executable is not installed",
+  "shared_tls_passed": false,
+  "answer_quality_passed": false,
+  "semantic_support_passed": false,
+  "rtx3050_measured": false,
+  "human_timing_measured": false,
+  "provider_blocker": "Intermittent HTTP 503; completed requests are checkpointed",
+  "limits": [
+    "Local single-owner scope; no multi-user or shared production claim",
+    "One dependency advisory without a listed patched version; CUDA wheels skipped by auditor",
+    "Small selected retrieval pools and synthetic product fixtures; no broad answer quality approval",
+    "User verification time and RTX 3050 hardware unavailable/unmeasured"
+  ]
+}

@@ -257,6 +257,144 @@
         "total_token_count": 288,
         "traffic_type": null
       }
+    },
+    {
+      "id": "delta-2",
+      "tier": "visual",
+      "seconds": 5.9471722999587655,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 5,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 67,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 67
+          }
+        ],
+        "thoughts_token_count": 378,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 450,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "delta-3",
+      "tier": "visual",
+      "seconds": 8.409475299995393,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 66,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 66
+          }
+        ],
+        "thoughts_token_count": 980,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 1057,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "delta-4",
+      "tier": "text",
+      "seconds": 9.026922399993055,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 67,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 67
+          }
+        ],
+        "thoughts_token_count": 489,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 567,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "delta-5",
+      "tier": "text",
+      "seconds": 5.2895525000058115,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 63,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 63
+          }
+        ],
+        "thoughts_token_count": 158,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 232,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "tundra-0",
+      "tier": "text",
+      "seconds": 5.818170199985616,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 64,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 64
+          }
+        ],
+        "thoughts_token_count": 179,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 254,
+        "traffic_type": null
+      }
+    },
+    {
+      "id": "tundra-1",
+      "tier": "text",
+      "seconds": 2.845886899973266,
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 11,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 69,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 69
+          }
+        ],
+        "thoughts_token_count": 173,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 253,
+        "traffic_type": null
+      }
     }
   ],
   "status": "partial_or_unavailable",

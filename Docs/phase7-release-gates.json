@@ -1,0 +1,22 @@
+{
+  "gates": {
+    "source_matches_verification": true,
+    "routine_checks": true,
+    "backup_restore": true,
+    "owner_browser": true,
+    "wheel_smoke": true,
+    "public_retrieval_measured": true,
+    "internal_retrieval_measured": true,
+    "live_stream": true,
+    "prompted_router_complete": false,
+    "dependency_advisories_resolved": false,
+    "container_runtime": false,
+    "shared_tls_deployment": false,
+    "representative_answer_quality": false,
+    "independent_semantic_support": false,
+    "rtx3050_measurements": false,
+    "human_verification_time": false
+  },
+  "release_ready": false,
+  "note": "Smoke tests are not broad quality approval. Recorded checks apply to their recorded source revision and environment; rerun after changes."
+}

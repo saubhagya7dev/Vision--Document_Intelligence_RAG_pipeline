@@ -12,8 +12,8 @@
           "id": "PYSEC-2026-3804",
           "fix_versions": [],
           "aliases": [
-            "CVE-2026-69112",
-            "GHSA-4j2p-28q2-5m79"
+            "GHSA-4j2p-28q2-5m79",
+            "CVE-2026-69112"
           ],
           "description": "Hugging Face Accelerate through 1.14.0 contains a path traversal vulnerability in load_checkpoint_in_model and load_checkpoint_and_dispatch functions that fail to sanitize weight_map entries from sharded checkpoint indexes. Attackers can supply relative paths with ../ sequences or absolute paths to read arbitrary files, or point shard entries at named pipes to cause indefinite blocking and denial of service."
         }
@@ -34,5 +34,6 @@
       "skip_reason": "Dependency not found on PyPI and could not be audited: vision-native-rag (0.1.0)"
     }
   ],
-  "limits": "Advisory lookup is not a security audit or proof of exploitability. No listed fix for Accelerate; shared release remains blocked. Python 3.10 may resolve older Pillow; only this Python 3.14 profile was audited."
+  "limits": "Advisory lookup is not a security audit or proof of exploitability. No listed fix for Accelerate; shared release remains blocked. Python 3.10 may resolve older Pillow; only this Python 3.14 profile was audited.",
+  "audit_refreshed_on": "2026-11-06"
 }
