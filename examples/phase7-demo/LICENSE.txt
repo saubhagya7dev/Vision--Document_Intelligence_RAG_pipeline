@@ -1,0 +1,11 @@
+The fictional PDF files and manifest in this directory are dedicated to the
+public domain under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+These are generated evaluation fixtures. Companies, values and identifiers are
+fictional. No real customer documents are included. Regenerate with:
+python -m scripts.phase7_corpus examples/phase7-demo
+
+The generator's source code retains the repository's existing license. The
+separate ViDoRe/OpenStax evaluation downloads are not included in this directory
+and retain their own CC-BY-4.0 terms and attribution requirements.

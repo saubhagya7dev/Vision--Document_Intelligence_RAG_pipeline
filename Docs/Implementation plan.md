@@ -131,11 +131,29 @@ simulated inference; existing Phase 4 quality limits still apply.
 
 See [Phase 6 guide](Phase%206%20guide.md). No normalization or new numerical
 calculations are presented as reported facts. Historical versions without retained
-eligible indexes show missing evidence. Phase 7 has not been started.
+eligible indexes show missing evidence. Phase 7 implementation and local validation
+are recorded below.
 
-## Later phases — not started
+## Phase 7 — evaluation, hardening and release
 
 
-7. Evaluation/release: held-out document tasks, quality and hardware comparisons, access controls, security, deployment/restore and accurate release documentation. Exit: measured release gates, no unsupported production claims.
+- [x] Single-owner sessions/bearer access and fixed-workspace authorization.
+- [x] Host/origin/CORS/body boundaries, cookie revocation and secret masking.
+- [x] Signed offline backup and restore with real storage/search/history validation.
+- [x] Pinned ViDoRe V3 subset, new fictional product corpus and real CUDA retrieval comparisons.
+- [x] Real provider streaming check and resumable router/product-answer measurements.
+- [x] Wheel build and isolated packaged API/static/session smoke.
+- [x] Pinned container recipe and localhost-only optional Qdrant compose configuration.
+- [x] Dependency advisory fixes, explicit remaining advisory and auditor exclusions.
+- [x] Fail-closed release gates with source fingerprints; current guide and feature matrix.
+- [x] 133 regression tests plus lint, format, strict typing, compilation and JS syntax checks.
+- [ ] Complete remaining live provider samples after service availability.
+- [ ] Independent semantic support, broad answer quality and human verification timing.
+- [ ] RTX 3050 measurements, container runtime and shared TLS deployment verification.
+
+See [Phase 7 guide](Phase%207%20guide.md), [benchmark](Phase%207%20benchmark.md),
+and [release gates](phase7-release-gates.json). Local implementation is delivered;
+unverified release gates remain false. No production or shared-deployment readiness
+is claimed. The original README was preserved at the user's request.
 
 Tests and measurements run throughout each implemented phase. Phase 2 adds a durable local metadata/worker boundary without new extraction dependencies, models, frontend frameworks or distributed services.
