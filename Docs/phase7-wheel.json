@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "wheel": "vision_native_rag-0.1.0-py3-none-any.whl",
+  "sha256": "205d48a8709f0ff0f3fa831d8d5ff1d8318056d4df630cf7bcff26803a76d5da",
+  "returncode": 0,
+  "scope": "Wheel imports/static/API/session smoke in fresh data directory; dependencies supplied by current .venv; not a fresh dependency install"
+}
