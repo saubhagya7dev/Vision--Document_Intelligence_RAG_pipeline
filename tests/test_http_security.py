@@ -77,6 +77,7 @@ def test_origin_host_body_limit_and_secret_free_errors(client, monkeypatch):
 
 
 def test_login_backoff_and_profile_fail_closed(client, monkeypatch):
+    assert Settings(_env_file=None, access_token="").access_token is None
     monkeypatch.setattr(settings, "access_token", SecretStr("a" * 40))
     security.clear_sessions()
     for _ in range(5):

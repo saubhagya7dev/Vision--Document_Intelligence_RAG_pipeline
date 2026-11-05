@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -64,6 +64,11 @@ class Settings(BaseSettings):
     trusted_tls_proxy: bool = False
     trusted_proxy_ips: list[str] = ["127.0.0.1", "::1"]
     max_request_mb: int = Field(default=102, ge=1, le=1024)
+
+    @field_validator("access_token", mode="before")
+    @classmethod
+    def empty_access_token(cls, value: Any) -> Any:
+        return None if value == "" else value
 
     @property
     def provider_api_key(self) -> str | None:

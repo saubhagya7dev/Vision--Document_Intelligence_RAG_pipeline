@@ -1,10 +1,11 @@
-version: '3.8'
+# Optional legacy server-mode experiment; the verified app uses embedded Qdrant.
 services:
   qdrant:
-    image: qdrant/qdrant:latest
+    # Official registry manifest resolved on 2026-11-06; runtime not verified here.
+    image: qdrant/qdrant@sha256:9bfc89f9914fc14876a88c05270685921a55b8877b254a98bcc1cc2f0a424cd2
     ports:
-      - "6333:6333"
-      - "6334:6334"
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
     environment:
