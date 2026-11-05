@@ -1,7 +1,9 @@
+import json
+
 import pypdfium2 as pdfium
 import pytest
 
-from scripts.check_release import gates
+from scripts.check_release import fingerprint, gates
 from scripts.evaluate_phase7 import metrics
 from scripts.phase7_corpus import create
 
@@ -20,6 +22,17 @@ def test_release_gates_fail_closed_without_measurements(tmp_path):
     result = gates(tmp_path)
     assert result["release_ready"] is False
     assert not any(result["gates"].values())
+    project = tmp_path / "project"
+    docs = project / "Docs"
+    docs.mkdir(parents=True)
+    config = project / "pyproject.toml"
+    config.write_text("first configuration")
+    (docs / "phase7-verification.json").write_text(
+        json.dumps({"source_fingerprint": fingerprint(project)})
+    )
+    assert gates(docs)["gates"]["source_matches_verification"] is True
+    config.write_text("changed configuration")
+    assert gates(docs)["gates"]["source_matches_verification"] is False
 
 
 def test_demo_sources_and_gold_pages_are_reproducible_and_resolvable(tmp_path):

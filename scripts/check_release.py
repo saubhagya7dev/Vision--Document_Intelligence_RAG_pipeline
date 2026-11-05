@@ -1,8 +1,32 @@
 """Report release gates from recorded checks; missing evidence fails closed."""
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
+
+
+def fingerprint(project: Path):
+    if not (project / "pyproject.toml").exists():
+        return None
+    paths = [
+        project / name
+        for name in ("pyproject.toml", "uv.lock", "Dockerfile", "docker-compose.yml")
+    ]
+    for folder in ("src", "scripts", "tests"):
+        paths.extend(
+            p
+            for p in (project / folder).rglob("*")
+            if p.is_file()
+            and "__pycache__" not in p.parts
+            and p.suffix in (".py", ".js", ".css", ".html")
+        )
+    value = hashlib.sha256()
+    for path in sorted(paths):
+        if path.exists():
+            value.update(path.relative_to(project).as_posix().encode())
+            value.update(path.read_bytes())
+    return value.hexdigest()
 
 
 def gates(root: Path):
@@ -16,6 +40,8 @@ def gates(root: Path):
     provider = read("phase7-provider.json")
     audit = read("phase7-dependencies.json")
     result = {
+        "source_matches_verification": checks.get("source_fingerprint") is not None
+        and checks.get("source_fingerprint") == fingerprint(root.resolve().parent),
         "routine_checks": checks.get("routine_checks_passed") is True,
         "backup_restore": checks.get("backup_restore_passed") is True,
         "owner_browser": checks.get("owner_browser_passed") is True,

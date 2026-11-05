@@ -27,11 +27,13 @@ assert Path(vision_rag.__file__).resolve().is_relative_to(Path.cwd() / "installe
 with TestClient(app) as client:
     assert client.get('/health').json() == {'status':'ok'}
     assert client.get('/api/v1/documents').status_code == 401
-    assert client.get('/api/v1/session').json() == {'required':True,'authenticated':False}
+    state = client.get('/api/v1/session').json()
+    assert state == {'required':True,'authenticated':False}
     assert client.get('/').status_code == 200
     assert client.get('/static/session.js').status_code == 200
     assert client.get('/static/styles.css').status_code == 200
-    assert client.post('/api/v1/session',json={'token':'public-wheel-fixture-token-1234567890'}).status_code == 200
+    token = 'public-wheel-fixture-token-1234567890'
+    assert client.post('/api/v1/session',json={'token':token}).status_code == 200
     assert client.get('/api/v1/documents').status_code == 200
     assert client.get('/openapi.json').status_code == 200
     client.delete('/api/v1/session')

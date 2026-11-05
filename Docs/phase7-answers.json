@@ -1,0 +1,62 @@
+{
+  "scope": "Fictional product tasks, supplied gold evidence; adapter-only",
+  "semantic_support": "No independent judge; exact values are limited checks",
+  "samples": [
+    {
+      "kind": "version_change",
+      "passed": true,
+      "expected_checks": [
+        true,
+        true
+      ],
+      "citation_references_valid": true,
+      "seconds": 5.7954275999218225,
+      "result": {
+        "status": "supported",
+        "claims": [
+          {
+            "text": "Juniper's revenue was 137 million EUR in 2024.",
+            "citations": [
+              "E1"
+            ]
+          },
+          {
+            "text": "Juniper's revenue was 163 million EUR in 2025.",
+            "citations": [
+              "E2"
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 62,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 2307,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 179
+          },
+          {
+            "modality": "IMAGE",
+            "token_count": 2128
+          }
+        ],
+        "thoughts_token_count": 785,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 3154,
+        "traffic_type": null
+      }
+    }
+  ],
+  "model": "gemini-3.6-flash",
+  "dollar_cost": null,
+  "status": "partial_or_unavailable",
+  "error": {
+    "type": "ServerError",
+    "code": 503
+  }
+}
