@@ -344,5 +344,9 @@
         window.addEventListener('online', () => { if (!active) open(); });
         list().then(() => busy(false)).catch(report);
     }
-    window.VisionWorkspace = {open, setup};
+    window.VisionWorkspace = {open, setup, async useDocument(id) {
+        if (working() || selection.isLocked()) { status('Finish the current question or upload before starting another chat.'); return; }
+        try { location.hash = '#chat'; await create(); await selection.change([id]); await selection.refresh(); }
+        catch (error) { report(error); }
+    }};
 })();

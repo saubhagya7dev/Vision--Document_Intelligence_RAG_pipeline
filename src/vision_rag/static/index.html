@@ -466,6 +466,11 @@ Operating margin</textarea>
             <p id="session-status" role="status" aria-live="polite"></p>
         </form>
     </dialog>
+    <dialog id="versions-dialog" class="processing-dialog" aria-labelledby="versions-title">
+        <div class="modal-header"><h2 id="versions-title">Document versions</h2><button id="close-versions" class="quiet-action">Close</button></div>
+        <p>Citations keep the original version and page. Replacing a PDF does not rewrite earlier answers.</p>
+        <div id="versions-list"></div>
+    </dialog>
     <dialog id="document-picker" class="processing-dialog document-picker" aria-labelledby="document-picker-title">
         <div class="modal-header"><h2 id="document-picker-title">Choose documents</h2><button id="close-document-picker" class="quiet-action">Cancel</button></div>
         <p>Choose up to six documents. Each question keeps its own selection.</p>

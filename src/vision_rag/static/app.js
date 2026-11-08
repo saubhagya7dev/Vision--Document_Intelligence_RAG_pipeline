@@ -502,6 +502,10 @@
             }
         });
         document.addEventListener('click', event => {
+            const chatDocument = event.target.closest('[data-chat-document]');
+            if (chatDocument) { window.VisionWorkspace.useDocument(chatDocument.dataset.chatDocument); return; }
+            const history = event.target.closest('[data-document-versions]');
+            if (history) { showVersions(history.dataset.documentVersions); return; }
             const deletion = event.target.closest('[data-doc-delete]');
             if (deletion) {
                 window.__deleteDoc(deletion.dataset.docDelete, deletion.dataset.filename);
@@ -679,7 +683,8 @@
         `).join('');
 
         try {
-            const docs = await api.get('/documents');
+            const readiness = await api.get('/workspace/readiness');
+            const docs = readiness.documents;
 
             if (!docs || docs.length === 0) {
                 grid.innerHTML = '';
@@ -701,11 +706,14 @@
                     <div class="doc-card-meta">
                         <span class="doc-meta-tag">${doc.page_count} page${doc.page_count !== 1 ? 's' : ''}</span>
                         <span class="doc-meta-tag">${formatBytes(doc.size_bytes)}</span>
-                        <span class="doc-meta-tag">Version ${doc.version || '?'} · ${escapeHtml(doc.state)}</span>
+                        <span class="doc-meta-tag">Version ${doc.version || '?'} · ${escapeHtml(({ready: 'Ready to ask', reading: 'Reading pages', preparing: 'Preparing search', failed: 'Preparation stopped', empty: 'No searchable pages'})[doc.search_state] || 'Check preparation')}</span>
                     </div>
-                    <p class="doc-job-status">${doc.pages_done || 0}/${doc.total_pages || doc.page_count} pages indexed${doc.error ? ' · ' + escapeHtml(doc.error) : ''}</p>
+                    <p class="doc-job-status">${doc.search_state === 'ready' ? `${doc.searchable_pages} searchable pages` : `${doc.pages_done || 0}/${doc.total_pages || doc.page_count} pages processed`}${doc.error ? ' · ' + escapeHtml(doc.error) : ''}</p>
                     ${doc.active_version_id && doc.active_version_id !== doc.version_id ? '<p class="doc-job-status">The previous ready version remains searchable.</p>' : ''}
                     <div class="doc-card-actions">
+                        <button class="job-action" data-chat-document="${escapeHtml(doc.id)}">Ask about this</button>
+                        ${doc.active_version_id ? `<a class="job-action" href="/api/v1/versions/${encodeURIComponent(doc.active_version_id)}/file" target="_blank" rel="noopener">Original PDF ↗</a>` : ''}
+                        <button class="job-action" data-document-versions="${escapeHtml(doc.id)}">Version history</button>
                         <span data-job-buttons>${doc.job_id ? jobButtons({id: doc.job_id, kind: 'ingest', state: doc.state, cancel_requested: doc.cancel_requested}) : ''}</span>
                         <button class="job-action" data-version-for="${escapeHtml(doc.id)}">New version</button>
                         ${doc.active_version_id ? `<button class="job-action" data-processing-version="${escapeHtml(doc.active_version_id)}">Page processing</button>` : ''}
@@ -725,6 +733,23 @@
             const retry = document.createElement('button'); retry.className = 'job-action'; retry.textContent = 'Retry loading library';
             retry.addEventListener('click', initDocuments); grid.append(failure, retry);
         }
+    }
+
+    async function showVersions(id) {
+        const dialog = document.getElementById('versions-dialog'), list = document.getElementById('versions-list');
+        list.textContent = 'Loading document versions…'; dialog.showModal();
+        try {
+            const versions = await api.get(`/documents/${encodeURIComponent(id)}/versions`);
+            list.replaceChildren();
+            for (const version of versions) {
+                const row = document.createElement('div'); row.className = 'version-row';
+                const label = document.createElement('p'); label.textContent = `${version.filename} · Version ${version.ordinal} · ${version.state}`;
+                row.append(label);
+                const link = document.createElement('a'); link.className = 'quiet-action';
+                link.href = `/api/v1/versions/${encodeURIComponent(version.id)}/file`; link.target = '_blank'; link.rel = 'noopener'; link.textContent = 'Open original PDF ↗';
+                row.append(link); list.append(row);
+            }
+        } catch (error) { list.textContent = `Version history unavailable: ${error.message}`; }
     }
 
     function createEmptyDocsState() {
@@ -894,6 +919,7 @@
         try { await window.VisionSession.ready(); }
         catch { document.getElementById('api-status').textContent = 'Offline — reload after reconnecting'; return; }
         // Setup event listeners
+        document.getElementById('close-versions').addEventListener('click', () => document.getElementById('versions-dialog').close());
         setupNavigation();
         setupUpload();
         setupChat();
