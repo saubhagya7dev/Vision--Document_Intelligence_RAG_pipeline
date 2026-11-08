@@ -81,10 +81,13 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
             ? 'Choose documents' : waiting ? 'Waiting for documents' : '';
     }
     async function change(selected) {
-        if (locked || isBusy() || uploading) return;
+        if (locked || isBusy() || uploading) return false;
         locked = true; updateSend();
-        try { await setSelection(selected); render(); }
-        catch (error) { report(error); }
+        try { await setSelection(selected); render(); return true; }
+        catch (error) {
+            report(error); el('document-picker-status').textContent = `Selection not saved: ${error.message}`;
+            return false;
+        }
         finally { locked = false; render(); }
     }
     function refresh() {
@@ -126,15 +129,19 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
         if (!file.name.toLowerCase().endsWith('.pdf')) { report(new Error('Choose a PDF file')); return; }
         if (ids().length >= 6) { report(new Error('Remove a selected document before adding another (six maximum)')); return; }
         uploading = true; upload = `Uploading ${file.name}…`; render();
+        let saved = false;
         try {
             const job = await window.VisionUploads.upload(file, percent => {
                 upload = percent < 100 ? `Uploading ${file.name} · ${percent}%` : `Saving ${file.name}…`; render();
             });
+            saved = true;
             const selected = [...new Set([...ids(), job.document_id])];
             await setSelection(selected);
             upload = `${file.name} saved to your library and selected for this chat.`;
             await refresh();
-        } catch (error) { upload = `Upload could not finish: ${error.message}. Your question draft is kept.`; }
+        } catch (error) { upload = saved
+            ? `${file.name} was saved, but could not be selected: ${error.message}. Choose it from your library.`
+            : `Upload could not finish: ${error.message}. Your question draft is kept.`; }
         finally { uploading = false; render(); }
     }
     function setup() {
@@ -147,7 +154,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
         });
         el('apply-documents').addEventListener('click', async () => {
             const button = el('apply-documents'); button.disabled = true;
-            try { await change([...pickerSelection]); el('document-picker').close(); }
+            try { if (await change([...pickerSelection])) el('document-picker').close(); }
             finally { button.disabled = false; }
         });
         el('attach-document').addEventListener('click', () => el('chat-file-input').click());
