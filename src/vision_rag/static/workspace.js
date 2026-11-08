@@ -83,7 +83,7 @@
     async function setSelection(ids) {
         if (!current) await create();
         current = await api(`/conversations/${encode(current.id)}`, 'PATCH', {document_ids: ids});
-        scope();
+        scope(); status(ids.length ? 'Selected documents saved for the next question.' : 'Choose documents before sending.');
     }
     const selection = window.createDocumentSelection(api, () => current, setSelection, working, report);
     function richText(node, text, sources) {
@@ -251,6 +251,7 @@
             const turn = await api(`/conversations/${encode(current.id)}/messages`, 'POST', {
                 query, top_k: Math.max(3, current.document_ids?.length || 0), evidence_only: evidenceOnly || el('question-mode').value === 'pages',
             });
+            status('Question saved on this server.');
             if (current.title === 'New conversation') {
                 current.title = query.slice(0, 100);
                 // A cosmetic title failure must never abandon an accepted question.
