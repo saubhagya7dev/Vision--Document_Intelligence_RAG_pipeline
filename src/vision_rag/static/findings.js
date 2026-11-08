@@ -50,14 +50,20 @@
         const result = el('comparison-result'); result.replaceChildren();
         el('finding-actions').hidden = !current;
         el('finding-exports').replaceChildren();
-        if (!current) { result.append(text('p', 'Compare reports or reopen a saved finding.')); return; }
+        if (!current) {
+            result.append(text('p', document.body.dataset.findingsView === 'saved'
+                ? 'Choose a saved finding above to review its evidence and export it.'
+                : 'Choose reports and fields to build a comparison.'));
+            return;
+        }
         const content = current.content;
         el('finding-title').value = current.title;
         el('finding-reviewed').checked = current.reviewed;
         el('save-finding').textContent = current.state === 'saved' ? 'Save title' : 'Save finding';
-        result.append(text('h2', current.title), text('p', content.answer || ''),
-            text('p', `References: ${content.verification.references}. Semantic support: ${content.verification.semantic_support}. User marked reviewed: ${current.reviewed ? 'yes' : 'no'}.`, 'finding-verification'));
+        result.append(text('h2', current.title),
+            text('p', `Page references: ${content.verification.references}. Answer accuracy is not independently verified. Reviewed by you: ${current.reviewed ? 'yes' : 'no'}.`, 'finding-verification'));
         if (content.table) {
+            if (content.answer) result.append(text('p', content.answer));
             const table = document.createElement('table'), head = document.createElement('thead');
             table.append(text('caption', 'Reported values and context. No unit/currency conversion or inferred matching of periods/scopes.'));
             const row = document.createElement('tr'); row.append(text('th', 'Field'));
@@ -94,7 +100,7 @@
                 result.append(text('p', `${item.version_id.slice(0, 8)}: ${item.reason}. Rebuild while that version is active if it has no retained index.`, 'job-error'));
             }
         } else {
-            result.append(text('p', content.answer || ''));
+            if (!content.claims?.length) result.append(text('p', content.answer || ''));
             for (const claim of content.claims || []) {
                 const p = text('p', claim.text); citations(claim, content.sources, p); result.append(p);
             }
@@ -145,7 +151,7 @@
             for (const document of documents) {
                 const versions = await api(`/documents/${encode(document.id)}/versions`);
                 for (const version of versions.filter(v => v.state === 'ready')) {
-                    select.add(new Option(`${version.filename} · v${version.ordinal} · ${version.id.slice(0, 8)}`, version.id, false, selected.has(version.id)));
+                    select.add(new Option(`${version.filename} · Version ${version.ordinal}`, version.id, false, selected.has(version.id)));
                 }
             }
             const choices = el('comparison-version-options'); choices.replaceChildren();
@@ -164,7 +170,11 @@
             if (!choices.children.length) choices.append(text('p', 'Upload reports and wait for preparation before comparing.'));
             await list(); opened = true;
             const id = current?.id || localStorage.getItem('vr_finding');
-            if (id) await load(id); else { render(); status('Select two to four ready versions and the fields to compare.'); }
+            if (id) await load(id); else {
+                render(); status(document.body.dataset.findingsView === 'saved'
+                    ? 'Choose a saved finding to review or export. Use Save finding on a chat answer to keep it here.'
+                    : 'Select two to four ready versions and the fields to compare.');
+            }
         } catch (error) { report(error); }
     }
     async function compare(event) {
