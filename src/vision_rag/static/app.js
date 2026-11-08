@@ -10,7 +10,7 @@
     // CONFIG
     // =========================
     const API_BASE = '/api/v1';
-    const PAGES = ['dashboard', 'upload', 'chat', 'documents', 'analysis'];
+    const PAGES = ['dashboard', 'upload', 'chat', 'documents', 'analysis', 'findings'];
 
     // Session state
     let queryCount = parseInt(sessionStorage.getItem('vr_query_count') || '0', 10);
@@ -186,8 +186,8 @@
     // ROUTER
     // =========================
     function getPageFromHash() {
-        const hash = window.location.hash.replace('#', '') || 'dashboard';
-        return PAGES.includes(hash) ? hash : 'dashboard';
+        const hash = window.location.hash.replace('#', '') || 'chat';
+        return PAGES.includes(hash) ? hash : 'chat';
     }
 
     function navigateTo(page) {
@@ -197,7 +197,7 @@
         });
 
         // Show target page
-        const target = document.getElementById(`page-${page}`);
+        const target = document.getElementById(`page-${page === 'findings' ? 'analysis' : page}`);
         if (target) {
             target.classList.add('active');
         }
@@ -207,12 +207,38 @@
             item.classList.toggle('active', item.dataset.page === page);
         });
 
+        document.body.dataset.findingsView = page === 'findings' ? 'saved' : 'compare';
+        document.getElementById('analysis-title').textContent = page === 'findings' ? 'Saved findings' : 'Compare reports';
+        closeNavigation();
         // Trigger page-specific init
         if (page === 'dashboard') initDashboard();
         if (page === 'documents') initDocuments();
         if (page === 'chat') initChat();
-        if (page === 'analysis') window.VisionFindings.open();
+        if (page === 'analysis' || page === 'findings') window.VisionFindings.open();
         if (page === 'upload') initUpload();
+    }
+
+    function closeNavigation() {
+        document.body.classList.remove('navigation-open');
+        document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false');
+        document.getElementById('navigation-backdrop').hidden = true;
+    }
+    function setupNavigation() {
+        const toggle = document.getElementById('menu-toggle');
+        toggle.addEventListener('click', () => {
+            const open = !document.body.classList.contains('navigation-open');
+            document.body.classList.toggle('navigation-open', open);
+            toggle.setAttribute('aria-expanded', String(open));
+            document.getElementById('navigation-backdrop').hidden = !open;
+            if (open) document.getElementById('new-conversation').focus();
+        });
+        document.getElementById('navigation-backdrop').addEventListener('click', () => { closeNavigation(); toggle.focus(); });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && document.body.classList.contains('navigation-open')) { closeNavigation(); toggle.focus(); }
+        });
+        document.getElementById('app-header').addEventListener('click', event => {
+            if (event.target.closest('a, .recent-chat, #new-conversation, #data-controls-btn')) closeNavigation();
+        });
     }
 
     // =========================
@@ -358,6 +384,8 @@
             }
             toast.show(job.deduplicated ? 'This content is already in the library.' : 'Upload saved; indexing is queued.', 'info');
             await refreshJobs();
+            window.dispatchEvent(new Event('vision-library-changed'));
+            return job;
         } catch (error) {
             if (activeUploadToken === token) {
                 status.textContent = `Upload failed: ${error.message}`;
@@ -401,6 +429,7 @@
             const jobs = await api.get('/jobs');
             const previous = new Map(durableJobs.map(job => [job.id, job.state]));
             durableJobs = jobs;
+            window.dispatchEvent(new CustomEvent('vision-jobs-updated', {detail: jobs}));
             if (connection) connection.textContent = 'Recent jobs saved on the server';
             renderUploadHistory();
             let refreshDocuments = false;
@@ -835,7 +864,7 @@
                 }
                 // A new document prevents an old in-flight response restoring
                 // cleared browser state and fetches the versioned current assets.
-                location.replace('/?fresh=' + Date.now() + '#dashboard');
+                location.replace('/?fresh=' + Date.now() + '#chat');
             } catch (err) {
                 pending = false;
                 clearingData = false;
@@ -862,6 +891,7 @@
         try { await window.VisionSession.ready(); }
         catch { document.getElementById('api-status').textContent = 'Offline — reload after reconnecting'; return; }
         // Setup event listeners
+        setupNavigation();
         setupUpload();
         setupChat();
         window.VisionFindings.setup();
@@ -882,6 +912,15 @@
         checkHealth();
         setInterval(checkHealth, 30000); // Check every 30 seconds
     }
+
+    window.VisionUploads = {
+        async upload(file, progress) {
+            const job = await api.uploadFile(file, progress);
+            await refreshJobs();
+            window.dispatchEvent(new Event('vision-library-changed'));
+            return job;
+        },
+    };
 
     // Start when DOM is ready
     if (document.readyState === 'loading') {
