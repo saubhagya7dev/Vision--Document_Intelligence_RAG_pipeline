@@ -305,7 +305,8 @@
             <p id="finding-status" role="status" aria-live="polite">Open Findings to load document versions.</p>
             <form id="comparison-form" class="comparison-form">
                 <label for="comparison-versions">Reports or versions to compare</label>
-                <select id="comparison-versions" multiple size="4" aria-describedby="comparison-help"></select>
+                <select id="comparison-versions" multiple hidden aria-label="Selected versions"></select>
+                <div id="comparison-version-options" aria-label="Reports and versions"></div>
                 <small id="comparison-help">Select two to four distinct ready versions. Older versions use retained retrieval indexes; unavailable evidence is shown explicitly.</small>
                 <label for="comparison-fields">Fields to compare (one per line, up to eight)</label>
                 <textarea id="comparison-fields" rows="3" required maxlength="808">Revenue

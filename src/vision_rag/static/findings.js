@@ -29,6 +29,8 @@
         working = value;
         el('finding-status').classList.toggle('luminous', value);
         ['compare-submit', 'finding-list', 'save-finding', 'finding-reviewed', 'finding-title', 'delete-finding'].forEach(id => { el(id).disabled = value; });
+        el('comparison-version-options').querySelectorAll('input').forEach(input => { input.disabled = value; });
+        el('comparison-fields').disabled = el('comparison-question').disabled = value;
     }
     async function list() {
         const records = await api('/findings');
@@ -146,6 +148,20 @@
                     select.add(new Option(`${version.filename} · v${version.ordinal} · ${version.id.slice(0, 8)}`, version.id, false, selected.has(version.id)));
                 }
             }
+            const choices = el('comparison-version-options'); choices.replaceChildren();
+            for (const option of select.options) {
+                const label = text('label', '', 'document-option'), checkbox = document.createElement('input');
+                checkbox.type = 'checkbox'; checkbox.checked = option.selected;
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked && select.selectedOptions.length >= 4) {
+                        checkbox.checked = false; status('Select up to four report versions.'); return;
+                    }
+                    option.selected = checkbox.checked;
+                    status(`${select.selectedOptions.length} versions selected. Choose two to four for comparison.`);
+                });
+                label.append(checkbox, text('span', option.textContent)); choices.append(label);
+            }
+            if (!choices.children.length) choices.append(text('p', 'Upload reports and wait for preparation before comparing.'));
             await list(); opened = true;
             const id = current?.id || localStorage.getItem('vr_finding');
             if (id) await load(id); else { render(); status('Select two to four ready versions and the fields to compare.'); }
