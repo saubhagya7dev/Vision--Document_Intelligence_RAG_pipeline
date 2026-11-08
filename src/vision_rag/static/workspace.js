@@ -5,10 +5,23 @@
     /** @typedef {{evidence_id?:string, source:string, version_id:string, page:number, excerpt?:string}} Source */
     /** @typedef {{id:string, question:string, state:string, request:{document_ids:string[]|null}, result?:{answer:string,sources:Source[]}, error?:string}} Turn */
     const el = id => document.getElementById(id);
-    let current = null, documents = [], active = null, controller = null;
-    let opening = false, creating = null, submitting = false;
+    let current = null, active = null, controller = null;
+    let opening = false, creating = null, submitting = false, sourceTrigger = null;
     const terminal = new Set(['completed', 'failed', 'cancelled', 'interrupted']);
     const status = text => { el('workspace-status').textContent = text; };
+    const progress = (text, running = false) => {
+        el('answer-progress').textContent = text;
+        el('answer-progress').classList.toggle('luminous', running);
+    };
+    const working = () => Boolean(active || submitting || creating || opening);
+    function saveDraft() {
+        try { sessionStorage.setItem(`vr_draft_${current?.id || 'new'}`, el('chat-input').value); }
+        catch { /* Storage full: the visible draft stays editable. */ }
+    }
+    function restoreDraft() {
+        try { el('chat-input').value = sessionStorage.getItem(`vr_draft_${current?.id || 'new'}`) || ''; }
+        catch { el('chat-input').value = ''; }
+    }
     const encode = encodeURIComponent;
     async function api(path, method = 'GET', data) {
         const response = await fetch('/api/v1' + path, {
@@ -26,29 +39,52 @@
         b.className = className; b.textContent = text; b.addEventListener('click', action);
         return b;
     }
-    function report(error) { status(`Unable to complete: ${error.message}. Your saved conversation remains available.`); }
+    function report(error) { status(`Unable to complete: ${error.message}. Your draft and existing chats are kept.`); }
     function busy(value) {
-        ['send-btn', 'find-pages-btn', 'new-conversation', 'rename-conversation',
-            'delete-conversation', 'conversation-list', 'query-document-scope'].forEach(id => { el(id).disabled = value; });
-        el('stop-answer').hidden = !value || !active;
+        ['new-conversation', 'rename-conversation', 'delete-conversation', 'conversation-list', 'query-document-scope'].forEach(id => { el(id).disabled = value; });
+        document.querySelectorAll('.recent-chat').forEach(b => { b.disabled = value; });
+        el('stop-answer').hidden = !active;
+        el('send-btn').hidden = Boolean(active);
+        selection.updateSend();
+    }
+    function title() {
+        el('conversation-title').textContent = current?.title || 'New conversation';
+        el('rename-conversation').disabled = !current || working();
+        el('delete-conversation').disabled = !current || working();
     }
     async function list() {
         const conversations = await api('/conversations');
         el('conversation-list').replaceChildren(new Option('Choose a conversation', ''));
-        for (const c of conversations) el('conversation-list').add(new Option(c.title, c.id));
-        el('conversation-list').value = current?.id || '';
+        const recent = el('recent-conversations'); recent.replaceChildren();
+        for (const c of conversations) {
+            el('conversation-list').add(new Option(c.title, c.id));
+            const b = button(c.title, () => {
+                if (working() || selection.isLocked()) return;
+                location.hash = '#chat'; openConversation(c.id).catch(report);
+            }, 'recent-chat');
+            if (c.id === current?.id) b.setAttribute('aria-current', 'page');
+            b.disabled = working(); recent.append(b);
+        }
+        if (!conversations.length) {
+            const p = document.createElement('p'); p.className = 'sidebar-empty'; p.textContent = 'Your chats will appear here.'; recent.append(p);
+        }
+        el('conversation-list').value = current?.id || ''; title();
         return conversations;
     }
     function scope() {
         const select = el('query-document-scope'); select.replaceChildren();
-        const wanted = new Set(current?.document_ids || []);
-        const known = new Set(documents.map(d => d.id));
-        for (const d of documents) select.add(new Option(d.filename, d.id, false, wanted.has(d.id)));
-        for (const id of wanted) if (!known.has(id)) select.add(new Option(`Unavailable document (${id.slice(0, 8)})`, id, false, true));
+        for (const id of current?.document_ids || []) select.add(new Option(selection.name(id), id, true, true));
+        selection.render(); title();
     }
     function scopeLabel(ids) {
-        return ids === null ? 'All live documents (automatic scope)' : ids.length ? ids.map(id => documents.find(d => d.id === id)?.filename || `Unavailable document ${id.slice(0, 8)}`).join(', ') : 'No documents selected';
+        return ids === null ? 'All documents available when asked' : ids.length ? ids.map(selection.name).join(', ') : 'No documents selected';
     }
+    async function setSelection(ids) {
+        if (!current) await create();
+        current = await api(`/conversations/${encode(current.id)}`, 'PATCH', {document_ids: ids});
+        scope();
+    }
+    const selection = window.createDocumentSelection(api, () => current, setSelection, working, report);
     function richText(node, text, sources) {
         const tokens = /(\[E[a-f0-9]{16}\]|\*\*[^*]+\*\*|`[^`]+`)/g;
         for (const part of String(text || '').split(tokens)) {
@@ -64,114 +100,143 @@
             } else node.append(document.createTextNode(part));
         }
     }
+    function atBottom() {
+        const box = el('chat-messages'); return box.scrollHeight - box.scrollTop - box.clientHeight < 90;
+    }
+    function followLatest() {
+        el('chat-messages').scrollTop = el('chat-messages').scrollHeight;
+        el('jump-latest').hidden = true;
+    }
     function render() {
-        const messages = el('chat-messages'); messages.replaceChildren();
+        const messages = el('chat-messages'), follow = atBottom(), oldTop = messages.scrollTop;
+        messages.replaceChildren(); title();
         if (!current?.messages.length) {
-            const p = document.createElement('p'); p.className = 'workspace-empty';
-            p.textContent = 'Start a conversation, choose documents, then ask a question. Find pages searches locally without contacting the answer provider.';
-            messages.append(p); return;
+            const welcome = document.createElement('div'); welcome.className = 'welcome';
+            welcome.innerHTML = '<p class="eyebrow">Your document workspace</p><h2>A clearer view<br>of your documents.</h2><p>Add a PDF or choose from your library to begin.</p>';
+            const actions = document.createElement('div'); actions.className = 'welcome-actions';
+            actions.append(button('↑ Upload PDF', () => el('attach-document').click(), 'btn btn-primary'),
+                button('Choose from library ↗', () => selection.pick().catch(report), 'quiet-action'));
+            const suggestions = document.createElement('div'); suggestions.className = 'suggestions';
+            for (const [label, query] of [['Summarize this report', 'Summarize the main points in the selected report.'], ['Find a reported number', 'What revenue is reported, and for which period?']]) {
+                suggestions.append(button(label, () => { el('chat-input').value = query; saveDraft(); el('chat-input').focus(); }, 'quiet-action'));
+            }
+            welcome.append(actions, suggestions); messages.append(welcome); return;
         }
         for (const turn of current.messages) {
             const article = document.createElement('article'); article.className = 'saved-turn';
+            const question = document.createElement('div'); question.className = 'user-message';
             const q = document.createElement('h3'); q.textContent = turn.question;
-            const label = document.createElement('p'); label.className = 'turn-scope';
-            label.textContent = `Scope: ${scopeLabel(turn.request.document_ids)}`;
-            article.append(q, label);
-            const answer = document.createElement('div'); answer.className = 'saved-answer';
-            answer.id = `answer-${turn.id}`;
+            const label = document.createElement('p'); label.className = 'turn-scope'; label.textContent = scopeLabel(turn.request.document_ids);
+            question.append(q, label); article.append(question);
+            const brand = document.createElement('p'); brand.className = 'assistant-label'; brand.textContent = 'Vision'; article.append(brand);
+            const answer = document.createElement('div'); answer.className = 'saved-answer'; answer.id = `answer-${turn.id}`;
+            article.append(answer);
             if (turn.result) {
-                richText(answer, turn.result.answer, turn.result.sources || []);
-                article.append(button('Inspect evidence', () => sources(turn.result.sources || [])));
-                article.append(button('Save finding', async () => {
-                    try {
-                        await api(`/findings/from-message/${encode(turn.id)}`, 'POST', {});
-                        status('Answer saved as a finding. Open Findings to review or export it.');
-                    } catch (error) { report(error); }
+                const refs = turn.result.sources || [];
+                richText(answer, turn.result.answer, refs);
+                for (const source of refs) article.append(button(`${source.source} · Page ${source.page} ↗`, () => showEvidence(source), 'answer-source'));
+                const actions = document.createElement('div'); actions.className = 'answer-actions';
+                actions.append(button('Copy', async () => {
+                    try { await navigator.clipboard.writeText(turn.result.answer); status('Answer copied.'); }
+                    catch { status('Copy unavailable in this browser. Select the answer text to copy it.'); }
+                }), button('Inspect evidence', () => { sources(refs); openEvidence(); }));
+                actions.append(button('Save finding', async () => {
+                    try { await api(`/findings/from-message/${encode(turn.id)}`, 'POST', {}); status('Answer saved. Open Saved findings to review or export it.'); }
+                    catch (error) { report(error); }
                 }));
+                article.append(actions);
             } else {
-                answer.textContent = turn.error || (terminal.has(turn.state) ? turn.state : 'Waiting for an answer…');
-                if (terminal.has(turn.state)) article.append(button('Retry question', () => ask(false, turn.question, turn.request)));
+                answer.textContent = turn.error || (terminal.has(turn.state) ? `Answer ${turn.state}. You can retry this question.` : 'Preparing your answer…');
+                if (!terminal.has(turn.state)) answer.classList.add('luminous');
+                if (terminal.has(turn.state)) article.append(button('Retry question', () => ask(false, turn.question, turn.request), 'quiet-action'));
             }
-            article.append(answer); messages.append(article);
+            messages.append(article);
         }
-        messages.scrollTop = messages.scrollHeight;
+        if (follow || submitting) followLatest(); else { messages.scrollTop = oldTop; el('jump-latest').hidden = false; }
     }
     function sources(items) {
         const list = el('source-list'); list.replaceChildren();
         if (!items.length) { list.textContent = 'No cited evidence for this answer.'; return; }
         for (const s of items) {
             const b = button(`${s.source} · page ${s.page}`, () => showEvidence(s), 'source-card');
-            const image = document.createElement('img'); image.loading = 'lazy';
-            image.alt = `Thumbnail: ${s.source}, page ${s.page}`;
+            const image = document.createElement('img'); image.loading = 'lazy'; image.alt = '';
             image.src = `/api/v1/versions/${encode(s.version_id)}/pages/${s.page}?thumbnail=true`;
             b.prepend(image); list.append(b);
             if (s.excerpt) { const p = document.createElement('p'); p.textContent = s.excerpt; p.className = 'evidence-excerpt'; list.append(p); }
         }
     }
+    function openEvidence() {
+        sourceTrigger = document.activeElement;
+        el('chat-evidence').hidden = false;
+        document.querySelector('.workspace-layout').classList.add('has-evidence');
+        el('close-evidence').focus();
+    }
+    function closeEvidence() {
+        el('chat-evidence').hidden = true;
+        document.querySelector('.workspace-layout').classList.remove('has-evidence');
+        if (sourceTrigger?.isConnected) sourceTrigger.focus();
+    }
     async function openConversation(id) {
-        if (active) return;
-        evidence.reset();
+        if (active || submitting || selection.isLocked()) return;
+        saveDraft(); evidence.reset(); closeEvidence();
         current = await api(`/conversations/${encode(id)}`);
         localStorage.setItem('vr_conversation', id);
-        scope(); render(); await list();
+        restoreDraft(); progress(''); scope(); render(); await list();
         sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
-        evidence.reset();
-        if (current.viewer?.version_id) await showEvidence({version_id: current.viewer.version_id, page: current.viewer.page}, true);
-        status('Conversation saved on this server.');
+        status(current.document_ids === null ? 'Choose documents for your next question. Earlier answers keep their original sources.' : 'Saved on this server.');
         const pending = current.messages.find(m => !terminal.has(m.state));
         if (pending) await watch(pending);
     }
     function create() {
         if (creating) return creating;
-        creating = createConversation().finally(() => { creating = null; if (!active && !submitting) busy(false); });
+        creating = createConversation().finally(() => { creating = null; if (!active && !submitting) busy(false); title(); });
         return creating;
     }
     async function createConversation() {
         if (active) return;
-        busy(true);
-        evidence.reset();
-        current = await api('/conversations', 'POST', {title: 'New conversation', document_ids: null});
-        el('answer-progress').textContent = '';
+        saveDraft(); busy(true); evidence.reset(); closeEvidence();
+        const oldDraft = !current ? el('chat-input').value : '';
+        current = await api('/conversations', 'POST', {title: 'New conversation', document_ids: []});
+        el('chat-input').value = oldDraft; saveDraft(); progress('');
         localStorage.setItem('vr_conversation', current.id);
-        scope(); render(); sources([]); evidence.reset();
-        el('viewer-controls').hidden = true; await list(); status('New conversation ready.');
+        scope(); render(); sources([]); await list(); status('Choose documents, then ask a question.');
         el('chat-input').focus();
     }
     async function open() {
-        if (opening || active) return;
+        if (opening || active || creating || selection.isLocked()) return;
         opening = true; status('Loading saved conversations…');
         try {
-            documents = await api('/documents');
+            await selection.refresh();
             const conversations = await list();
             const id = current?.id || localStorage.getItem('vr_conversation');
             if (conversations.some(c => c.id === id)) await openConversation(id);
             else if (conversations.length) await openConversation(conversations[0].id);
-            else { current = null; scope(); render(); status('No saved conversations. Ask a question to create one.'); }
+            else { current = null; restoreDraft(); scope(); render(); status('Add a PDF or choose documents to begin.'); }
         } catch (error) { report(error); }
-        finally { opening = false; }
+        finally { opening = false; busy(Boolean(active || submitting)); title(); }
     }
     async function ask(evidenceOnly = false, retryText = null, retryRequest = null) {
-        if (active || submitting) return;
+        if (working() || selection.isLocked()) return;
         const query = retryText || el('chat-input').value.trim(); if (!query) return;
+        if (retryRequest) {
+            try { await setSelection(retryRequest.document_ids || []); evidenceOnly = retryRequest.evidence_only; } catch (error) { report(error); return; }
+        }
+        await selection.refresh();
+        if (!selection.canSend()) { status('Choose ready documents before sending. Your question is kept.'); return; }
         submitting = true; busy(true);
-        el('answer-progress').textContent = 'Submitting question…';
+        progress('Submitting question…', true);
         try {
             if (!current) await create();
-            if (retryRequest) {
-                // Retrying preserves the failed turn's document scope, including unavailable IDs.
-                current = await api(`/conversations/${encode(current.id)}`, 'PATCH', {document_ids: retryRequest.document_ids});
-                scope(); evidenceOnly = retryRequest.evidence_only;
-            }
             const turn = await api(`/conversations/${encode(current.id)}/messages`, 'POST', {
-                query, top_k: Math.max(3, current.document_ids?.length || 0), evidence_only: evidenceOnly,
+                query, top_k: Math.max(3, current.document_ids?.length || 0), evidence_only: evidenceOnly || el('question-mode').value === 'pages',
             });
             if (current.title === 'New conversation') {
                 current.title = query.slice(0, 100);
                 await api(`/conversations/${encode(current.id)}`, 'PATCH', {title: current.title});
             }
-            el('chat-input').value = ''; current.messages.push(turn); render(); await list(); await watch(turn);
+            el('chat-input').value = ''; saveDraft(); current.messages.push(turn); render(); await list(); await watch(turn);
         } catch (error) { report(error); }
-        finally { submitting = false; if (!active) busy(false); }
+        finally { submitting = false; if (!active) { busy(false); el('answer-progress').classList.remove('luminous'); } }
     }
     async function watch(turn) {
         active = turn.id; busy(true); controller = new AbortController();
@@ -191,15 +256,17 @@
                     const dataLine = block.split('\n').find(l => l.startsWith('data: '));
                     if (!type || !dataLine) continue;
                     const data = JSON.parse(dataLine.slice(6));
-                    if (type === 'progress') el('answer-progress').textContent = `${data.stage}${data.tier ? ` · ${data.tier}` : ''}…`;
+                    if (type === 'progress') progress(({queued: 'Waiting to search…', retrieving: 'Searching selected documents…', generating: 'Writing answer…', validating: 'Checking page references…'})[data.stage] || 'Working on your question…', true);
                     if (type === 'answer-delta') {
                         if (data.reset) draft = ''; draft += data.text;
-                        answer.textContent = draft; answer.classList.add('provisional');
-                        el('answer-progress').textContent = 'Draft answer — checking references before publishing.';
+                        const follow = atBottom();
+                        answer.textContent = draft; answer.classList.remove('luminous'); answer.classList.add('provisional');
+                        progress('Writing answer · draft until page references are checked', true);
+                        if (follow) followLatest(); else el('jump-latest').hidden = false;
                     }
                     if (type === 'final-answer' || type === 'error') {
                         finished = true;
-                        el('answer-progress').textContent = data.message || 'Answer saved. Final references are authoritative.';
+                        progress(data.message || 'Answer saved. Inspect cited pages to check accuracy.');
                     }
                 }
                 if (chunk.done) break;
@@ -209,9 +276,9 @@
             if (error.name !== 'AbortError') report(error);
             try { await api(`/messages/${encode(turn.id)}/cancel`, 'POST', {}); } catch { /* Offline: server disconnect recovery handles this. */ }
             answer.textContent = 'Answer interrupted. Reopen this conversation to see its saved status and retry.';
-            answer.classList.remove('provisional');
+            answer.classList.remove('provisional', 'luminous');
         } finally {
-            active = null; controller = null; busy(false);
+            active = null; controller = null; el('answer-progress').classList.remove('luminous'); busy(false);
             try {
                 current = await api(`/conversations/${encode(current.id)}`); render();
                 sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
@@ -221,36 +288,50 @@
         }
     }
     const evidence = window.createEvidenceViewer(api, () => current, report);
-    const showEvidence = (source, restore = false) => evidence.show(source, restore);
+    const showEvidence = (source, restore = false) => { openEvidence(); return evidence.show(source, restore); };
     function setup() {
-        evidence.setup();
-        document.querySelector('.skip-link').addEventListener('click', event => {
-            event.preventDefault(); el('app-main').focus();
+        evidence.setup(); selection.setup(); restoreDraft();
+        el('chat-input').addEventListener('input', saveDraft);
+        el('chat-input').addEventListener('keydown', event => {
+            if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); ask(); }
         });
-        el('new-conversation').addEventListener('click', () => create().catch(report));
-        el('conversation-list').addEventListener('change', e => { if (e.target.value) openConversation(e.target.value).catch(report); });
+        el('chat-messages').addEventListener('scroll', () => { el('jump-latest').hidden = atBottom(); });
+        el('jump-latest').addEventListener('click', followLatest);
+        el('close-evidence').addEventListener('click', closeEvidence);
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !el('chat-evidence').hidden && !document.querySelector('dialog[open]')) closeEvidence();
+        });
+        document.querySelector('.skip-link').addEventListener('click', event => { event.preventDefault(); el('app-main').focus(); });
+        el('new-conversation').addEventListener('click', () => {
+            if (working() || selection.isLocked()) return;
+            location.hash = '#chat'; create().catch(report);
+        });
+        el('conversation-list').addEventListener('change', e => { if (e.target.value && !working()) openConversation(e.target.value).catch(report); });
         el('rename-conversation').addEventListener('click', async () => {
-            if (!current) return;
-            const title = prompt('Conversation title', current.title)?.trim(); if (!title) return;
-            try { current = await api(`/conversations/${encode(current.id)}`, 'PATCH', {title: title.slice(0, 160)}); await list(); } catch (error) { report(error); }
+            if (!current || working()) return;
+            const name = prompt('Conversation title', current.title)?.trim(); if (!name) return;
+            try { current = await api(`/conversations/${encode(current.id)}`, 'PATCH', {title: name.slice(0, 160)}); await list(); }
+            catch (error) { report(error); }
         });
         el('delete-conversation').addEventListener('click', async () => {
-            if (!current || !confirm('Delete this saved conversation and its messages? Documents stay in the library.')) return;
-            try { await api(`/conversations/${encode(current.id)}`, 'DELETE'); current = null; localStorage.removeItem('vr_conversation'); await open(); } catch (error) { report(error); }
+            if (!current || working() || selection.isLocked() || !confirm('Delete this chat and its messages? Documents and saved findings stay in the library.')) return;
+            try {
+                const id = current.id; await api(`/conversations/${encode(id)}`, 'DELETE');
+                sessionStorage.removeItem(`vr_draft_${id}`); current = null;
+                localStorage.removeItem('vr_conversation'); el('chat-input').value = ''; evidence.reset(); closeEvidence(); await open();
+            } catch (error) { report(error); }
         });
-        el('query-document-scope').addEventListener('change', async e => {
-            const ids = [...e.target.selectedOptions].map(o => o.value);
-            if (ids.length > 6) { status('Select at most six documents.'); scope(); return; }
-            try { if (!current) await create(); current = await api(`/conversations/${encode(current.id)}`, 'PATCH', {document_ids: ids.length ? ids : null}); scope(); } catch (error) { report(error); }
-        });
+        el('query-document-scope').addEventListener('change', e => selection.change([...e.target.selectedOptions].map(o => o.value)));
         el('question-form').addEventListener('submit', e => { e.preventDefault(); ask(); });
         el('find-pages-btn').addEventListener('click', () => ask(true));
         el('stop-answer').addEventListener('click', async () => {
             if (!active) return;
-            try { await api(`/messages/${encode(active)}/cancel`, 'POST', {}); el('answer-progress').textContent = 'Cancellation requested…'; } catch (error) { report(error); }
+            try { await api(`/messages/${encode(active)}/cancel`, 'POST', {}); progress('Stopping at the next safe boundary…', true); }
+            catch (error) { report(error); }
         });
-        window.addEventListener('offline', () => status('Offline. Saved server conversations will be available after reconnection.'));
+        window.addEventListener('offline', () => status('Offline. Your draft is kept; reconnect to reopen saved chats.'));
         window.addEventListener('online', () => { if (!active) open(); });
+        list().then(() => busy(false)).catch(report);
     }
     window.VisionWorkspace = {open, setup};
 })();
