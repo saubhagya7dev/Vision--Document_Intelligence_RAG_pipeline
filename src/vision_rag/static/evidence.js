@@ -58,7 +58,9 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
             }
             el('viewer-zoom').value = zoom;
             page(source.page, restore);
-            if (!restore) el('viewer-controls').scrollIntoView({block: 'nearest'});
+            // The chat has its own drawer; scrolling it here hides its heading.
+            // Findings still live in a normal scrolling document.
+            if (!restore && prefix) el('viewer-controls').scrollIntoView({block: 'nearest'});
         } catch (error) {
             if (token !== viewerToken) return;
             el('viewer-controls').hidden = true; el('viewer-status').textContent = `Evidence unavailable: ${error.message}. The saved citation is retained.`;

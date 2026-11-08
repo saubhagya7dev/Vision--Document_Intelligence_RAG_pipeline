@@ -173,6 +173,7 @@
     function openEvidence() {
         sourceTrigger = document.activeElement;
         el('chat-evidence').hidden = false;
+        el('chat-evidence').scrollTop = 0;
         document.querySelector('.workspace-layout').classList.add('has-evidence');
         evidenceModality();
         el('close-evidence').focus();
