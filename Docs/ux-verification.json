@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-08",
+  "scope": "local owner workspace UX redesign",
+  "python_tests": {
+    "passed": 136,
+    "warnings": 2,
+    "duration_seconds": 233.23
+  },
+  "frontend_tests": {
+    "passed": 4,
+    "command": "node --test tests/frontend_selection.test.mjs"
+  },
+  "static_checks": {
+    "ruff_lint": "passed",
+    "ruff_format": "passed",
+    "mypy_source_files": 44,
+    "python_compilation": "passed",
+    "javascript_syntax": [
+      "app.js",
+      "workspace.js",
+      "documents.js",
+      "evidence.js",
+      "findings.js",
+      "session.js"
+    ],
+    "git_whitespace": "passed"
+  },
+  "browser": {
+    "fixtures": [
+      "tests/browser_phase5_fixture.py",
+      "tests/browser_ux_fixture.py"
+    ],
+    "inference": "simulated only",
+    "documents": "generated fictional PDFs only",
+    "checks": [
+      "explicit selection",
+      "streamed cited answer",
+      "source drawer and original page",
+      "Stop cancellation",
+      "draft reload recovery",
+      "empty scope blocks submission",
+      "local Find pages",
+      "chat PDF upload to readiness",
+      "save answer finding",
+      "comparison with missing cells",
+      "save and reopen comparison",
+      "JSON export download",
+      "mobile navigation",
+      "mobile source sheet focus isolation",
+      "close returns to citation"
+    ],
+    "desktop_width": 1280,
+    "desktop_content_width": 1280,
+    "mobile_width": 384,
+    "mobile_content_width": 384,
+    "mobile_height": 820,
+    "mobile_composer_bottom": 769,
+    "source_drawer_heading_visible": true
+  },
+  "limits": [
+    "No new live-provider or representative model-quality evaluation.",
+    "No new deployment/release approval.",
+    "Reduced-motion fallback reviewed in CSS; not emulated in the browser session."
+  ],
+  "source_sha256": {
+    "src/vision_rag/static/app.js": "b585d96d7d32257c0652a72a342285ff1375e8fb36db0551a2b70aeecc3a0556",
+    "src/vision_rag/static/documents.js": "cdf2d358db2ce58547e15997b76436e6381cc7cc7a1e78d9cb79fb70be5ec268",
+    "src/vision_rag/static/evidence.js": "0e914f0e6b983a8d6dc0818a3a8239c77e714f21e73beea34d8bdca29be187de",
+    "src/vision_rag/static/findings.js": "b79543a54378d30b02c8edcb7c65e7649feb2ac2f79a3cecac9a307173dcff43",
+    "src/vision_rag/static/index.html": "da8fc9e46682f98410c29970812e75cb8c06e72183ab865db08b1d6d1be12fc5",
+    "src/vision_rag/static/session.js": "227b1960036f1e0610e3da5bc10de110e9849375cef596e6d327fa3d9525fc2b",
+    "src/vision_rag/static/styles.css": "f3cb898dd55f1e7d73f5fd9b47364ea1fc2f65cf078de86180c029ec0287e715",
+    "src/vision_rag/static/workspace.css": "e703faa945f7ef55b60a4b1f61159f45707722af8172a2fb04710cedc077b9ec",
+    "src/vision_rag/static/workspace.js": "b58022d82164583c9aa04c2907a2b50340937cbdda3924d9bc0b3a0c2399df59",
+    "src/vision_rag/api/main.py": "bdecd59ce68ce52241827a0f4e343dddbf85ba9282b8fcb2973a47b2b3e98300",
+    "src/vision_rag/api/workspace.py": "2d7fdd509a4113d84b767f655d06431c5fc7640cd2bd7ebee64caa6ec3520104"
+  }
+}

@@ -1,6 +1,9 @@
 # Vision UX redesign proposal
 
-Preview stage: 8 November 2026. Application code has not been changed.
+Approved and implemented on 8 November 2026. This document records the design
+intent and preview iterations. See [UX redesign guide](UX%20redesign%20guide.md)
+for shipped behavior, screenshots and validation limits. The refined desktop
+scale and Luminous Type treatment supersede the earlier visual previews.
 
 ## Product model
 
