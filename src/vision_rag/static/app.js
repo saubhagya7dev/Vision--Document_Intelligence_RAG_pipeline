@@ -220,20 +220,32 @@
 
     function closeNavigation() {
         document.body.classList.remove('navigation-open');
+        document.getElementById('app-main').inert = false;
         document.getElementById('menu-toggle').setAttribute('aria-expanded', 'false');
         document.getElementById('navigation-backdrop').hidden = true;
+        document.getElementById('app-header').inert = window.matchMedia('(max-width: 700px)').matches;
     }
     function setupNavigation() {
         const toggle = document.getElementById('menu-toggle');
         toggle.addEventListener('click', () => {
             const open = !document.body.classList.contains('navigation-open');
             document.body.classList.toggle('navigation-open', open);
+            document.getElementById('app-header').inert = !open && window.matchMedia('(max-width: 700px)').matches;
+            document.getElementById('app-main').inert = open;
             toggle.setAttribute('aria-expanded', String(open));
             document.getElementById('navigation-backdrop').hidden = !open;
             if (open) document.getElementById('new-conversation').focus();
         });
         document.getElementById('navigation-backdrop').addEventListener('click', () => { closeNavigation(); toggle.focus(); });
+        window.matchMedia('(max-width: 700px)').addEventListener('change', closeNavigation);
+        closeNavigation();
         document.addEventListener('keydown', event => {
+            if (event.key === 'Tab' && document.body.classList.contains('navigation-open')) {
+                const items = [...document.getElementById('app-header').querySelectorAll('a[href], button:not(:disabled)')].filter(node => !node.hidden && node.getClientRects().length);
+                const first = items[0], last = items.at(-1);
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+            }
             if (event.key === 'Escape' && document.body.classList.contains('navigation-open')) { closeNavigation(); toggle.focus(); }
         });
         document.getElementById('app-header').addEventListener('click', event => {

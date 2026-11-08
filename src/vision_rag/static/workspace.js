@@ -173,12 +173,24 @@
         sourceTrigger = document.activeElement;
         el('chat-evidence').hidden = false;
         document.querySelector('.workspace-layout').classList.add('has-evidence');
+        evidenceModality();
         el('close-evidence').focus();
     }
     function closeEvidence() {
         el('chat-evidence').hidden = true;
         document.querySelector('.workspace-layout').classList.remove('has-evidence');
+        evidenceModality();
         if (sourceTrigger?.isConnected) sourceTrigger.focus();
+    }
+    function evidenceModality() {
+        const modal = !el('chat-evidence').hidden && window.matchMedia('(max-width: 1000px)').matches;
+        document.querySelector('.chat-main').inert = modal;
+        document.querySelector('.workspace-toolbar').inert = modal;
+        document.querySelector('.selection-toolbar').inert = modal;
+        // Sidebar is also inaccessible while the mobile evidence sheet is open.
+        el('app-header').inert = modal || (window.matchMedia('(max-width: 700px)').matches && !document.body.classList.contains('navigation-open'));
+        if (modal) { el('chat-evidence').setAttribute('role', 'dialog'); el('chat-evidence').setAttribute('aria-modal', 'true'); }
+        else { el('chat-evidence').removeAttribute('role'); el('chat-evidence').removeAttribute('aria-modal'); }
     }
     async function openConversation(id) {
         if (active || submitting || navigating || selection.isLocked()) return;
@@ -309,7 +321,14 @@
         el('chat-messages').addEventListener('scroll', () => { el('jump-latest').hidden = atBottom(); });
         el('jump-latest').addEventListener('click', followLatest);
         el('close-evidence').addEventListener('click', closeEvidence);
+        window.matchMedia('(max-width: 1000px)').addEventListener('change', evidenceModality);
         document.addEventListener('keydown', event => {
+            if (event.key === 'Tab' && el('chat-evidence').getAttribute('aria-modal') === 'true') {
+                const items = [...el('chat-evidence').querySelectorAll('button:not(:disabled), a[href], input, select, [tabindex="0"]')].filter(node => node.getClientRects().length);
+                const first = items[0], last = items.at(-1);
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+            }
             if (event.key === 'Escape' && !el('chat-evidence').hidden && !document.querySelector('dialog[open]')) closeEvidence();
         });
         document.querySelector('.skip-link').addEventListener('click', event => { event.preventDefault(); el('app-main').focus(); });
