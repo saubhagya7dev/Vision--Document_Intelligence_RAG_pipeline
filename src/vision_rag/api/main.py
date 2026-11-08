@@ -125,6 +125,7 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
             "app.js",
             "workspace.js",
             "evidence.js",
+            "documents.js",
             "findings.js",
             "session.js",
         ):
