@@ -28,7 +28,7 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
         el('viewer-prev').disabled = number === 1; el('viewer-next').disabled = number === viewer.page_count;
         el('viewer-pages').textContent = `/ ${viewer.page_count}`;
         el('viewer-status').textContent = `Loading page ${number}…`;
-        savedScroll = restore ? current.viewer : {scroll_top: 0, scroll_left: 0};
+        savedScroll = restore ? current?.viewer : {scroll_top: 0, scroll_left: 0};
         el('viewer-image').src = `/api/v1/versions/${encode(viewer.id)}/pages/${number}`;
         el('viewer-image').alt = `${viewer.filename}, page ${number}`;
         el('viewer-image').style.width = `${Number(el('viewer-zoom').value) * 100}%`;
@@ -59,7 +59,10 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
             el('viewer-zoom').value = zoom;
             page(source.page, restore);
             if (!restore) el('viewer-controls').scrollIntoView({block: 'nearest'});
-        } catch (error) { el('viewer-controls').hidden = true; el('viewer-status').textContent = `Evidence unavailable: ${error.message}. The saved citation is retained.`; }
+        } catch (error) {
+            if (token !== viewerToken) return;
+            el('viewer-controls').hidden = true; el('viewer-status').textContent = `Evidence unavailable: ${error.message}. The saved citation is retained.`;
+        }
     }
     function setup() {
         el('viewer-prev').addEventListener('click', () => page(Number(el('viewer-page').value) - 1));
@@ -68,6 +71,7 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
         el('viewer-zoom').addEventListener('change', () => { el('viewer-image').style.width = `${Number(el('viewer-zoom').value) * 100}%`; saveViewer(); });
         el('viewer-scroll').addEventListener('scroll', saveViewer);
         el('viewer-image').addEventListener('load', () => {
+            if (!viewer) return;
             el('viewer-status').textContent = 'Evidence page ready.';
             if (savedScroll) { el('viewer-scroll').scrollTop = savedScroll.scroll_top || 0; el('viewer-scroll').scrollLeft = savedScroll.scroll_left || 0; savedScroll = null; }
             saveViewer();
@@ -76,6 +80,7 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
     }
     function reset() {
         clearTimeout(saveTimer); ++viewerToken; viewer = null;
+        savedScroll = null;
         el('viewer-controls').hidden = true;
         el('viewer-status').textContent = '';
     }
