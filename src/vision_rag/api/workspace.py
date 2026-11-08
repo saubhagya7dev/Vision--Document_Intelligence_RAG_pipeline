@@ -76,6 +76,93 @@ def store() -> Conversations:
     return Conversations(routes.get_library().metadata)
 
 
+@router.get("/workspace/readiness")
+def workspace_readiness() -> dict[str, Any]:
+    """Report selected-version search eligibility without loading a model."""
+    library = routes.get_library()
+    with library.access:
+        manager = library.retrieval
+        active = manager.active() if manager else None
+        builds = {}
+        if manager:
+            for key in manager.source_builds():
+                row = library.metadata.rows(
+                    "SELECT id,version_id FROM builds WHERE id=?", (key,)
+                )[0]
+                builds[row["version_id"]] = key
+        allowed = manager.eligible(active) if manager and active else {}
+        points = [point for values in allowed.values() for point in values]
+        indexed = (
+            library.metadata.rows(
+                "SELECT DISTINCT document_id,page_number FROM retrieval_items "
+                "WHERE index_id=? AND id IN (SELECT value FROM json_each(?))",
+                (active["id"], json.dumps(points)),
+            )
+            if active
+            else []
+        )
+        documents = []
+        for document in library.documents():
+            pages = {
+                row["page_number"]
+                for row in indexed
+                if row["document_id"] == document["id"]
+            }
+            build = builds.get(document.get("version_id"))
+            records = (
+                library.metadata.rows(
+                    "SELECT p.page_number,p.state,p.visual,EXISTS(SELECT 1 FROM "
+                    "text_chunks t WHERE t.build_id=p.build_id AND "
+                    "t.page_number=p.page_number) AS has_text FROM page_processing p "
+                    "WHERE p.build_id=?",
+                    (build,),
+                )
+                if build
+                else []
+            )
+            expected = (
+                {
+                    row["page_number"]
+                    for row in records
+                    if row["visual"] or row["has_text"]
+                }
+                if records
+                else set(range(1, document["page_count"] + 1))
+            )
+            ready = bool(
+                manager
+                and active
+                and build
+                and expected
+                and document["state"] == "ready"
+                and expected.issubset(pages)
+                and all(row["state"] == "ready" for row in records)
+            )
+            state = (
+                "ready"
+                if ready
+                else (
+                    "failed"
+                    if document["state"] in ("failed", "cancelled")
+                    else "reading"
+                    if document["state"] != "ready"
+                    else "empty"
+                    if build and not expected
+                    else "preparing"
+                )
+            )
+            documents.append(
+                {**document, "search_state": state, "searchable_pages": len(pages)}
+            )
+        revisions = manager.revisions() if manager else []
+        return {
+            "documents": documents,
+            "search_enabled": manager is not None,
+            "index": revisions[0] if revisions else None,
+            "active_index": active["id"] if active else None,
+        }
+
+
 def scoped_documents(documents: list[str] | None) -> None:
     if documents is not None:
         for key in documents:
