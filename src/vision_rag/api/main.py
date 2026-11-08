@@ -121,6 +121,7 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
         html = index_file.read_text(encoding="utf-8")
         for asset in (
             "styles.css",
+            "workspace.css",
             "app.js",
             "workspace.js",
             "evidence.js",
