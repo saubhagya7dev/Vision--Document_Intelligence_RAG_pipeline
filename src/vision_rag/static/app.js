@@ -369,7 +369,8 @@
         document.getElementById('upload-filesize').textContent = formatBytes(file.size);
         fill.style.width = '0%';
         status.style.color = '';
-        status.textContent = 'Uploading...';
+        status.textContent = 'Uploading…';
+        status.classList.add('luminous');
         activeUploadJobId = null;
         try {
             const job = await api.uploadFile(file, percent => {
@@ -388,6 +389,7 @@
             return job;
         } catch (error) {
             if (activeUploadToken === token) {
+                status.classList.remove('luminous');
                 status.textContent = `Upload failed: ${error.message}`;
                 status.style.color = '#ef4444';
             }
@@ -447,6 +449,7 @@
                 if (job.id === activeUploadJobId) {
                     const percent = job.total_pages ? Math.round(100 * job.pages_done / job.total_pages) : 0;
                     document.getElementById('progress-fill').style.width = `${percent}%`;
+                    document.getElementById('upload-status').classList.toggle('luminous', !terminalJobs.has(job.state));
                     document.getElementById('upload-status').textContent =
                         `${jobLabel(job)} — ${job.pages_done}/${job.total_pages} pages indexed${job.error ? '. ' + job.error : ''}`;
                 }
@@ -475,7 +478,7 @@
                     ${job.kind === 'ingest' ? `<progress max="${Math.max(1, job.total_pages)}" value="${job.pages_done}" aria-label="Indexed pages"></progress>` : ''}
                     ${job.error ? `<p class="job-error">${escapeHtml(job.error)}</p>` : ''}
                 </div>
-                <span class="status-badge ${style}">${label}</span>
+                <span class="status-badge ${style}${terminalJobs.has(job.state) ? '' : ' luminous'}">${label}</span>
                 ${jobButtons(job)}
             </div>`;
         }).join('');

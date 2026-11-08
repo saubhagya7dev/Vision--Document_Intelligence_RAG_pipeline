@@ -27,6 +27,7 @@
     }
     function busy(value) {
         working = value;
+        el('finding-status').classList.toggle('luminous', value);
         ['compare-submit', 'finding-list', 'save-finding', 'finding-reviewed', 'finding-title', 'delete-finding'].forEach(id => { el(id).disabled = value; });
     }
     async function list() {
