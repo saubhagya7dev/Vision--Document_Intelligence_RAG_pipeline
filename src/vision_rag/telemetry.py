@@ -20,18 +20,38 @@ class SecretFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         from vision_rag.config import settings
 
-        message = record.getMessage()
+        secrets = [
+            secret.get_secret_value() if isinstance(secret, SecretStr) else secret
+            for secret in (settings.provider_api_key, settings.access_token)
+        ]
+
+        def redact(value: Any) -> Any:
+            if isinstance(value, str):
+                for secret in secrets:
+                    if secret:
+                        value = value.replace(secret, "[redacted]")
+                return value
+            if isinstance(value, tuple):
+                return tuple(redact(item) for item in value)
+            if isinstance(value, list):
+                return [redact(item) for item in value]
+            if isinstance(value, dict):
+                return {key: redact(item) for key, item in value.items()}
+            if value is None or isinstance(value, (int, float, bool)):
+                return value
+            return redact(str(value))
+
+        # Uvicorn reuses args for its colored message and access fields. Keep
+        # their structure and numeric types instead of flattening the record.
+        record.msg = redact(record.msg)
+        record.args = redact(record.args)
+        if "color_message" in record.__dict__:
+            record.__dict__["color_message"] = redact(record.__dict__["color_message"])
         if record.exc_info:
-            message += "\n" + logging.Formatter().formatException(record.exc_info)
-        for secret in (settings.provider_api_key, settings.access_token):
-            value = (
-                secret.get_secret_value() if isinstance(secret, SecretStr) else secret
-            )
-            if value:
-                message = message.replace(str(value), "[redacted]")
-        record.msg, record.args = message, ()
-        record.exc_info = None
-        record.exc_text = None
+            record.exc_text = logging.Formatter().formatException(record.exc_info)
+            record.exc_info = None
+        if record.exc_text:
+            record.exc_text = redact(record.exc_text)
         return True
 
 
