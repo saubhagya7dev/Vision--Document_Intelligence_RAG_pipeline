@@ -6,14 +6,14 @@
     /** @typedef {{id:string, question:string, state:string, request:{document_ids:string[]|null}, result?:{answer:string,sources:Source[]}, error?:string}} Turn */
     const el = id => document.getElementById(id);
     let current = null, active = null, controller = null;
-    let opening = false, creating = null, submitting = false, sourceTrigger = null;
+    let opening = false, creating = null, submitting = false, navigating = false, sourceTrigger = null;
     const terminal = new Set(['completed', 'failed', 'cancelled', 'interrupted']);
     const status = text => { el('workspace-status').textContent = text; };
     const progress = (text, running = false) => {
         el('answer-progress').textContent = text;
         el('answer-progress').classList.toggle('luminous', running);
     };
-    const working = () => Boolean(active || submitting || creating || opening);
+    const working = () => Boolean(active || submitting || creating || opening || navigating);
     function saveDraft() {
         try { sessionStorage.setItem(`vr_draft_${current?.id || 'new'}`, el('chat-input').value); }
         catch { /* Storage full: the visible draft stays editable. */ }
@@ -139,7 +139,11 @@
                 actions.append(button('Copy', async () => {
                     try { await navigator.clipboard.writeText(turn.result.answer); status('Answer copied.'); }
                     catch { status('Copy unavailable in this browser. Select the answer text to copy it.'); }
-                }), button('Inspect evidence', () => { sources(refs); openEvidence(); }));
+                }), button('Inspect evidence', () => {
+                    sources(refs);
+                    if (current.viewer?.version_id) showEvidence({version_id: current.viewer.version_id, page: current.viewer.page}, true);
+                    else openEvidence();
+                }));
                 actions.append(button('Save finding', async () => {
                     try { await api(`/findings/from-message/${encode(turn.id)}`, 'POST', {}); status('Answer saved. Open Saved findings to review or export it.'); }
                     catch (error) { report(error); }
@@ -177,15 +181,18 @@
         if (sourceTrigger?.isConnected) sourceTrigger.focus();
     }
     async function openConversation(id) {
-        if (active || submitting || selection.isLocked()) return;
-        saveDraft(); evidence.reset(); closeEvidence();
-        current = await api(`/conversations/${encode(id)}`);
-        localStorage.setItem('vr_conversation', id);
-        restoreDraft(); progress(''); scope(); render(); await list();
-        sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
-        status(current.document_ids === null ? 'Choose documents for your next question. Earlier answers keep their original sources.' : 'Saved on this server.');
-        const pending = current.messages.find(m => !terminal.has(m.state));
-        if (pending) await watch(pending);
+        if (active || submitting || navigating || selection.isLocked()) return;
+        navigating = true; busy(true);
+        try {
+            saveDraft(); evidence.reset(); closeEvidence();
+            current = await api(`/conversations/${encode(id)}`);
+            localStorage.setItem('vr_conversation', id);
+            restoreDraft(); progress(''); scope(); render(); await list();
+            sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
+            status(current.document_ids === null ? 'Choose documents for your next question. Earlier answers keep their original sources.' : 'Saved on this server.');
+            const pending = current.messages.find(m => !terminal.has(m.state));
+            if (pending) await watch(pending);
+        } finally { navigating = false; busy(Boolean(active || submitting || opening)); title(); }
     }
     function create() {
         if (creating) return creating;
@@ -218,23 +225,27 @@
     async function ask(evidenceOnly = false, retryText = null, retryRequest = null) {
         if (working() || selection.isLocked()) return;
         const query = retryText || el('chat-input').value.trim(); if (!query) return;
-        if (retryRequest) {
-            try { await setSelection(retryRequest.document_ids || []); evidenceOnly = retryRequest.evidence_only; } catch (error) { report(error); return; }
-        }
-        await selection.refresh();
-        if (!selection.canSend()) { status('Choose ready documents before sending. Your question is kept.'); return; }
         submitting = true; busy(true);
-        progress('Submitting question…', true);
         try {
+            if (retryRequest) {
+                await setSelection(retryRequest.document_ids || []); evidenceOnly = retryRequest.evidence_only;
+            }
+            await selection.refresh();
+            if (!selection.canSend()) { status('Choose ready documents before sending. Your question is kept.'); return; }
+            progress('Submitting question…', true);
             if (!current) await create();
             const turn = await api(`/conversations/${encode(current.id)}/messages`, 'POST', {
                 query, top_k: Math.max(3, current.document_ids?.length || 0), evidence_only: evidenceOnly || el('question-mode').value === 'pages',
             });
             if (current.title === 'New conversation') {
                 current.title = query.slice(0, 100);
-                await api(`/conversations/${encode(current.id)}`, 'PATCH', {title: current.title});
+                // A cosmetic title failure must never abandon an accepted question.
+                try { await api(`/conversations/${encode(current.id)}`, 'PATCH', {title: current.title}); }
+                catch { status('Question accepted; the automatic chat title could not be saved.'); }
             }
-            el('chat-input').value = ''; saveDraft(); current.messages.push(turn); render(); await list(); await watch(turn);
+            el('chat-input').value = ''; saveDraft(); current.messages.push(turn); render();
+            try { await list(); } catch { /* The accepted question still needs its stream. */ }
+            await watch(turn);
         } catch (error) { report(error); }
         finally { submitting = false; if (!active) { busy(false); el('answer-progress').classList.remove('luminous'); } }
     }
