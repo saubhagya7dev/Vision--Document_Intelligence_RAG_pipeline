@@ -49,6 +49,7 @@
     }
     function title() {
         el('conversation-title').textContent = current?.title || 'New conversation';
+        el('conversation-title').title = current?.title || 'New conversation';
         el('rename-conversation').disabled = !current || working();
         el('delete-conversation').disabled = !current || working();
     }
@@ -197,6 +198,7 @@
         navigating = true; busy(true);
         try {
             saveDraft(); evidence.reset(); closeEvidence();
+            await selection.refresh();
             current = await api(`/conversations/${encode(id)}`);
             localStorage.setItem('vr_conversation', id);
             restoreDraft(); progress(''); scope(); render(); await list();

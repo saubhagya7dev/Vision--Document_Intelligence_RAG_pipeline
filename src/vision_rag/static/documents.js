@@ -30,7 +30,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
     }
     function render() {
         const selected = ids();
-        el('library-count').textContent = String(data.documents.length).padStart(2, '0');
+        el('library-count').textContent = unavailable ? '…' : String(data.documents.length).padStart(2, '0');
         el('selected-summary').textContent = selected.length
             ? `Using ${selected.length} document${selected.length === 1 ? '' : 's'} · ${selected.map(name).join(', ')}`
             : 'Choose documents to begin';
@@ -165,7 +165,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
         window.addEventListener('vision-library-changed', refresh);
         window.addEventListener('offline', () => { unavailable = true; render(); });
         setInterval(() => { if (!document.hidden && !el('page-chat').hidden && el('page-chat').classList.contains('active')) refresh(); }, 2500);
-        render();
+        render(); refresh();
     }
     return {setup, refresh, render, pick, change, name, ready, updateSend,
         canSend: () => !locked && !uploading && ids().length > 0 && ids().every(ready),
