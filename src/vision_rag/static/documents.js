@@ -3,7 +3,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
     'use strict';
     const el = id => document.getElementById(id);
     let data = {documents: [], search_enabled: true, index: null};
-    let refreshing = null, pickerSelection = new Set(), upload = null, uploading = false;
+    let refreshing = null, pickerSelection = new Set(), upload = null, uploadConversation = null, uploading = false;
     let locked = false, unavailable = true;
     const ids = () => getCurrent()?.document_ids || [];
     const documentFor = id => data.documents.find(d => d.id === id);
@@ -44,7 +44,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
             remove.disabled = locked || isBusy() || uploading; chip.append(remove); chips.append(chip);
         }
         const container = el('chat-preparation'); container.replaceChildren();
-        if (upload) container.append(text('div', upload, 'preparation-row'));
+        if (upload && (uploading || uploadConversation === (getCurrent()?.id || null))) container.append(text('div', upload, 'preparation-row'));
         for (const id of selected.filter(id => !ready(id))) {
             const doc = documentFor(id), row = text('div', '', 'preparation-row');
             row.append(text('header', name(id)));
@@ -128,7 +128,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
         if (uploading || locked || isBusy()) return;
         if (!file.name.toLowerCase().endsWith('.pdf')) { report(new Error('Choose a PDF file')); return; }
         if (ids().length >= 6) { report(new Error('Remove a selected document before adding another (six maximum)')); return; }
-        uploading = true; upload = `Uploading ${file.name}…`; render();
+        uploading = true; uploadConversation = getCurrent()?.id || null; upload = `Uploading ${file.name}…`; render();
         let saved = false;
         try {
             const job = await window.VisionUploads.upload(file, percent => {
@@ -137,6 +137,7 @@ window.createDocumentSelection = function(api, getCurrent, setSelection, isBusy,
             saved = true;
             const selected = [...new Set([...ids(), job.document_id])];
             await setSelection(selected);
+            uploadConversation = getCurrent()?.id || null;
             upload = `${file.name} saved to your library and selected for this chat.`;
             await refresh();
         } catch (error) { upload = saved

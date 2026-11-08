@@ -108,7 +108,7 @@
         el('chat-messages').scrollTop = el('chat-messages').scrollHeight;
         el('jump-latest').hidden = true;
     }
-    function render() {
+    function render(forceFollow = false) {
         const messages = el('chat-messages'), follow = atBottom(), oldTop = messages.scrollTop;
         messages.replaceChildren(); title();
         if (!current?.messages.length) {
@@ -157,7 +157,7 @@
             }
             messages.append(article);
         }
-        if (follow || submitting) followLatest(); else { messages.scrollTop = oldTop; el('jump-latest').hidden = false; }
+        if (follow || forceFollow) followLatest(); else { messages.scrollTop = oldTop; el('jump-latest').hidden = false; }
     }
     function sources(items) {
         const list = el('source-list'); list.replaceChildren();
@@ -257,7 +257,7 @@
                 try { await api(`/conversations/${encode(current.id)}`, 'PATCH', {title: current.title}); }
                 catch { status('Question accepted; the automatic chat title could not be saved.'); }
             }
-            el('chat-input').value = ''; saveDraft(); current.messages.push(turn); render();
+            el('chat-input').value = ''; saveDraft(); current.messages.push(turn); render(true);
             try { await list(); } catch { /* The accepted question still needs its stream. */ }
             await watch(turn);
         } catch (error) { report(error); }
