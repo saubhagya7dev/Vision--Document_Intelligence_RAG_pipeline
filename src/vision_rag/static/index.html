@@ -13,66 +13,34 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/workspace.css">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
 </head>
 
 <body>
     <a class="skip-link" href="#app-main">Skip to main content</a>
-    <!-- ===== TOP NAVIGATION ===== -->
-    <header id="app-header">
-        <div class="header-inner">
-            <a href="#dashboard" class="logo" id="logo-link">
-                <span class="logo-icon">✦</span>
-                <span class="logo-text">Vision RAG</span>
-            </a>
-            <nav class="nav-pill" id="main-nav">
-                <a href="#dashboard" class="nav-item active" data-page="dashboard">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="7" height="7" rx="1" />
-                        <rect x="14" y="3" width="7" height="7" rx="1" />
-                        <rect x="3" y="14" width="7" height="7" rx="1" />
-                        <rect x="14" y="14" width="7" height="7" rx="1" />
-                    </svg>
-                    Dashboard
-                </a>
-                <a href="#upload" class="nav-item" data-page="upload">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                    </svg>
-                    Upload
-                </a>
-                <a href="#chat" class="nav-item" data-page="chat">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                    </svg>
-                    Chat
-                </a>
-                <a href="#documents" class="nav-item" data-page="documents">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                    </svg>
-                    Documents
-                </a>
-                <a href="#analysis" class="nav-item" data-page="analysis">Findings</a>
-            </nav>
-            <div class="header-right">
-                <button class="btn btn-secondary btn-sm" id="sign-out" hidden>Sign out</button>
-                <button class="btn btn-secondary btn-sm" id="data-controls-btn">Data &amp; history</button>
-                <div class="status-indicator" id="api-status">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Checking...</span>
-                </div>
-            </div>
+    <button id="menu-toggle" class="mobile-menu btn-icon" aria-label="Open navigation" aria-controls="app-header" aria-expanded="false">☰</button>
+    <header id="app-header" class="app-sidebar" aria-label="Workspace navigation">
+        <a href="#chat" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">Ⅴ</span><span class="logo-text">Vision</span></a>
+        <p class="brand-caption">Document intelligence</p>
+        <button id="new-conversation" class="btn btn-primary sidebar-new">＋ New chat</button>
+        <nav id="main-nav" aria-label="Main navigation">
+            <a href="#documents" class="nav-item" data-page="documents"><span aria-hidden="true">▤</span> Documents <span id="library-count" class="nav-count"></span></a>
+            <a href="#analysis" class="nav-item" data-page="analysis"><span aria-hidden="true">▥</span> Compare reports</a>
+            <a href="#findings" class="nav-item" data-page="findings"><span aria-hidden="true">♧</span> Saved findings</a>
+        </nav>
+        <p class="sidebar-caption">Recent chats</p>
+        <nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav>
+        <div class="sidebar-footer">
+            <div class="status-indicator" id="api-status"><span class="status-dot"></span><span class="status-text">Checking connection…</span></div>
+            <a href="#upload" class="nav-item" data-page="upload">Processing &amp; search</a>
+            <a href="#dashboard" class="nav-item" data-page="dashboard">Workspace activity</a>
+            <button class="quiet-action" id="data-controls-btn">Settings &amp; data</button>
+            <button class="quiet-action" id="sign-out" hidden>Sign out</button>
         </div>
     </header>
+    <button id="navigation-backdrop" class="navigation-backdrop" aria-label="Close navigation" hidden></button>
 
     <!-- ===== TOAST CONTAINER ===== -->
     <div id="toast-container"></div>
@@ -208,8 +176,8 @@
         <!-- ========== UPLOAD PAGE ========== -->
         <section id="page-upload" class="page">
             <div class="page-header">
-                <h1 class="page-title">Upload Documents</h1>
-                <p class="page-subtitle">Drag & drop your PDF files to ingest them into the Vision RAG pipeline.</p>
+                <h1 class="page-title">Processing &amp; search</h1>
+                <p class="page-subtitle">Upload PDFs and inspect preparation details. You can also upload directly in a chat.</p>
             </div>
 
             <div class="upload-zone" id="upload-zone">
@@ -268,36 +236,41 @@
 
         <!-- ========== CHAT PAGE ========== -->
         <section id="page-chat" class="page">
-            <div class="workspace-toolbar">
-                <h1 class="page-title">Document workspace</h1>
-                <button id="new-conversation" class="job-action">New conversation</button>
-                <label>Saved conversations <select id="conversation-list"><option value="">Choose a conversation</option></select></label>
-                <button id="rename-conversation" class="job-action">Rename</button>
-                <button id="delete-conversation" class="job-action">Delete conversation</button>
-            </div>
-            <p id="workspace-status" role="status" aria-live="polite">Loading conversations…</p>
+            <header class="workspace-toolbar">
+                <div><p class="eyebrow">Workspace / conversation</p><h1 class="page-title" id="conversation-title">New conversation</h1></div>
+                <details class="chat-actions"><summary>Chat actions</summary><div>
+                    <button id="rename-conversation" class="quiet-action">Rename chat</button>
+                    <button id="delete-conversation" class="quiet-action">Delete chat</button>
+                </div></details>
+                <select id="conversation-list" aria-label="Saved conversations" hidden><option value="">Choose a conversation</option></select>
+            </header>
+            <div class="selection-toolbar"><p id="selected-summary">Choose documents to begin</p><button class="quiet-action" id="choose-documents">Choose documents</button></div>
+            <p id="workspace-status" role="status" aria-live="polite"></p>
             <div class="chat-layout workspace-layout">
                 <div class="chat-main">
-                    <div class="query-scope-controls">
-                        <label for="query-document-scope">Document scope (empty means all live documents)</label>
-                        <select id="query-document-scope" multiple size="3" aria-describedby="query-scope-help"></select>
-                        <small id="query-scope-help">Up to six documents. Each saved question retains its own scope.</small>
-                    </div>
+                    <select id="query-document-scope" multiple hidden aria-label="Selected documents"></select>
                     <div class="chat-messages" id="chat-messages" tabindex="0" aria-label="Conversation messages"></div>
+                    <button id="jump-latest" class="quiet-action" hidden>Jump to latest ↓</button>
+                    <div id="chat-preparation" aria-live="polite"></div>
                     <p id="answer-progress" role="status" aria-live="polite"></p>
                     <form id="question-form" class="chat-input-container">
-                        <label for="chat-input">Ask about your documents</label>
-                        <div class="chat-input-wrapper">
-                            <input type="text" id="chat-input" maxlength="8000" autocomplete="off" placeholder="Ask about your documents…" required>
-                            <button class="job-action" id="send-btn" type="submit">Ask</button>
-                            <button class="job-action" id="find-pages-btn" type="button">Find pages</button>
-                            <button class="job-action" id="stop-answer" type="button" hidden>Stop</button>
+                        <div id="composer-documents" aria-label="Documents selected for this chat"></div>
+                        <label for="chat-input" class="sr-only">Ask about your documents</label>
+                        <textarea id="chat-input" rows="2" maxlength="8000" autocomplete="off" placeholder="Ask a follow-up about your documents…" required></textarea>
+                        <div class="composer-actions">
+                            <button class="btn-icon" id="attach-document" type="button" aria-label="Upload PDF">＋</button>
+                            <label class="composer-mode"><span class="sr-only">Question mode</span><select id="question-mode"><option value="answer">Ask documents</option><option value="pages">Find pages</option></select></label>
+                            <button class="quiet-action" id="find-pages-btn" type="button" hidden>Find pages</button>
+                            <span id="send-readiness" class="composer-hint"></span>
+                            <button class="btn btn-primary" id="send-btn" type="submit" aria-label="Send question">↑</button>
+                            <button class="btn btn-primary" id="stop-answer" type="button" hidden>Stop</button>
                         </div>
-                        <small>Draft text is provisional. Final answers carry validated references; semantic support is not automatically verified.</small>
                     </form>
+                    <small class="composer-footnote">Answers use selected documents. Open citations to inspect original pages.</small>
+                    <input type="file" id="chat-file-input" accept=".pdf,application/pdf" hidden>
                 </div>
-                <aside class="source-panel evidence-panel" aria-label="Evidence viewer">
-                    <h2>Evidence</h2>
+                <aside id="chat-evidence" class="source-panel evidence-panel" aria-label="Evidence viewer" hidden>
+                    <div class="source-heading"><h2>Source</h2><button id="close-evidence" class="btn-icon" aria-label="Close source viewer">×</button></div>
                     <div id="source-list" class="workspace-sources"><p>No evidence selected. Ask a question or use Find pages.</p></div>
                     <p id="viewer-status" role="status" aria-live="polite"></p>
                     <div id="viewer-controls" hidden>
@@ -315,14 +288,15 @@
                             <img id="viewer-image" alt="Selected evidence page">
                         </div>
                     </div>
+                    <small class="source-note">Page references checked. Answer accuracy still needs review.</small>
                 </aside>
             </div>
         </section>
 
         <!-- ========== FINDINGS PAGE ========== -->
         <section id="page-analysis" class="page">
-            <h1 class="page-title">Compare and save findings</h1>
-            <p>Compare reported values and inspect each factual cell's evidence. Units, currencies, periods and scopes are preserved, not normalized.</p>
+            <h1 class="page-title" id="analysis-title">Compare reports</h1>
+            <p class="comparison-intro">Compare reported values and inspect each factual cell's evidence. Units, currencies, periods and scopes are preserved, not normalized.</p>
             <div class="findings-toolbar">
                 <label>Saved findings <select id="finding-list"><option value="">Choose a saved finding</option></select></label>
                 <button id="refresh-findings" class="job-action">Refresh findings and versions</button>
@@ -439,7 +413,7 @@ Operating margin</textarea>
         <fieldset id="data-options">
             <legend>Clear options</legend>
             <label class="data-option"><input type="radio" name="data-action" value="history" checked>
-                <span><strong>Clear history</strong><small>Remove chat, sources and activity from your browser, and hide completed upload and cleanup history. Keep documents and active jobs.</small></span>
+                <span><strong>Clear history</strong><small>Remove chats and draft comparisons, and hide completed processing history. Keep saved findings, documents and active jobs.</small></span>
             </label>
             <label class="data-option"><input type="radio" name="data-action" value="cache">
                 <span><strong>Clear page cache</strong><small>Delete rendered pages and thumbnails. Keep documents, extracted text and indexes. Previews regenerate when opened.</small></span>
@@ -491,6 +465,15 @@ Operating margin</textarea>
             <button id="session-submit" class="job-action" type="submit">Sign in</button>
             <p id="session-status" role="status" aria-live="polite"></p>
         </form>
+    </dialog>
+    <dialog id="document-picker" class="processing-dialog document-picker" aria-labelledby="document-picker-title">
+        <div class="modal-header"><h2 id="document-picker-title">Choose documents</h2><button id="close-document-picker" class="quiet-action">Cancel</button></div>
+        <p>Choose up to six documents. Each question keeps its own selection.</p>
+        <label for="document-search" class="sr-only">Search documents</label>
+        <input id="document-search" type="search" placeholder="Search your library…" autocomplete="off">
+        <div id="document-options"></div>
+        <p id="document-picker-status" role="status"></p>
+        <div class="picker-actions"><button id="select-ready-documents" class="quiet-action">Select ready documents</button><button id="apply-documents" class="btn btn-primary">Use selected documents</button></div>
     </dialog>
     <script src="/static/session.js"></script>
     <script src="/static/evidence.js"></script>
