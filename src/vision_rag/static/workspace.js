@@ -41,6 +41,8 @@
     }
     function report(error) { status(`Unable to complete: ${error.message}. Your draft and existing chats are kept.`); }
     function busy(value) {
+        // Independent list/readiness requests must not unlock an unfinished open.
+        value = Boolean(value || working());
         ['new-conversation', 'rename-conversation', 'delete-conversation', 'conversation-list', 'query-document-scope', 'mode-answer', 'mode-pages'].forEach(id => { el(id).disabled = value; });
         document.querySelectorAll('.recent-chat').forEach(b => { b.disabled = value; });
         el('stop-answer').hidden = !active;
@@ -226,7 +228,7 @@
     }
     async function open() {
         if (opening || active || creating || selection.isLocked()) return;
-        opening = true; status('Loading saved conversations…');
+        opening = true; busy(true); status('Loading saved conversations…');
         try {
             await selection.refresh();
             const conversations = await list();
