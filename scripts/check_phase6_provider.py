@@ -109,7 +109,7 @@ def main():
         if generator:
             generator.close()
     report["seconds"] = perf_counter() - started
-    Path("Docs/phase6-provider-smoke.json").write_text(
+    Path("Docs/evidence/phase6-provider-smoke.json").write_text(
         json.dumps(report, indent=2) + "\n", encoding="utf-8"
     )
     print(
