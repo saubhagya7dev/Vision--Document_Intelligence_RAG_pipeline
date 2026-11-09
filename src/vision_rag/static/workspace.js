@@ -113,6 +113,8 @@
     function render(forceFollow = false) {
         const messages = el('chat-messages'), follow = atBottom(), oldTop = messages.scrollTop;
         messages.replaceChildren(); title();
+        el('chat-input').placeholder = current?.messages.length
+            ? 'Ask a follow-up about your documents…' : 'Ask a question about your documents…';
         if (!current?.messages.length) {
             const welcome = document.createElement('div'); welcome.className = 'welcome';
             welcome.innerHTML = '<p class="eyebrow">Your document workspace</p><h2>What will you discover?</h2><p>Bring a report, a research paper, or a question.<br>Your answers begin with the documents you choose.</p>';
@@ -131,7 +133,8 @@
             }
             const guide = document.createElement('div'); guide.className = 'welcome-guide';
             guide.innerHTML = '<span><b>01</b> Choose PDFs</span><i>→</i><span><b>02</b> Ask or find pages</span><i>→</i><span><b>03</b> Inspect &amp; save</span>';
-            welcome.append(actions, suggestions, guide); messages.append(welcome); return;
+            welcome.append(actions, suggestions, guide); messages.append(welcome);
+            messages.scrollTop = 0; el('jump-latest').hidden = true; return;
         }
         for (const turn of current.messages) {
             const article = document.createElement('article'); article.className = 'saved-turn';
