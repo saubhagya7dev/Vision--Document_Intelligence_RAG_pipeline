@@ -508,3 +508,20 @@ The public project page retains its separate Explore Vision entry.
 This follow-up also restores mobile navigation after leaving a source sheet and
 handles remembered findings that no longer exist. See the follow-up record in
 [Validation](Validation.md#recorded-checks).
+
+## 12. Product landing and interactive walkthrough — 9 November
+
+Rebuilt the About Project page around the supplied reference: centered cream
+serif headline, compact navigation, black surfaces, a focused emerald glow and
+a detailed product window. The public example now walks through a dashboard,
+PDF preparation, a cited answer and the document library. Its fictional data is
+explicitly labeled, and all example interactions stay local to the page.
+
+The workspace keeps its compact header. Fresh chats now show useful starter
+tasks and an explanation of the workflow; first-question placeholders and scroll
+position reset when opening a new chat.
+
+![Complete reference-led product page](assets/product-landing-full.png)
+
+See [Usage](Usage.md) for walkthrough controls and
+[Validation](Validation.md#recorded-checks) for the checks on this revision.
