@@ -133,3 +133,15 @@ body { background: #090a0a; }
     .workspace-layout .chat-main { padding: 0 0 12px; }.workspace-layout .chat-messages { padding: 16px 0; }.workspace-toolbar .eyebrow { display: none; }.selection-toolbar { padding-top: 8px; }.header-menu > div { width: 185px; }.history-menu > nav { left: 0; right: auto; }.header-menu summary { padding: 8px; }
     .welcome { margin-top: 18px; }.welcome h2 { font-size: 26px; }.welcome-actions { margin-block: 18px; }.suggestions { margin-block: 15px; }#chat-input { min-height: 44px; }.workspace-layout .evidence-panel { inset: 0; }
 }
+
+/* A purposeful start: examples explain the next step without fake activity. */
+.welcome { max-width:700px; width:100%; margin:20px auto 16px; padding:8px 12px; }
+.welcome h2 { font:400 38px/1.15 Georgia,serif; letter-spacing:-1px; color:#e8eee6; margin:12px 0; }
+.welcome>p { font-size:12px; line-height:1.75; }.welcome .eyebrow { font-size:9px; letter-spacing:1.8px; color:#71aa89; }
+.welcome-actions { margin:18px 0 20px; }.welcome-actions .btn { border-radius:4px; }
+.welcome .suggestions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0; }
+.suggestions .starter-card { display:block; text-align:left; padding:16px; border:1px solid #73978125; border-radius:4px; background:linear-gradient(130deg,#15251b,#111a15); color:#c7d6cb; }
+.starter-card strong { display:block; font-size:12px; font-weight:500; }.starter-card span { display:block; margin-top:7px; color:#81998b; font-size:10px; }.suggestions .starter-card:hover { border-color:#63977566; background:#182b1e; }
+.welcome-guide { display:flex; align-items:center; gap:14px; margin-top:22px; padding-top:17px; border-top:1px solid #87a99316; color:#809489; font-size:9px; }.welcome-guide b { color:#75a68b; margin-right:5px; font-weight:400; }.welcome-guide i { color:#476a55; font-style:normal; }
+@media(max-height:780px) and (min-width:701px) { .welcome { margin:8px auto; }.welcome h2 { font-size:30px; }.welcome>p { font-size:11px; }.welcome-actions { margin:12px 0; }.suggestions .starter-card { padding:11px 14px; }.welcome-guide { margin-top:12px; padding-top:10px; } }
+@media(max-width:700px) { .welcome { padding:0; margin:14px auto; }.welcome h2 { font-size:30px; }.welcome>p { font-size:11px; }.welcome .suggestions { grid-template-columns:1fr; gap:8px; }.suggestions .starter-card { padding:12px; }.welcome-guide { gap:7px; flex-wrap:wrap; font-size:8px; }.welcome-actions { margin:15px 0; } }
