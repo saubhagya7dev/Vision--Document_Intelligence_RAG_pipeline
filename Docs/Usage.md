@@ -96,7 +96,8 @@ Every submitted turn retains its source set. Saved conversations and events are
 server-owned. Unsent drafts are saved per chat in browser-tab session storage;
 access tokens are not stored there. Accepted questions clear only after server
 acceptance. Failed selection saves keep the picker open; already-saved uploads are
-distinguished from selection failures. Failed provider calls are not replayed automatically.
+distinguished from selection failures. Temporary full-answer failures use bounded
+server-side recovery; a submitted question is not duplicated in conversation history.
 
 Draft recovery is tab-local, not a cross-device sync feature. Cancellation may wait
 for an in-flight GPU/provider boundary. Reduced-motion/forced-color fallbacks and
@@ -108,12 +109,23 @@ An HTTP 503 from Gemini or a provider read timeout is different from a missing
 local search index. The failed turn is kept with an actionable error; provisional
 text is not published as a validated answer. Find pages remains provider-free.
 
-For a failed answer, **Retry without streaming** explicitly submits a new turn
-with the same question, source scope and request options. It waits for the complete
-provider response, then applies the same claim/citation validation. It does not
-silently retry or automatically spend another provider request. The API equivalent
-is `stream_answer: false` on a conversation-message request; SSE still delivers
-progress and the final saved answer. `/query` already uses a non-streamed request.
+New chats and ordinary UI retries now use the complete-response path by default;
+users should not need a failed streaming attempt first. SSE still delivers progress
+and the final saved answer. API clients can explicitly opt into provider streaming
+with `stream_answer: true`; `/query` remains a non-streamed request.
+
+`PROVIDER_ATTEMPTS` is the total attempt budget for each provider adapter call
+(default two, maximum three). Temporary timeouts, connections and selected server
+errors use cancellable backoff. The SDK itself makes only one attempt, avoiding
+multiplied retry loops. A partial opt-in stream is never automatically replayed.
+Semantic retrieval escalation is a separate bounded generation step; the attempt
+budget is not a guaranteed total question deadline or a promise of zero provider cost.
+
+Only identified short per-minute limits with a provider delay of at most 30 seconds
+are retried. Daily quota, key/model permission and invalid-request errors require
+the appropriate account/configuration fix. When a daily quota includes a reset
+delay, the current client remembers it and avoids more provider calls until then.
+That hold is in memory; restart or a different model/client learns its own quota.
 
 This is an alternative transport path, not a bypass for quotas or unavailable
 models. Retry later for service errors, check model/key permissions for access
@@ -122,10 +134,12 @@ increase `PROVIDER_TIMEOUT_MS` (default 30000, maximum 120000) for genuinely slo
 requests; that does not fix HTTP 503 or quota exhaustion. Restart after changing
 configuration. An in-flight provider call may still finish before cancellation.
 
-The failure → manual retry → cited answer workflow was checked in a disposable
-browser library with fictional documents and simulated provider failures:
+Both recovery and the newer first-attempt full-answer default were checked in
+disposable browser libraries with fictional documents and simulated providers:
 
 ![Non-streamed retry completed with a cited answer in the recovery fixture](assets/provider-recovery.png)
+
+![A fresh chat completes directly without the failing streaming endpoint](assets/provider-default-answer.png)
 
 ## Comparisons and findings
 
