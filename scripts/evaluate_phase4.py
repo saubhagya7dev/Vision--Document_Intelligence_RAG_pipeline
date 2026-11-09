@@ -18,7 +18,7 @@ def main():
         "--work-dir", type=Path, default=Path(".tools/phase4-evaluation")
     )
     parser.add_argument(
-        "--output", type=Path, default=Path("Docs/phase4-evaluation.json")
+        "--output", type=Path, default=Path("Docs/evidence/phase4-evaluation.json")
     )
     parser.add_argument("--provider", action="store_true")
     parser.add_argument("--provider-only", action="store_true")
@@ -388,7 +388,13 @@ def main():
         )
         report["status"] = "completed"
         save()
-        plot(report, args.output.with_name("phase4-cost-quality.png"))
+        plot_dir = (
+            Path("Docs/assets")
+            if args.output.parent == Path("Docs/evidence")
+            else args.output.parent
+        )
+        plot_dir.mkdir(parents=True, exist_ok=True)
+        plot(report, plot_dir / "phase4-cost-quality.png")
         print(json.dumps(report["policies"], indent=2), flush=True)
     finally:
         if provider:
@@ -497,10 +503,10 @@ def plot(report, output):
         axis.grid(axis="x", alpha=0.2)
         axis.set_axisbelow(True)
     axes[0].invert_yaxis()
-    axes[0].set_xlabel("Gold page-set coverage @3 (%) — 20 answerable tests")
+    axes[0].set_xlabel("Gold page-set coverage @3 (%) â€” 20 answerable tests")
     axes[1].set_xlabel("Mean measured retrieval latency (ms)")
     figure.suptitle(
-        "Phase 4: synthetic held-out families — quality and latency\n"
+        "Phase 4: synthetic held-out families â€” quality and latency\n"
         "Scoped pooled baseline matches hybrid coverage at lower latency",
         fontsize=13,
     )
