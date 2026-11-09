@@ -490,3 +490,21 @@ The earlier screenshots above document the 8 November interface. The new browser
 captures use generated fictional PDFs and simulated inference. See
 [Validation](Validation.md#recorded-checks) for the 138 Python / seven frontend
 passing checks and [Usage](Usage.md) for the updated entry flow.
+
+## 11. Compact header and darker surfaces — 9 November
+
+Restored Dashboard, Upload, Chat and Documents to a compact top navigation bar,
+with Compare and Findings beside them. Recent chats moved into the chat toolbar;
+Settings holds data controls and About Vision. Black and charcoal surfaces replace
+the broad green treatment, while green accents and luminous progress remain.
+The public project page retains its separate Explore Vision entry.
+
+![Darker landing and compact illustrative navigation](assets/header-landing-desktop.png)
+
+![Compact desktop header and cited source](assets/header-workspace-desktop.png)
+
+![Mobile header and chat](assets/header-workspace-mobile.png)
+
+This follow-up also restores mobile navigation after leaving a source sheet and
+handles remembered findings that no longer exist. See the follow-up record in
+[Validation](Validation.md#recorded-checks).
