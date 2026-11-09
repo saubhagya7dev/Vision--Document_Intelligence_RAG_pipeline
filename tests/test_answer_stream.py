@@ -34,7 +34,7 @@ def test_provider_stream_emits_decoded_provisional_text_and_final_json():
     )
 
 
-def test_cancelled_provider_stream_is_closed_and_never_publishes():
+def test_already_cancelled_provider_never_starts_a_stream():
     provider = object.__new__(GeminiGenerator)
     provider.model_name = "fake"
     provider.client = MagicMock()
@@ -50,5 +50,30 @@ def test_cancelled_provider_stream_is_closed_and_never_publishes():
     with pytest.raises(QuestionCancelled):
         provider.generate_grounded_stream(
             "question", [{"id": "E1"}], [], lambda _: None, lambda: True
+        )
+    assert not closed
+    provider.client.models.generate_content_stream.assert_not_called()
+
+
+def test_provider_stream_cancelled_after_a_delta_is_closed():
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name = "fake"
+    provider.client = MagicMock()
+    closed, cancelled = [], [False]
+
+    def stream():
+        try:
+            yield SimpleNamespace(text='{"text":"draft', usage_metadata=None)
+            yield SimpleNamespace(text=" more", usage_metadata=None)
+        finally:
+            closed.append(True)
+
+    def delta(text):
+        cancelled[0] = True
+
+    provider.client.models.generate_content_stream.return_value = stream()
+    with pytest.raises(QuestionCancelled):
+        provider.generate_grounded_stream(
+            "question", [{"id": "E1"}], [], delta, lambda: cancelled[0]
         )
     assert closed

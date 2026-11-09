@@ -188,6 +188,9 @@ def test_provider_retries_and_deadlines_are_bounded(monkeypatch):
         "fake", "not-a-real-key", timeout_ms=2000, attempts=2
     )
     options = constructor.call_args.kwargs["http_options"]
-    assert options.timeout == 2000 and options.retry_options.attempts == 2
-    assert options.retry_options.http_status_codes == [429, 500, 502, 503, 504]
+    assert options.timeout == 2000 and options.retry_options.attempts == 1
+    assert (
+        generator.attempts == 2
+    )  # One bounded application policy, not SDK retries squared.
+    assert options.retry_options.http_status_codes == [500, 502, 503, 504]
     generator.close()

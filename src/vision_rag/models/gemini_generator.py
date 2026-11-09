@@ -32,6 +32,9 @@ class GeminiGenerator(BaseVLMGenerator):
             api_key: Google API key, or read GOOGLE_API_KEY from the environment.
         """
         self.model_name = model_name
+        if not 1 <= attempts <= 3:
+            raise ValueError("Provider attempts must be between 1 and 3")
+        self.attempts = attempts
         self.last_usage: dict[str, Any] = {}
 
         # Determine API key
@@ -44,10 +47,10 @@ class GeminiGenerator(BaseVLMGenerator):
             http_options=types.HttpOptions(
                 timeout=timeout_ms,
                 retry_options=types.HttpRetryOptions(
-                    attempts=attempts,
+                    attempts=1,
                     initial_delay=0.5,
                     max_delay=2,
-                    http_status_codes=[429, 500, 502, 503, 504],
+                    http_status_codes=[500, 502, 503, 504],
                 ),
             ),
         )

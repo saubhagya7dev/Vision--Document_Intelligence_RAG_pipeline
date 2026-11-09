@@ -17,7 +17,7 @@ from vision_rag.models.gemini_generator import GeminiGenerator
         (
             errors.ServerError(503, {"error": {"message": "private SDK message"}}),
             503,
-            "temporarily unavailable",
+            "still unavailable",
         ),
         (
             errors.ClientError(429, {"error": {"message": "private SDK message"}}),
@@ -36,6 +36,7 @@ def test_stream_failures_close_partial_stream_and_hide_sdk_details(
 ):
     provider = object.__new__(GeminiGenerator)
     provider.model_name = "fixture"
+    provider.attempts = 3
     provider.client = MagicMock()
     closed, deltas = [], []
 
@@ -54,3 +55,87 @@ def test_stream_failures_close_partial_stream_and_hide_sdk_details(
     assert "private" not in str(caught.value)
     assert closed and deltas
     provider.client.models.generate_content.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "failure",
+    [
+        httpx.ReadTimeout("private"),
+        httpx.ConnectError("private"),
+        errors.ServerError(503, {"error": {"message": "private"}}),
+    ],
+)
+def test_transient_full_answer_failure_recovers_within_one_attempt_budget(
+    monkeypatch, failure
+):
+    from vision_rag.generate import provider_errors
+
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 3
+    provider.client = MagicMock()
+    success = SimpleNamespace(
+        text='{"status":"insufficient","claims":[]}', usage_metadata=None
+    )
+    provider.client.models.generate_content.side_effect = [failure, failure, success]
+    pauses = []
+    monkeypatch.setattr(
+        provider_errors,
+        "retry_pause",
+        lambda seconds, cancelled: pauses.append(seconds),
+    )
+    assert provider.generate_grounded("question", [], []) == {
+        "status": "insufficient",
+        "claims": [],
+    }
+    assert provider.client.models.generate_content.call_count == 3
+    assert pauses == [0.5, 1.0]
+
+
+@pytest.mark.parametrize("code", [400, 401, 403, 404, 429, 501])
+def test_permanent_and_quota_failures_are_not_retried(monkeypatch, code):
+    from vision_rag.generate import provider_errors
+
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 3
+    provider.client = MagicMock()
+    provider.client.models.generate_content.side_effect = errors.APIError(
+        code, {"error": {"message": "private"}}
+    )
+    pause = MagicMock()
+    monkeypatch.setattr(provider_errors, "retry_pause", pause)
+    with pytest.raises(ProviderFailure):
+        provider.generate_grounded("question", [], [])
+    assert provider.client.models.generate_content.call_count == 1
+    pause.assert_not_called()
+
+
+def test_repeated_timeout_stops_at_the_configured_attempt_limit(monkeypatch):
+    from vision_rag.generate import provider_errors
+
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 2
+    provider.client = MagicMock()
+    provider.client.models.generate_content.side_effect = httpx.ReadTimeout("private")
+    monkeypatch.setattr(provider_errors, "retry_pause", lambda *_: None)
+    with pytest.raises(ProviderFailure) as caught:
+        provider.generate_grounded("question", [], [])
+    assert caught.value.status_code == 504
+    assert provider.client.models.generate_content.call_count == 2
+
+
+def test_cancellation_stops_automatic_recovery_before_another_call():
+    from vision_rag.generate.events import QuestionCancelled
+
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 2
+    provider.client = MagicMock()
+    cancelled = [False]
+
+    def fail(**kwargs):
+        cancelled[0] = True
+        raise httpx.ReadTimeout("private")
+
+    provider.client.models.generate_content.side_effect = fail
+    with pytest.raises(QuestionCancelled):
+        provider.generate_grounded("question", [], [], cancelled=lambda: cancelled[0])
+    assert provider.client.models.generate_content.call_count == 1
