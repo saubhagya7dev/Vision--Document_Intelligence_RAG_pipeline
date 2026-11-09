@@ -6,6 +6,16 @@ as part of reorganizing documentation. Historical evidence remains historical.
 
 ## Recorded checks
 
+The **9 November compact-header follow-up** passed **138 Python tests** (two
+dependency deprecation warnings) and **seven frontend tests**. Browser checks
+covered the six header routes, saved-chat reopening, Settings/Data & history,
+cited originals, fresh-chat upload actions, mobile source isolation and browser
+Back restoring navigation. A remembered finding missing from the server now
+shows a recovery message and clears its stale browser reference. At 384 × 820,
+document width stayed at 384px and the composer bottom was 786.61px. Screenshots
+and source hashes are recorded in [header verification](evidence/header-verification.json).
+These checks used the disposable simulated fixture, not real model/provider calls.
+
 The **9 November luminous landing/workspace run** recorded **138 Python tests
 and seven frontend tests passed**, Ruff lint/format, strict typing of 44 source
 files and JavaScript syntax checks. New tests cover the public project page,
