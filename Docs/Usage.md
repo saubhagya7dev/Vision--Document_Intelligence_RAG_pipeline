@@ -35,6 +35,14 @@ workspace retains owner sign-in when configured. **Settings → About Vision**
 returns to the project page; existing root `#chat`/`#documents` bookmarks redirect
 to the equivalent workspace section.
 
+The landing page's **How it works** section is an interactive demonstration.
+Use its Dashboard, Upload, Chat and Documents tabs to explore the workflow;
+arrow keys, Home and End also switch tabs. The example uses fictional Juniper
+reports. Clicking its citation highlights the example original page. Upload your
+own PDF and workspace links enter the real application; the public demonstration
+never loads your library. New workspace chats offer starter questions and the
+three-step path from document selection to inspecting and saving evidence.
+
 ## CUDA and model setup
 
 For the measured Windows/Python 3.14 profile, stop processes using this environment
