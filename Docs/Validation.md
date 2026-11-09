@@ -4,6 +4,23 @@ Consolidated 9 November 2026. This replaces separate benchmark, feature-matrix,
 verification and release guides. No new model/provider measurements were made
 as part of reorganizing documentation. Historical evidence remains historical.
 
+## Provider recovery follow-up — 9 November 2026
+
+A live diagnostic using a generated fictional revenue page reproduced a provider
+failure: the configured model's non-streamed request passed in 15.322 s while its
+streamed request returned HTTP 503 in 2.672 s. Each used one attempt and a 30-second
+timeout. This is one diagnostic sample, not a streaming/non-streaming performance
+comparison or a statement about current service availability. No user PDF was sent.
+
+Provider failures now distinguish timeout, connection, quota, access/model and
+service errors without exposing raw SDK details. A failed stream retains a failed
+turn rather than a validated draft. Explicit non-streamed retry preserves scope,
+uses the same grounding validation and publishes progress plus a final saved answer.
+The isolated browser fixture verified failure → manual retry → cited completion,
+with the composer usable again. Simulated browser inference is separate from the
+live diagnostic. See [recovery evidence](evidence/provider-recovery.json) and
+[troubleshooting](Usage.md#when-answers-time-out-or-the-provider-is-unavailable).
+
 ## Recorded checks
 
 The **9 November product-landing rebuild** passed **nine frontend tests** and

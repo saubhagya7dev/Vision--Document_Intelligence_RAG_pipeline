@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-09",
+  "scope": "Provider streaming failure diagnosis and explicit recovery; not production approval",
+  "source_revision": "e7c2b9cbe750623a7456ccdf7da24716d51e1ee1",
+  "live_diagnostic": {
+    "model": "gemini-3.6-flash",
+    "timeout_ms": 30000,
+    "attempts": 1,
+    "fixture": "generated revenue image; no user documents",
+    "non_streaming": {
+      "status": "passed",
+      "delta_count": 0,
+      "seconds": 15.322
+    },
+    "streaming": {
+      "status": "failed",
+      "error_type": "ServerError",
+      "code": 503,
+      "seconds": 2.672
+    }
+  },
+  "browser": {
+    "fixture": "tests/browser_provider_fixture.py",
+    "library": "temporary fictional documents",
+    "provider": "simulated stream failure and non-streamed success",
+    "checks": [
+      "failed turn shows actionable provider error",
+      "unvalidated draft is not a final answer",
+      "retry requires an explicit click",
+      "same document selection retained",
+      "non-streamed retry completes with cited answer",
+      "composer enabled afterward"
+    ],
+    "screenshot": "../assets/provider-recovery.png"
+  },
+  "tests": {
+    "python_passed": 147,
+    "python_seconds": 180.97,
+    "python_warnings": 2,
+    "frontend_passed": 4,
+    "followup_non_streamed_progress_test_passed": 1,
+    "note": "Full suite passed; progress-only follow-up also checked with its targeted integration test."
+  },
+  "static_checks": [
+    "ruff lint",
+    "ruff format",
+    "mypy (45 source files)",
+    "compileall",
+    "workspace JavaScript syntax",
+    "documentation links",
+    "git diff whitespace"
+  ],
+  "limits": [
+    "A successful non-streamed diagnostic is not a guarantee for every model/request.",
+    "Provider outages, network timeouts, quota and access errors can still occur.",
+    "No automatic fallback request or change to the user model, API key or timeout setting.",
+    "Existing Phase 7 release and broad quality gates remain unverified."
+  ]
+}
