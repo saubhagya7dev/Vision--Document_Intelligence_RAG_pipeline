@@ -45,6 +45,34 @@ def compare(client, tmp_path, monkeypatch):
     return response.json(), jobs
 
 
+def test_comparison_provider_timeout_does_not_create_another_finding(
+    client, tmp_path, monkeypatch
+):
+    from vision_rag.api.findings import LazyGenerator
+    from vision_rag.generate.provider_errors import ProviderFailure
+
+    draft, jobs = compare(client, tmp_path, monkeypatch)
+
+    def fail(*args):
+        raise ProviderFailure(504, "The answer provider timed out.")
+
+    monkeypatch.setattr(LazyGenerator, "generate_comparison", fail)
+    response = client.post(
+        "/api/v1/comparisons",
+        json={
+            "question": "Compare ALPHA42",
+            "version_ids": [j["version_id"] for j in jobs],
+            "fields": ["Revenue"],
+        },
+    )
+    assert (
+        response.status_code == 504
+        and "No comparison finding was saved" in response.json()["detail"]
+    )
+    assert len(routes.get_library().metadata.rows("SELECT id FROM findings")) == 1
+    assert client.get(f"/api/v1/findings/{draft['id']}").status_code == 200
+
+
 def test_compare_save_reopen_and_export_links_in_every_format(
     client, tmp_path, monkeypatch
 ):

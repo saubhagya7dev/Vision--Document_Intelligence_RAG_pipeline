@@ -139,6 +139,30 @@ def test_find_pages_needs_no_provider_and_quota_is_actionable(
     assert "Find pages" in result.json()["detail"]
 
 
+@pytest.mark.parametrize(
+    "status,detail", [(504, "provider timed out"), (503, "provider unavailable")]
+)
+def test_provider_failures_keep_their_actionable_http_status(
+    client, tmp_path, monkeypatch, status, detail
+):
+    from vision_rag.generate.provider_errors import ProviderFailure
+
+    path = create_pdf(tmp_path / "provider.pdf", ("text",))
+    client.post("/api/v1/ingest", files={"file": ("provider.pdf", path.read_bytes())})
+    library = routes.get_library()
+    library.process_one()
+    library.retrieval.queue()
+    library.process_one()
+
+    def fail():
+        raise ProviderFailure(status, detail)
+
+    monkeypatch.setattr(routes, "get_components", fail)
+    response = client.post("/api/v1/query", json={"query": "ALPHA42"})
+    assert response.status_code == status
+    assert response.json()["detail"] == detail
+
+
 def test_warmup_loads_models_and_lazy_adapter_is_not_ready(monkeypatch):
     from unittest.mock import MagicMock
 

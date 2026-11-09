@@ -12,6 +12,7 @@ from vision_rag.analysis.contracts import ComparisonRequest
 from vision_rag.analysis.exports import export_finding
 from vision_rag.api import routes
 from vision_rag.config import settings
+from vision_rag.generate.provider_errors import ProviderFailure
 from vision_rag.storage.conversations import Conversations
 from vision_rag.storage.findings import Findings
 from vision_rag.storage.metadata import Conflict
@@ -108,6 +109,13 @@ def compare(body: ComparisonRequest) -> dict[str, Any]:
         raise HTTPException(409, str(error)) from None
     except KeyError:
         raise HTTPException(404, "A selected version is unavailable") from None
+    except ProviderFailure as error:
+        logger.warning(
+            "Comparison provider request failed (HTTP %s)", error.status_code
+        )
+        raise HTTPException(
+            error.status_code, f"{error} No comparison finding was saved."
+        ) from None
     except ValueError:
         raise HTTPException(
             422,

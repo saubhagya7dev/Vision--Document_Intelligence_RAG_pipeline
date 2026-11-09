@@ -75,7 +75,8 @@ def provider_request(function: Callable[P, R]) -> Callable[P, R]:
                     502,
                     (
                         "The answer provider rejected the request. Check the "
-                        "configured model and request limits. Find pages remains available."
+                        "configured model and request limits. "
+                        "Find pages remains available."
                     ),
                 )
             raise ProviderFailure(status, message) from None
