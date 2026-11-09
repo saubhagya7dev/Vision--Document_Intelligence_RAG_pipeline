@@ -247,7 +247,7 @@ class QueryRequest(BaseModel):
     previous_question: str | None = Field(default=None, max_length=2000)
     tier: Literal["auto", "text", "visual", "hybrid", "rerank"] = "auto"
     evidence_only: bool = False
-    stream_answer: bool = True
+    stream_answer: bool = False
 
 
 class QueryResponse(BaseModel):

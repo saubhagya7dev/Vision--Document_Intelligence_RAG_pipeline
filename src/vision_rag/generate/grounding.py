@@ -84,7 +84,7 @@ class GroundedSynthesizer:
         page_range: tuple[int, int] | None = None,
         emit: Emit | None = None,
         cancelled: Cancelled | None = None,
-        stream_answer: bool = True,
+        stream_answer: bool = False,
     ) -> dict[str, Any]:
         rewritten = followup_query(query, previous)
         start = (

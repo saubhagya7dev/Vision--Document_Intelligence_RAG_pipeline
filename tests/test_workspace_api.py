@@ -10,6 +10,46 @@ from vision_rag.generate.events import checkpoint
 from vision_rag.generate.provider_errors import ProviderFailure
 
 
+def test_each_new_chat_gets_a_full_answer_without_manual_stream_retry(
+    client, tmp_path, monkeypatch
+):
+    from vision_rag.models import gemini_generator
+
+    calls = []
+
+    class Provider(FakeProvider):
+        def generate_grounded_stream(self, *args):
+            raise AssertionError("New chats must not use the failing stream endpoint")
+
+        def generate_grounded(self, query, evidence, images):
+            calls.append(query)
+            return super().generate_grounded(query, evidence, images)
+
+    monkeypatch.setattr(gemini_generator, "GeminiGenerator", lambda **_: Provider())
+    pdf = create_pdf(tmp_path / "new-chat.pdf", ("text", "table"))
+    job = client.post(
+        "/api/v1/ingest", files={"file": ("new-chat.pdf", pdf.read_bytes())}
+    ).json()
+    library = routes.get_library()
+    library.process_one()
+    library.retrieval.queue()
+    library.process_one()
+    for index in range(3):
+        chat = client.post(
+            "/api/v1/conversations", json={"document_ids": [job["document_id"]]}
+        ).json()
+        question = f"ALPHA42 question {index}"
+        turn = client.post(
+            f"/api/v1/conversations/{chat['id']}/messages", json={"query": question}
+        ).json()
+        replay = client.get(f"/api/v1/messages/{turn['id']}/events").text
+        result = client.get(f"/api/v1/messages/{turn['id']}").json()
+        assert result["state"] == "completed" and result["result"]["claims"]
+        assert result["request"]["stream_answer"] is False
+        assert "event: error" not in replay and "event: answer-delta" not in replay
+    assert len(calls) == 3
+
+
 def test_failed_stream_can_be_retried_without_streaming_and_keeps_scope(
     client, tmp_path, monkeypatch
 ):
@@ -42,7 +82,9 @@ def test_failed_stream_can_be_retried_without_streaming_and_keeps_scope(
         "/api/v1/conversations", json={"document_ids": [job["document_id"]]}
     ).json()
     endpoint = f"/api/v1/conversations/{conversation['id']}/messages"
-    first = client.post(endpoint, json={"query": "ALPHA42"}).json()
+    first = client.post(
+        endpoint, json={"query": "ALPHA42", "stream_answer": True}
+    ).json()
     events = client.get(f"/api/v1/messages/{first['id']}/events").text
     failed = client.get(f"/api/v1/messages/{first['id']}").json()
     assert failed["state"] == "failed" and failed["result"] is None
@@ -92,7 +134,8 @@ def test_saved_chat_scope_event_replay_and_viewer(client, tmp_path, monkeypatch)
         "/api/v1/conversations", json={"document_ids": [job["document_id"]]}
     ).json()
     turn = client.post(
-        f"/api/v1/conversations/{c['id']}/messages", json={"query": "ALPHA42"}
+        f"/api/v1/conversations/{c['id']}/messages",
+        json={"query": "ALPHA42", "stream_answer": True},
     ).json()
     stream = client.get(f"/api/v1/messages/{turn['id']}/events")
     assert stream.status_code == 200

@@ -271,7 +271,7 @@
                 ...(retryRequest || {}), query,
                 top_k: retryRequest?.top_k ?? Math.max(3, current.document_ids?.length || 0),
                 evidence_only: retryRequest ? Boolean(retryRequest.evidence_only) : evidenceOnly || el('question-mode').value === 'pages',
-                stream_answer: retryRequest?.stream_answer !== false,
+                stream_answer: false,
             });
             status('Question saved on this server.');
             if (current.title === 'New conversation') {
