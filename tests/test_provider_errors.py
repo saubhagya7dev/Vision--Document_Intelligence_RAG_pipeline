@@ -139,3 +139,72 @@ def test_cancellation_stops_automatic_recovery_before_another_call():
     with pytest.raises(QuestionCancelled):
         provider.generate_grounded("question", [], [], cancelled=lambda: cancelled[0])
     assert provider.client.models.generate_content.call_count == 1
+
+
+def quota_error(identifier, delay):
+    return errors.ClientError(
+        429,
+        {
+            "error": {
+                "details": [
+                    {"violations": [{"quotaId": identifier}]},
+                    {"retryDelay": delay},
+                ]
+            }
+        },
+    )
+
+
+def test_known_daily_quota_blocks_further_calls_until_reported_reset(monkeypatch):
+    from vision_rag.generate import provider_errors
+
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 3
+    provider.client = MagicMock()
+    clock = [100.0]
+    monkeypatch.setattr(provider_errors, "monotonic", lambda: clock[0])
+    provider.client.models.generate_content.side_effect = [
+        quota_error("GenerateRequestsPerDayPerProjectPerModel-FreeTier", "3600s"),
+        SimpleNamespace(
+            text='{"status":"insufficient","claims":[]}', usage_metadata=None
+        ),
+    ]
+    for _ in range(3):
+        with pytest.raises(ProviderFailure, match="daily"):
+            provider.generate_grounded("question", [], [])
+    assert provider.client.models.generate_content.call_count == 1
+    clock[0] += 3601
+    assert provider.generate_grounded("question", [], [])["status"] == "insufficient"
+    assert provider.client.models.generate_content.call_count == 2
+
+
+def test_short_rate_limit_waits_once_then_recovers(monkeypatch):
+    from vision_rag.generate import provider_errors
+
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 2
+    provider.client = MagicMock()
+    provider.client.models.generate_content.side_effect = [
+        quota_error("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", "2s"),
+        SimpleNamespace(
+            text='{"status":"insufficient","claims":[]}', usage_metadata=None
+        ),
+    ]
+    pauses = []
+    monkeypatch.setattr(
+        provider_errors, "retry_pause", lambda seconds, _: pauses.append(seconds)
+    )
+    assert provider.generate_grounded("question", [], [])["status"] == "insufficient"
+    assert pauses == [2] and provider.client.models.generate_content.call_count == 2
+
+
+def test_long_rate_limit_is_not_blindly_retried():
+    provider = object.__new__(GeminiGenerator)
+    provider.model_name, provider.attempts = "fixture", 3
+    provider.client = MagicMock()
+    provider.client.models.generate_content.side_effect = quota_error(
+        "RequestsPerMinute", "90s"
+    )
+    with pytest.raises(ProviderFailure, match="short-term"):
+        provider.generate_grounded("question", [], [])
+    assert provider.client.models.generate_content.call_count == 1

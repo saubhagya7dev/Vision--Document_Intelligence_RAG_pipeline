@@ -35,6 +35,7 @@ class GeminiGenerator(BaseVLMGenerator):
         if not 1 <= attempts <= 3:
             raise ValueError("Provider attempts must be between 1 and 3")
         self.attempts = attempts
+        self._provider_quota: tuple[float, str] | None = None
         self.last_usage: dict[str, Any] = {}
 
         # Determine API key
