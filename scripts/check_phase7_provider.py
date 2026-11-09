@@ -19,7 +19,7 @@ def main():
     parser.add_argument("--resume-router", action="store_true")
     parser.add_argument("--delay", type=float, default=12)
     args = parser.parse_args()
-    output = Path("docs/phase7-provider.json")
+    output = Path("Docs/evidence/phase7-provider.json")
     report = {
         "model": settings.generation_model_name,
         "attempts": 1,
@@ -89,7 +89,9 @@ def main():
             }
             save()
         if args.resume_router:
-            baseline = json.loads(Path("docs/phase4-evaluation.json").read_text())
+            baseline = json.loads(
+                Path("Docs/evidence/phase4-evaluation.json").read_text()
+            )
             if not report["router"]:
                 report["router"] = baseline["provider"]["router"].copy()
             samples = [s for s in baseline["samples"] if s["split"] == "test"]
