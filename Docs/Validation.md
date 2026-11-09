@@ -21,6 +21,23 @@ with the composer usable again. Simulated browser inference is separate from the
 live diagnostic. See [recovery evidence](evidence/provider-recovery.json) and
 [troubleshooting](Usage.md#when-answers-time-out-or-the-provider-is-unavailable).
 
+### Automatic recovery and full-answer default
+
+The follow-up switches new chats and ordinary UI retries to complete answers,
+with two total provider attempts by default (maximum three) and SDK retries
+disabled. Transient failures and identified short rate limits can recover within
+that budget; partial streams, daily quotas and permanent access/request errors
+are not blindly replayed. Known daily-reset delays are held by the current client.
+
+The full suite passed **163 Python tests and nine frontend tests**. Targeted tests
+cover multiple fresh chats, transient recovery, retry exhaustion, cancellation,
+non-replayed partial streams, short throttles and daily-quota hold/expiry. The
+browser fixture completed a fresh chat without a manual retry. Two live fictional
+complete-answer checks passed in 3.829 s and 5.218 s; the third hit the model's
+20-request daily free-tier limit. A minimal diagnostic confirmed the daily quota
+with about 15 hours until reset when checked, so no further live calls were made.
+This is not a guarantee against external outages or an ability to bypass quotas.
+
 ## Recorded checks
 
 The **9 November product-landing rebuild** passed **nine frontend tests** and

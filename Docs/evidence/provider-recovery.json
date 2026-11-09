@@ -53,7 +53,79 @@
   "limits": [
     "A successful non-streamed diagnostic is not a guarantee for every model/request.",
     "Provider outages, network timeouts, quota and access errors can still occur.",
-    "No automatic fallback request or change to the user model, API key or timeout setting.",
+    "The original diagnostic made no automatic fallback; the follow-up adds bounded recovery. No model, API key or billing settings were changed.",
     "Existing Phase 7 release and broad quality gates remain unverified."
-  ]
+  ],
+  "automatic_recovery_followup": {
+    "date": "2026-11-09",
+    "source_revision": "0ee86025246042b7cccd8bf1b339c0b2b912955a",
+    "default": "UI/new API turns use complete answers; provider streaming is explicit API opt-in",
+    "policy": {
+      "application_attempt_limit": "PROVIDER_ATTEMPTS, default 2, maximum 3",
+      "sdk_attempts": 1,
+      "transient_retries": [
+        "transport timeout/connection",
+        "HTTP 500/502/503/504",
+        "identified per-minute limits with provider delay <=30 seconds"
+      ],
+      "not_replayed": [
+        "partial streams",
+        "daily quota",
+        "authentication/model/request errors"
+      ],
+      "daily_hold": "client-local until a provider-reported reset delay expires; no persistent key/account marker"
+    },
+    "live_checks": {
+      "model": "gemini-3.6-flash",
+      "fixture": "fictional diagnostic page; no user documents",
+      "attempt_limit": 2,
+      "sdk_attempts": 1,
+      "runs": [
+        {
+          "passed": true,
+          "seconds": 3.829,
+          "requests": 1
+        },
+        {
+          "passed": true,
+          "seconds": 5.218,
+          "requests": 1
+        },
+        {
+          "passed": false,
+          "type": "ProviderFailure",
+          "code": 429,
+          "seconds": 0.436,
+          "requests": 1
+        }
+      ]
+    },
+    "quota_confirmation": {
+      "code": 429,
+      "quota_id": "GenerateRequestsPerDayPerProjectPerModel-FreeTier",
+      "daily_limit": 20,
+      "provider_reported_retry_seconds": 54180,
+      "note": "Sanitized fields from the provider response to one minimal diagnostic request; no further live generation calls were made."
+    },
+    "browser": {
+      "fixture": "tests/browser_provider_fixture.py",
+      "documents": "fictional",
+      "inference": "simulated",
+      "result": "a fresh chat completed on its first submission despite the fixture stream method intentionally failing",
+      "screenshot": "../assets/provider-default-answer.png"
+    },
+    "tests": {
+      "python_passed": 163,
+      "seconds": 98.6,
+      "warnings": 2,
+      "frontend_passed": 9,
+      "targeted_new_chat_and_API_tests_passed": 12,
+      "targeted_provider_and_stream_tests_passed": 22
+    },
+    "limits": [
+      "Two live complete answers passed; a third was rejected by the daily quota. This does not guarantee future service availability.",
+      "Transient recovery was verified with injected failures; no claim that it can bypass quotas, billing or permission requirements.",
+      "No model, API key or billing configuration was changed."
+    ]
+  }
 }
