@@ -11,7 +11,7 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    root = Path("Docs")
+    root = Path("Docs/evidence")
     public, internal = [
         json.loads((root / name).read_text())
         for name in ("phase7-retrieval.json", "phase7-internal.json")
@@ -46,7 +46,7 @@ def main():
     lines.extend(
         [
             "",
-            "![Retrieval comparison](phase7-retrieval-comparison.png)",
+            "![Retrieval comparison](../assets/phase7-retrieval-comparison.png)",
             "",
             "Public: eight English questions, 20 pages, two OpenStax books from "
             "[ViDoRe V3 computer science](https://huggingface.co/datase"
@@ -129,7 +129,7 @@ def main():
             "application work; text timing also excludes keyword fusion. First query "
             "visual encoding can include lazy model loading; inspect raw samples. "
             "Cached subset preparation is not cold ingestion throughput. The separate "
-            "[uncached internal run](phase7-internal-cold.json) prepared 18 pages in "
+            "[uncached internal run](history.json) prepared 18 pages in "
             "117.78 seconds including model loading (0.153 pages/s), "
             "outside the durable "
             "application ingestion pipeline. It measured a peak CUDA allocator value "
@@ -163,7 +163,8 @@ def main():
             "Token usage is recorded where supplied by the provider. Dollar cost is "
             "unknown, not zero; no verified account billing rate is "
             "available. Phase 4's "
-            "[cost/quality comparison](phase4-cost-quality.png) remains a synthetic "
+            "[cost/quality comparison](../assets/phase4-cost-quality.png) "
+            "remains a synthetic "
             "cached-tier experiment. Partial prompted routes are not compared against "
             "full test-set means. Independent semantic support, representative answer "
             "correctness/abstention and human time-to-verify are unmeasured. Routine "
@@ -171,7 +172,7 @@ def main():
             "",
         ]
     )
-    (root / "Phase 7 benchmark.md").write_text("\n".join(lines), encoding="utf-8")
+    (root / "retrieval-summary.md").write_text("\n".join(lines), encoding="utf-8")
     fig, axes = plt.subplots(1, 2, figsize=(12, 5.5), sharey=True)
     for axis, report, title in zip(
         axes,
@@ -188,7 +189,7 @@ def main():
     axes[0].invert_yaxis()
     fig.suptitle("Phase 7 retrieval smoke checks — small candidate pools")
     fig.tight_layout()
-    fig.savefig(root / "phase7-retrieval-comparison.png", dpi=160)
+    fig.savefig(root.parent / "assets" / "phase7-retrieval-comparison.png", dpi=160)
     plt.close(fig)
 
 
