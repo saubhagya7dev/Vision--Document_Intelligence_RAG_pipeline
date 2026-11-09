@@ -117,10 +117,12 @@ body { background: #090a0a; }
 .btn-primary { background: #1c4933; color: #d0f4e1; border-color: #427d5b; }.btn-primary:hover:not(:disabled) { background: #255c41; border-color: #5b9e76; }
 .mode-switch { background: #151a17; border-color: #ffffff0e; }.mode-switch button[aria-pressed="true"] { background: #263d2e; color: #c6ecd3; }
 .welcome-actions .btn { border-radius: 99px; }.preparation-row { background: #141918; }.welcome .eyebrow { color: #6ab791; }
+.welcome { margin: clamp(12px, 3dvh, 30px) auto 12px; }.welcome h2 { font-size: 30px; }.welcome-actions { margin-block: 16px; }.suggestions { margin-block: 12px; }
 .comparison-form, .comparison-result, .findings-layout .evidence-panel, .processing-dialog, .session-dialog { background: #111414; }.comparison-result th { background: #191e1b; }.comparison-result td, .comparison-result th { border-color: #ffffff0c; }
 .library-toolbar input, .library-toolbar select { background: #151818; border-color: #ffffff14; }.documents-grid.library-list { background: #111414; border-color: #ffffff14; }.library-table th { background: #181c1a; }.library-table tr:hover td { background: #ffffff02; }.library-state { background: #202b24; color: #a6c6b2; }
 .dashboard-hero { gap: 35px; }.hero-heading { font-size: 30px; }.hero-card .card-dark { background: #141717; }.stat-card, .card-dark, .doc-card { background: #141717; }
 @media(max-width:1100px) { #app-header.app-topbar { padding-inline: 20px; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; }.header-nav .nav-item { padding-inline: 9px; font-size: 10px; }.header-tools { gap: 8px; }.header-tools .status-text { display: none; } }
+@media(max-height:780px) { .welcome .suggestions { display: none; } }
 @media(max-width:1000px) { .workspace-layout .evidence-panel { position: fixed; inset: 0; margin: 0; border-radius: 0; z-index: 100; } }
 @media(max-width:700px) {
     :root { --workspace-header: 108px; --sidebar-width: 0px; }
