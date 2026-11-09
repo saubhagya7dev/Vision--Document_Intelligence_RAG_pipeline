@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-09",
+  "scope": "reference-led product landing and purposeful workspace starter",
+  "frontend_tests": {
+    "passed": 9,
+    "command": "node --test tests/frontend_landing.test.mjs tests/frontend_selection.test.mjs"
+  },
+  "targeted_python_tests": {
+    "passed": 2,
+    "warnings": 2,
+    "command": ".venv/Scripts/python.exe -m pytest tests/test_landing.py -q"
+  },
+  "checks": [
+    "JavaScript syntax",
+    "balanced landing HTML",
+    "unique HTML IDs",
+    "local documentation links",
+    "git diff whitespace"
+  ],
+  "browser": {
+    "fixture": "tests/browser_ux_fixture.py",
+    "real_library_touched": false,
+    "inference": "simulated only",
+    "paid_calls": false,
+    "checks": [
+      "all four example tabs",
+      "keyboard End and Home",
+      "upload-to-chat transition",
+      "citation source highlighting",
+      "mobile document table containment",
+      "Launch Workspace navigation",
+      "starter question fills composer",
+      "document selection",
+      "streamed answer",
+      "original cited page",
+      "new chat scroll reset",
+      "first-question placeholder",
+      "tablet header order"
+    ],
+    "desktop_viewport": [
+      1280,
+      720
+    ],
+    "mobile_viewport": [
+      384,
+      820
+    ],
+    "mobile_landing_content_width": 369,
+    "mobile_library_table_scroll_width": 550,
+    "tablet_viewport": [
+      737,
+      900
+    ],
+    "tablet_content_width": 737,
+    "new_chat_scroll_top": 0,
+    "console_errors": []
+  },
+  "screenshots": {
+    "Docs/assets/product-evidence-demo.png": [
+      1265,
+      712
+    ],
+    "Docs/assets/product-landing-desktop.png": [
+      1265,
+      712
+    ],
+    "Docs/assets/product-landing-full.png": [
+      1265,
+      3445
+    ],
+    "Docs/assets/product-landing-mobile.png": [
+      369,
+      788
+    ],
+    "Docs/assets/product-workspace-start.png": [
+      1280,
+      720
+    ]
+  },
+  "limits": [
+    "Fictional demonstration data is explicitly labeled.",
+    "No fresh real-provider or model-quality validation.",
+    "The full Python suite was not rerun for these static UI changes."
+  ],
+  "source_sha256": {
+    "src/vision_rag/static/app.js": "c0ab1d4d90e3bd19798fae2f2f2919013f157f04afc8004626396f9022ab1fe7",
+    "src/vision_rag/static/documents.js": "cdf2d358db2ce58547e15997b76436e6381cc7cc7a1e78d9cb79fb70be5ec268",
+    "src/vision_rag/static/emerald.css": "87b2d9929f49cbbfcc25eaa15dfb01a7cfccf48417eb4c58c66fe01518273ff3",
+    "src/vision_rag/static/evidence.js": "0e914f0e6b983a8d6dc0818a3a8239c77e714f21e73beea34d8bdca29be187de",
+    "src/vision_rag/static/findings.js": "a748f768354f5240bb671c704234cee29cdd5565c77b4ecc29758603ae7f1cd5",
+    "src/vision_rag/static/index.html": "194516215aa35257ecdc675e14b533f1a629d12e06f18c14f047ce682093955b",
+    "src/vision_rag/static/landing.css": "fca643dc4f1d6a01cb71b16b3456585e8437db946bf70c06209b1d0756ec0888",
+    "src/vision_rag/static/landing.html": "16ec60ddc2f36135427fe122f3377ae054a8661d465db590068216ae481745db",
+    "src/vision_rag/static/landing.js": "615f4130e51b268fffee106b415da664849a4a48ff58da3e46ea449da06cec38",
+    "src/vision_rag/static/session.js": "227b1960036f1e0610e3da5bc10de110e9849375cef596e6d327fa3d9525fc2b",
+    "src/vision_rag/static/styles.css": "f3cb898dd55f1e7d73f5fd9b47364ea1fc2f65cf078de86180c029ec0287e715",
+    "src/vision_rag/static/workspace.css": "e703faa945f7ef55b60a4b1f61159f45707722af8172a2fb04710cedc077b9ec",
+    "src/vision_rag/static/workspace.js": "7e9bdc5bbbdf604840100b69492f6a6e499f41730dd32d895bd0867f75b6021b"
+  }
+}
