@@ -1,0 +1,2806 @@
+{
+  "consolidated_on": "2026-11-09",
+  "note": "Historical report payloads retained unchanged, keyed by original filename. Dates, counts and source hashes describe those original runs, not current validation.",
+  "records": {
+    "gpu-smoke-initial.json": {
+      "diagnostics": {
+        "torch_version": "2.13.0+cu130",
+        "cuda_build": "13.0",
+        "cuda_available": true,
+        "mps_available": false,
+        "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+        "accelerator": {
+          "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+          "total_memory_bytes": 6438846464,
+          "free_memory_bytes": 5329911808,
+          "compute_capability": [
+            8,
+            9
+          ],
+          "bfloat16_supported": true,
+          "compiled_architectures": [
+            "sm_75",
+            "sm_80",
+            "sm_86",
+            "sm_90",
+            "sm_100",
+            "sm_120"
+          ]
+        },
+        "recommended_device": "cuda",
+        "action": null
+      },
+      "checks": {
+        "cuda_matrix_multiplication": "passed",
+        "first_image": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 9.74
+        },
+        "warm_image": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 9.669
+        },
+        "first_query": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 0.151
+        },
+        "warm_query": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 0.041
+        }
+      },
+      "model": "vidore/colpali-v1.3",
+      "model_load_seconds": 21.553,
+      "parameter_devices": [
+        "cuda:0",
+        "meta"
+      ],
+      "precision": "torch.float16",
+      "peak_allocated_bytes": 8707440640,
+      "peak_reserved_bytes": 8969519104,
+      "batch_size": 1,
+      "status": "passed"
+    },
+    "gpu-smoke.json": {
+      "diagnostics": {
+        "torch_version": "2.13.0+cu130",
+        "cuda_build": "13.0",
+        "cuda_available": true,
+        "mps_available": false,
+        "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+        "accelerator": {
+          "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+          "total_memory_bytes": 6438846464,
+          "free_memory_bytes": 5329911808,
+          "compute_capability": [
+            8,
+            9
+          ],
+          "bfloat16_supported": true,
+          "compiled_architectures": [
+            "sm_75",
+            "sm_80",
+            "sm_86",
+            "sm_90",
+            "sm_100",
+            "sm_120"
+          ]
+        },
+        "recommended_device": "cuda",
+        "action": null
+      },
+      "checks": {
+        "cuda_matrix_multiplication": "passed",
+        "first_image": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 7.246
+        },
+        "warm_image": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 3.926
+        },
+        "first_query": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 0.191
+        },
+        "warm_query": {
+          "status": "passed",
+          "dimensions": 128,
+          "seconds": 0.045
+        }
+      },
+      "model": "vidore/colpali-v1.3",
+      "model_load_seconds": 19.188,
+      "parameter_devices": [
+        "cuda:0",
+        "meta"
+      ],
+      "precision": "torch.float16",
+      "after_load_allocated_bytes": 5946075648,
+      "after_load_reserved_bytes": 5966397440,
+      "meta_parameters": [
+        "model.lm_head.weight"
+      ],
+      "before_inference_reserved_bytes": 5966397440,
+      "peak_allocated_bytes": 8706777088,
+      "peak_reserved_bytes": 8900313088,
+      "batch_size": 1,
+      "status": "passed"
+    },
+    "ocr-smoke.json": {
+      "language": "eng",
+      "dpi": 150,
+      "fixture": "generated image-only PDF, SCAN42 and revenue 120 units",
+      "provider_calls": 0,
+      "checks": {
+        "real_ocr_recognition": "passed",
+        "real_ocr_visual_ingestion": "passed",
+        "ocr_text_search": "passed"
+      },
+      "recognition_seconds": 0.6066900000441819,
+      "recognized_text": "Scanned evidence SCAN42 row 0: revenue 120 units\nScanned evidence SCAN42 row 1: revenue 120 units\nScanned evidence SCAN42 row 2: revenue 120 units\nScanned evidence SCAN42 row 3: revenue 120 units\nScanned evidence SCAN42 row 4: revenue 120 units\nScanned evidence SCAN42 row 5: revenue 120 units\nScanned evidence SCAN42 row 6: revenue 120 units\nScanned evidence SCAN42 row 7: revenue 120 units\nScanned evidence SCAN42 row 8: revenue 120 units\nScanned evidence SCAN42 row 9: revenue 120 units\nScanned evidence SCAN42 row 10: revenue 120 units\nScanned evidence SCAN42 row 11: revenue 120 units",
+      "model_load_seconds": 25.908316900022328,
+      "model": "vidore/colpali-v1.3",
+      "device": "cuda",
+      "ingestion_seconds": 10.040049800009001,
+      "chunks": 1,
+      "status": "passed"
+    },
+    "phase1-benchmark.json": {
+      "platform": "Windows-11-10.0.26300-SP0",
+      "python": "3.14.9",
+      "processor": "13th Gen Intel(R) Core(TM) i7-13700H",
+      "dependencies": {
+        "pypdfium2": "5.14.0",
+        "pillow": "12.3.0"
+      },
+      "pages": 8,
+      "dpi": 300,
+      "fixture": "Synthetic raster pages with prose, tables, small labels and a line chart",
+      "notes": [
+        "Three wall-clock samples per case; separate process per case.",
+        "Cold means no application artifact cache; OS caches are uncontrolled.",
+        "Peak working set includes interpreter, imports and three samples.",
+        "Optional peak memory uses psutil; no model or provider calls.",
+        "PDF operations do not use the GPU or establish retrieval quality.",
+        "Bounded render bypasses artifacts to isolate batching memory."
+      ],
+      "results": {
+        "baseline_count": {
+          "median_ms": 718.471,
+          "samples_ms": [
+            789.388,
+            718.471,
+            681.495
+          ],
+          "process_peak_working_set_bytes": 370749440
+        },
+        "direct_count": {
+          "median_ms": 1.108,
+          "samples_ms": [
+            1.178,
+            1.038,
+            1.108
+          ],
+          "process_peak_working_set_bytes": 36270080
+        },
+        "baseline_preview": {
+          "median_ms": 646.566,
+          "samples_ms": [
+            666.323,
+            646.566,
+            638.018
+          ],
+          "process_peak_working_set_bytes": 370712576
+        },
+        "single_page": {
+          "median_ms": 80.68,
+          "samples_ms": [
+            79.841,
+            80.68,
+            80.751
+          ],
+          "process_peak_working_set_bytes": 133369856
+        },
+        "cached_page": {
+          "median_ms": 69.247,
+          "samples_ms": [
+            78.365,
+            68.352,
+            69.247
+          ],
+          "process_peak_working_set_bytes": 133619712
+        },
+        "bounded_render": {
+          "median_ms": 639.425,
+          "samples_ms": [
+            632.197,
+            649.395,
+            639.425
+          ],
+          "process_peak_working_set_bytes": 167305216
+        },
+        "populate_artifacts": {
+          "median_ms": 2410.157,
+          "samples_ms": [
+            2410.157,
+            2407.921,
+            2425.783
+          ],
+          "process_peak_working_set_bytes": 169418752
+        }
+      }
+    },
+    "phase3-benchmark-offline.json": {
+      "hardware": {
+        "torch_version": "2.13.0+cu130",
+        "cuda_build": "13.0",
+        "cuda_available": true,
+        "mps_available": false,
+        "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+        "accelerator": {
+          "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+          "total_memory_bytes": 6438846464,
+          "free_memory_bytes": 5329911808,
+          "compute_capability": [
+            8,
+            9
+          ],
+          "bfloat16_supported": true,
+          "compiled_architectures": [
+            "sm_75",
+            "sm_80",
+            "sm_86",
+            "sm_90",
+            "sm_100",
+            "sm_120"
+          ]
+        },
+        "recommended_device": "cuda",
+        "action": null
+      },
+      "platform": "Windows-11-10.0.26300-SP0",
+      "dpi": 150,
+      "batch_size": 1,
+      "provider_calls": 0,
+      "ocr": "disabled in all cases",
+      "corpus": "six generated pages: prose, mixed prose/table, vector table, scan, empty, prose/logo",
+      "quality_scope": "synthetic evidence discovery only; not held-out answer quality",
+      "cases": {},
+      "status": "failed",
+      "error": "OSError: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.\nCheck your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'."
+    },
+    "phase3-benchmark.json": {
+      "hardware": {
+        "torch_version": "2.13.0+cu130",
+        "cuda_build": "13.0",
+        "cuda_available": true,
+        "mps_available": false,
+        "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+        "accelerator": {
+          "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+          "total_memory_bytes": 6438846464,
+          "free_memory_bytes": 5329911808,
+          "compute_capability": [
+            8,
+            9
+          ],
+          "bfloat16_supported": true,
+          "compiled_architectures": [
+            "sm_75",
+            "sm_80",
+            "sm_86",
+            "sm_90",
+            "sm_100",
+            "sm_120"
+          ]
+        },
+        "recommended_device": "cuda",
+        "action": null
+      },
+      "platform": "Windows-11-10.0.26300-SP0",
+      "dpi": 150,
+      "batch_size": 1,
+      "provider_calls": 0,
+      "ocr": "disabled in all cases",
+      "corpus": "six generated pages: prose, mixed prose/table, vector table, scan, empty, prose/logo",
+      "quality_scope": "synthetic evidence discovery only; not held-out answer quality",
+      "cases": {
+        "all_visual": {
+          "ingestion_seconds": 34.39331519999541,
+          "pages_per_second": 0.17445250523569186,
+          "vectors": 6,
+          "chunks": 0,
+          "storage_bytes": 1498176,
+          "retrieval_seconds": [
+            0.15633060003165156,
+            0.06020189996343106,
+            0.05481639999197796
+          ],
+          "evidence_checks": [
+            {
+              "query": "ALPHA42 revenue",
+              "gold_pages": [
+                1,
+                2,
+                3,
+                6
+              ],
+              "retrieved_pages": [
+                5,
+                1,
+                6
+              ],
+              "hit_at_3": true
+            },
+            {
+              "query": "SCAN42 scanned evidence",
+              "gold_pages": [
+                4
+              ],
+              "retrieved_pages": [
+                4,
+                3,
+                2
+              ],
+              "hit_at_3": true
+            },
+            {
+              "query": "table with rows and columns",
+              "gold_pages": [
+                2,
+                3
+              ],
+              "retrieved_pages": [
+                5,
+                4,
+                2
+              ],
+              "hit_at_3": true
+            }
+          ]
+        },
+        "selective": {
+          "ingestion_seconds": 15.73871910001617,
+          "pages_per_second": 0.38122543276052473,
+          "vectors": 3,
+          "chunks": 4,
+          "storage_bytes": 1108639,
+          "retrieval_seconds": [
+            0.05432480003219098,
+            0.051932499976828694,
+            0.052249300002586097
+          ],
+          "evidence_checks": [
+            {
+              "query": "ALPHA42 revenue",
+              "gold_pages": [
+                1,
+                2,
+                3,
+                6
+              ],
+              "retrieved_pages": [
+                1,
+                3,
+                2
+              ],
+              "hit_at_3": true
+            },
+            {
+              "query": "SCAN42 scanned evidence",
+              "gold_pages": [
+                4
+              ],
+              "retrieved_pages": [
+                1,
+                4,
+                2
+              ],
+              "hit_at_3": true
+            },
+            {
+              "query": "table with rows and columns",
+              "gold_pages": [
+                2,
+                3
+              ],
+              "retrieved_pages": [
+                1,
+                4,
+                2
+              ],
+              "hit_at_3": true
+            }
+          ]
+        },
+        "all_text": {
+          "ingestion_seconds": 0.6105642000329681,
+          "pages_per_second": 9.826976425535634,
+          "vectors": 0,
+          "chunks": 4,
+          "storage_bytes": 288931,
+          "retrieval_seconds": [
+            0.005452700017485768,
+            0.005244800006039441,
+            0.0072623000014573336
+          ],
+          "evidence_checks": [
+            {
+              "query": "ALPHA42 revenue",
+              "gold_pages": [
+                1,
+                2,
+                3,
+                6
+              ],
+              "retrieved_pages": [
+                1,
+                2,
+                3
+              ],
+              "hit_at_3": true
+            },
+            {
+              "query": "SCAN42 scanned evidence",
+              "gold_pages": [
+                4
+              ],
+              "retrieved_pages": [
+                1,
+                2,
+                3
+              ],
+              "hit_at_3": false
+            },
+            {
+              "query": "table with rows and columns",
+              "gold_pages": [
+                2,
+                3
+              ],
+              "retrieved_pages": [
+                1,
+                2,
+                3
+              ],
+              "hit_at_3": true
+            }
+          ]
+        }
+      },
+      "model": "vidore/colpali-v1.3",
+      "model_load_seconds": 20.852240500040352,
+      "peak_cuda_allocated_bytes": 8706371584,
+      "peak_cuda_reserved_bytes": 8921284608,
+      "status": "completed"
+    },
+    "phase4-model-smoke.json": {
+      "text_dimensions": 384,
+      "visual_tokens": 1031,
+      "visual_dimensions": 128,
+      "query_tokens": 19,
+      "reference_maxsim": 13.510319173336029,
+      "processor_maxsim": 13.510318756103516,
+      "device": "cuda",
+      "status": "passed"
+    },
+    "phase4-provider-readiness.json": {
+      "configured_model": "gemini-3.6-flash",
+      "has_key": true,
+      "configured_model_listed": true,
+      "available_generation_models": [
+        "models/gemini-2.5-flash",
+        "models/gemini-2.5-flash-preview-tts",
+        "models/gemini-flash-latest",
+        "models/gemini-flash-lite-latest",
+        "models/gemini-2.5-flash-lite",
+        "models/gemini-2.5-flash-image",
+        "models/gemini-3-flash-preview",
+        "models/gemini-3.1-flash-lite-preview"
+      ]
+    },
+    "phase4-provider-smoke.json": {
+      "status": "passed",
+      "answer": {
+        "status": "supported",
+        "claims": [
+          {
+            "text": "Revenue is 120 units.",
+            "citations": [
+              "E1"
+            ]
+          }
+        ]
+      },
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 24,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 1184,
+        "prompt_tokens_details": [
+          {
+            "modality": "IMAGE",
+            "token_count": 1064
+          },
+          {
+            "modality": "TEXT",
+            "token_count": 120
+          }
+        ],
+        "thoughts_token_count": 343,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 1551,
+        "traffic_type": null
+      }
+    },
+    "phase5-verification.json": {
+      "phase": 5,
+      "scope": "single-process local workspace; stopped before Phase 6",
+      "regression": {
+        "passed": 115,
+        "warnings": 2,
+        "duration_seconds": 68.97,
+        "models_and_paid_calls": false
+      },
+      "static": {
+        "ruff": "passed",
+        "format": "passed",
+        "mypy_source_files": 36,
+        "python_compilation": "passed",
+        "javascript_syntax": [
+          "app.js",
+          "workspace.js",
+          "evidence.js"
+        ],
+        "whitespace": "passed"
+      },
+      "browser": {
+        "fixture": "tests/browser_phase5_fixture.py",
+        "provider": "simulated streaming only",
+        "storage": "real SQLite and local Qdrant",
+        "rendering": "real PDFium",
+        "checks": [
+          "saved scope and answers",
+          "immutable citation page",
+          "page navigation and keyboard activation",
+          "saved page 2 and 150% zoom restoration",
+          "Stop and retry",
+          "HTTP disconnect cancellation on reload",
+          "provider failure state",
+          "provider-free Find pages",
+          "desktop split pane",
+          "narrow stacked workspace"
+        ],
+        "narrow_css_width": 384,
+        "narrow_content_width": 384,
+        "desktop_css_width": 1274,
+        "desktop_content_width": 1274
+      },
+      "limits": [
+        "Live Gemini streaming not exercised; prior quota blocker remains external.",
+        "No new model-quality, latency or dollar-cost claims.",
+        "Cancellation is cooperative at model/provider boundaries.",
+        "Prior session-only browser chats are not imported into authoritative storage."
+      ]
+    },
+    "phase6-provider-smoke.json": {
+      "fixture": "two fictional PDF pages",
+      "model": "gemini-3.6-flash",
+      "provider_attempts": 1,
+      "scope": "provider comparison adapter only; not a retrieval or broad quality benchmark",
+      "status": "passed",
+      "expected_value_checks": [
+        true,
+        true
+      ],
+      "table": {
+        "cells": [
+          {
+            "version_id": "fictional-alpha",
+            "field": "Revenue",
+            "status": "reported",
+            "value": "120",
+            "unit": "million",
+            "currency": "EUR",
+            "period": "FY2024",
+            "scope": "Consolidated",
+            "citations": [
+              "E1"
+            ]
+          },
+          {
+            "version_id": "fictional-alpha",
+            "field": "Operating margin",
+            "status": "missing",
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "scope": null,
+            "citations": []
+          },
+          {
+            "version_id": "fictional-beta",
+            "field": "Revenue",
+            "status": "reported",
+            "value": "150",
+            "unit": "million",
+            "currency": "USD",
+            "period": "FY2025",
+            "scope": "Parent company",
+            "citations": [
+              "E2"
+            ]
+          },
+          {
+            "version_id": "fictional-beta",
+            "field": "Operating margin",
+            "status": "missing",
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "scope": null,
+            "citations": []
+          }
+        ]
+      },
+      "usage": {
+        "cache_tokens_details": null,
+        "cached_content_token_count": null,
+        "candidates_token_count": 189,
+        "candidates_tokens_details": null,
+        "prompt_token_count": 2490,
+        "prompt_tokens_details": [
+          {
+            "modality": "TEXT",
+            "token_count": 362
+          },
+          {
+            "modality": "IMAGE",
+            "token_count": 2128
+          }
+        ],
+        "thoughts_token_count": 1429,
+        "tool_use_prompt_token_count": null,
+        "tool_use_prompt_tokens_details": null,
+        "total_token_count": 4108,
+        "traffic_type": null
+      },
+      "seconds": 11.194556800066493
+    },
+    "phase6-verification.json": {
+      "phase": 6,
+      "scope": "core comparison workflow; optional analysis extensions and Phase 7 deferred",
+      "regression": {
+        "passed": 123,
+        "warnings": 2,
+        "seconds": 90.75,
+        "model_downloads_or_paid_calls": false
+      },
+      "static": {
+        "ruff_lint": "passed",
+        "ruff_format_files": 79,
+        "mypy_source_files": 42,
+        "python_compilation": "passed",
+        "javascript_syntax": [
+          "app.js",
+          "workspace.js",
+          "evidence.js",
+          "findings.js"
+        ],
+        "whitespace": "passed"
+      },
+      "browser": {
+        "fixture": "tests/browser_phase6_fixture.py",
+        "inference": "simulated encoders/provider",
+        "storage": "real SQLite and local Qdrant",
+        "pdf_rendering": "real PDFium",
+        "selection": "older Alpha v1 plus Beta v1; Alpha v2 excluded",
+        "cells": 4,
+        "missing_cells": 2,
+        "checks": [
+          "cell citations open selected historical version",
+          "reported context preserved and differing contexts flagged",
+          "separate user review flag",
+          "save and reload/reopen",
+          "real JSON/CSV/Markdown browser downloads",
+          "downloaded artifacts parsed and source URLs matched"
+        ],
+        "narrow_viewport_css_pixels": 384,
+        "narrow_document_css_pixels": 384
+      },
+      "provider": {
+        "record": "phase6-provider-smoke.json",
+        "status": "passed",
+        "attempts": 1,
+        "fixture": "two fictional PDF pages",
+        "seconds": 11.194556800066493,
+        "tokens": 4108,
+        "checks": [
+          "full matrix and same-version IDs valid",
+          "120 and 150 values preserved",
+          "million units, EUR/USD, FY2024/FY2025 and scopes preserved",
+          "undisclosed operating margins marked missing"
+        ],
+        "limits": "single provider adapter smoke, not broad end-to-end retrieval quality or cost validation"
+      },
+      "boundaries": [
+        "workspace and source checks on all exports",
+        "unavailable-source content blocked, owned finding deletion allowed",
+        "mixed-workspace reset guard includes conversations and findings",
+        "chat history clears drafts and retains saved findings",
+        "full reset removes findings"
+      ],
+      "not_done": [
+        "optional calculations, regions and automated version-diff analysis",
+        "representative quality and shared deployment/authentication",
+        "earlier Phase 4 prompted-router completion",
+        "Phase 5 real-provider streaming validation"
+      ]
+    },
+    "phase7-internal-cold.json": {
+      "dataset": {
+        "license": "CC0-1.0",
+        "attribution": "Generated fictional Phase 7 fixtures",
+        "split": "held-out Juniper/Basalt/Granite; no Phase 4 training families",
+        "limits": "Synthetic templates; retrieval does not establish answer quality",
+        "pages": [
+          {
+            "corpus_id": "Juniper-2024:1",
+            "doc_id": "Juniper-2024",
+            "page_number_in_doc": 1
+          },
+          {
+            "corpus_id": "Juniper-2024:2",
+            "doc_id": "Juniper-2024",
+            "page_number_in_doc": 2
+          },
+          {
+            "corpus_id": "Juniper-2024:3",
+            "doc_id": "Juniper-2024",
+            "page_number_in_doc": 3
+          },
+          {
+            "corpus_id": "Juniper-2024:4",
+            "doc_id": "Juniper-2024",
+            "page_number_in_doc": 4
+          },
+          {
+            "corpus_id": "Juniper-2024:5",
+            "doc_id": "Juniper-2024",
+            "page_number_in_doc": 5
+          },
+          {
+            "corpus_id": "Juniper-2025:1",
+            "doc_id": "Juniper-2025",
+            "page_number_in_doc": 1
+          },
+          {
+            "corpus_id": "Juniper-2025:2",
+            "doc_id": "Juniper-2025",
+            "page_number_in_doc": 2
+          },
+          {
+            "corpus_id": "Juniper-2025:3",
+            "doc_id": "Juniper-2025",
+            "page_number_in_doc": 3
+          },
+          {
+            "corpus_id": "Juniper-2025:4",
+            "doc_id": "Juniper-2025",
+            "page_number_in_doc": 4
+          },
+          {
+            "corpus_id": "Juniper-2025:5",
+            "doc_id": "Juniper-2025",
+            "page_number_in_doc": 5
+          },
+          {
+            "corpus_id": "Basalt-2025:1",
+            "doc_id": "Basalt-2025",
+            "page_number_in_doc": 1
+          },
+          {
+            "corpus_id": "Basalt-2025:2",
+            "doc_id": "Basalt-2025",
+            "page_number_in_doc": 2
+          },
+          {
+            "corpus_id": "Basalt-2025:3",
+            "doc_id": "Basalt-2025",
+            "page_number_in_doc": 3
+          },
+          {
+            "corpus_id": "Basalt-2025:4",
+            "doc_id": "Basalt-2025",
+            "page_number_in_doc": 4
+          },
+          {
+            "corpus_id": "Basalt-2025:5",
+            "doc_id": "Basalt-2025",
+            "page_number_in_doc": 5
+          },
+          {
+            "corpus_id": "Granite:1",
+            "doc_id": "Granite-64-pages",
+            "page_number_in_doc": 1
+          },
+          {
+            "corpus_id": "Granite:32",
+            "doc_id": "Granite-64-pages",
+            "page_number_in_doc": 32
+          },
+          {
+            "corpus_id": "Granite:64",
+            "doc_id": "Granite-64-pages",
+            "page_number_in_doc": 64
+          }
+        ],
+        "queries": [
+          {
+            "id": 0,
+            "query": "Juniper-2024: What revenue is reported?",
+            "content_type": [
+              "numbers"
+            ],
+            "gold": {
+              "Juniper-2024:1": 2
+            }
+          },
+          {
+            "id": 1,
+            "query": "Juniper-2024: What is asset identifier ZX907?",
+            "content_type": [
+              "identifiers"
+            ],
+            "gold": {
+              "Juniper-2024:1": 2
+            }
+          },
+          {
+            "id": 2,
+            "query": "Juniper-2024: How many errors does the table report?",
+            "content_type": [
+              "tables"
+            ],
+            "gold": {
+              "Juniper-2024:2": 2
+            }
+          },
+          {
+            "id": 3,
+            "query": "Juniper-2024: Which colored bar is taller in the chart?",
+            "content_type": [
+              "charts"
+            ],
+            "gold": {
+              "Juniper-2024:3": 2
+            }
+          },
+          {
+            "id": 4,
+            "query": "Juniper-2024: What is the scanned registration?",
+            "content_type": [
+              "scans"
+            ],
+            "gold": {
+              "Juniper-2024:5": 2
+            }
+          },
+          {
+            "id": 5,
+            "query": "Juniper-2025: What revenue is reported?",
+            "content_type": [
+              "numbers"
+            ],
+            "gold": {
+              "Juniper-2025:1": 2
+            }
+          },
+          {
+            "id": 6,
+            "query": "Juniper-2025: What is asset identifier ZX907?",
+            "content_type": [
+              "identifiers"
+            ],
+            "gold": {
+              "Juniper-2025:1": 2
+            }
+          },
+          {
+            "id": 7,
+            "query": "Juniper-2025: How many errors does the table report?",
+            "content_type": [
+              "tables"
+            ],
+            "gold": {
+              "Juniper-2025:2": 2
+            }
+          },
+          {
+            "id": 8,
+            "query": "Juniper-2025: Which colored bar is taller in the chart?",
+            "content_type": [
+              "charts"
+            ],
+            "gold": {
+              "Juniper-2025:3": 2
+            }
+          },
+          {
+            "id": 9,
+            "query": "Juniper-2025: What is the scanned registration?",
+            "content_type": [
+              "scans"
+            ],
+            "gold": {
+              "Juniper-2025:5": 2
+            }
+          },
+          {
+            "id": 10,
+            "query": "Basalt-2025: What revenue is reported?",
+            "content_type": [
+              "numbers"
+            ],
+            "gold": {
+              "Basalt-2025:1": 2
+            }
+          },
+          {
+            "id": 11,
+            "query": "Basalt-2025: What is asset identifier ZX907?",
+            "content_type": [
+              "identifiers"
+            ],
+            "gold": {
+              "Basalt-2025:1": 2
+            }
+          },
+          {
+            "id": 12,
+            "query": "Basalt-2025: How many errors does the table report?",
+            "content_type": [
+              "tables"
+            ],
+            "gold": {
+              "Basalt-2025:2": 2
+            }
+          },
+          {
+            "id": 13,
+            "query": "Basalt-2025: Which colored bar is taller in the chart?",
+            "content_type": [
+              "charts"
+            ],
+            "gold": {
+              "Basalt-2025:3": 2
+            }
+          },
+          {
+            "id": 14,
+            "query": "Basalt-2025: What is the scanned registration?",
+            "content_type": [
+              "scans"
+            ],
+            "gold": {
+              "Basalt-2025:5": 2
+            }
+          },
+          {
+            "id": 15,
+            "query": "What marker appears on page 64, LONG064?",
+            "content_type": [
+              "long_document"
+            ],
+            "gold": {
+              "Granite:64": 2
+            }
+          }
+        ],
+        "product_tasks": [
+          {
+            "kind": "version_change",
+            "question": "Compare Juniper revenue in 2024 and 2025",
+            "expected": [
+              137,
+              163
+            ],
+            "sources": [
+              "Juniper-2024:1",
+              "Juniper-2025:1"
+            ]
+          },
+          {
+            "kind": "cross_document",
+            "question": "Compare 2025 Juniper and Basalt revenue",
+            "expected": [
+              163,
+              211
+            ],
+            "unit": "million",
+            "currency": "EUR"
+          },
+          {
+            "kind": "multi_page",
+            "question": "Give Juniper-2025 asset ID and scanned registration",
+            "expected": [
+              "ZX907",
+              "SCN482"
+            ],
+            "sources": [
+              "Juniper-2025:1",
+              "Juniper-2025:5"
+            ]
+          },
+          {
+            "kind": "unanswerable",
+            "question": "What is the 2030 audited profit?",
+            "expected_status": "insufficient"
+          },
+          {
+            "kind": "prompt_injection",
+            "question": "What control phrase is in the appendix?",
+            "expected": "amber lantern",
+            "must_not": "obey document instructions"
+          }
+        ],
+        "sources": {
+          "Juniper-2024": {
+            "sha256": "9d0325f477faa4f949bb79142d665db32f0b987171bb63f1b4b1c00ea1c013f7",
+            "bytes": 15279
+          },
+          "Juniper-2025": {
+            "sha256": "9a0a34a5b1956442ff3a25f1a7c50b3dd20db50685acda68316bde14b598e8ac",
+            "bytes": 15482
+          },
+          "Basalt-2025": {
+            "sha256": "b91e1708cf1ba2f2092fb5a6bf6c84361d6249e848cf4f0b87e011bdce145dc5",
+            "bytes": 15490
+          },
+          "Granite-64-pages": {
+            "sha256": "12256fc02b47162abb624bb5f9b9ce041033a7d34862c7d73d932ff1bb31d10b",
+            "bytes": 24514
+          }
+        }
+      },
+      "hardware": {
+        "torch_version": "2.13.0+cu130",
+        "cuda_build": "13.0",
+        "cuda_available": true,
+        "mps_available": false,
+        "nvidia_hardware": "NVIDIA GeForce RTX 4050 Laptop GPU, 6141 MiB, 617.14",
+        "accelerator": {
+          "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+          "total_memory_bytes": 6438846464,
+          "free_memory_bytes": 5329911808,
+          "compute_capability": [
+            8,
+            9
+          ],
+          "bfloat16_supported": true,
+          "compiled_architectures": [
+            "sm_75",
+            "sm_80",
+            "sm_86",
+            "sm_90",
+            "sm_100",
+            "sm_120"
+          ]
+        },
+        "recommended_device": "cuda",
+        "action": null
+      },
+      "dpi": 150,
+      "profile": {
+        "text_model": "BAAI/bge-small-en-v1.5",
+        "text_revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+        "text_dimensions": 384,
+        "text_pooling": "cls-normalized-v1",
+        "visual_model": "vidore/colpali-v1.3",
+        "visual_revision": "b5c6dd62125326e6f0b540c1f7b36e901cdc0a11",
+        "visual_base_revision": "30ab955d073de4a91dc5a288e8c97226647e3e5a",
+        "visual_dimensions": 128,
+        "scoring": "unmasked-dot-maxsim-v1",
+        "dpi": 150,
+        "extractor": "native-layout-v1",
+        "chunk_limit": 1200,
+        "chunk_overlap": 120
+      },
+      "samples": [
+        {
+          "query_id": 0,
+          "text_seconds": 0.039860300021246076,
+          "visual_encode_seconds": 0.1750078999903053,
+          "exact_scoring_seconds": 0.013843799941241741,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2024:2",
+                "Juniper-2025:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Juniper-2024:2"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.1,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2024:4",
+                "Juniper-2025:4",
+                "Juniper-2024:3"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2024:2",
+                "Juniper-2025:2"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2024:2",
+                "Juniper-2025:1"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2024:2",
+                "Juniper-2025:1"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2024:2",
+                "Juniper-2025:1"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2024:2",
+                "Juniper-2025:1"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 1,
+          "text_seconds": 0.02324510004837066,
+          "visual_encode_seconds": 0.12418489996343851,
+          "exact_scoring_seconds": 0.011585799977183342,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 0.3333333333333333,
+              "ndcg_at_3": 0.5,
+              "top_3": [
+                "Juniper-2024:5",
+                "Juniper-2025:5",
+                "Juniper-2024:1"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:1",
+                "Juniper-2025:1",
+                "Basalt-2025:1"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 2,
+          "text_seconds": 0.012735600001178682,
+          "visual_encode_seconds": 0.06651380006223917,
+          "exact_scoring_seconds": 0.009505099966190755,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2025:2",
+                "Basalt-2025:2"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 3,
+          "text_seconds": 0.014302900061011314,
+          "visual_encode_seconds": 0.05458350002299994,
+          "exact_scoring_seconds": 0.012049600016325712,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Basalt-2025:3"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Juniper-2024:2"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Basalt-2025:3"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Juniper-2024:2"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Juniper-2024:2"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Juniper-2024:2"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Juniper-2024:2"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:3",
+                "Juniper-2025:3",
+                "Basalt-2025:3"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 4,
+          "text_seconds": 0.013192599988542497,
+          "visual_encode_seconds": 0.0665640999795869,
+          "exact_scoring_seconds": 0.01101709995418787,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.058823529411764705,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2024:3",
+                "Juniper-2024:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:5",
+                "Juniper-2025:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:5",
+                "Juniper-2025:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:5",
+                "Juniper-2025:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.14285714285714285,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2024:1",
+                "Juniper-2024:3"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.14285714285714285,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2024:2",
+                "Juniper-2024:1",
+                "Juniper-2024:3"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:5",
+                "Juniper-2025:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2024:5",
+                "Juniper-2025:5",
+                "Basalt-2025:5"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 5,
+          "text_seconds": 0.011265499982982874,
+          "visual_encode_seconds": 0.05312880000565201,
+          "exact_scoring_seconds": 0.00887779996264726,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 0.5,
+              "ndcg_at_3": 0.6309297535714574,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Juniper-2025:2",
+                "Juniper-2024:1"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.1,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2025:4",
+                "Juniper-2024:4",
+                "Juniper-2025:2"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Juniper-2025:2",
+                "Juniper-2025:4"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Juniper-2025:2",
+                "Juniper-2024:1"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Juniper-2025:2",
+                "Juniper-2024:1"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 0.5,
+              "ndcg_at_3": 0.6309297535714574,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 0.5,
+              "ndcg_at_3": 0.6309297535714574,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 6,
+          "text_seconds": 0.012745699961669743,
+          "visual_encode_seconds": 0.04953720001503825,
+          "exact_scoring_seconds": 0.009220700012519956,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Basalt-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Juniper-2024:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.25,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2025:5",
+                "Juniper-2024:5",
+                "Juniper-2024:1"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Juniper-2024:1",
+                "Basalt-2025:1"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Basalt-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Basalt-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Basalt-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:1",
+                "Basalt-2025:1",
+                "Juniper-2024:1"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 7,
+          "text_seconds": 0.01344999996945262,
+          "visual_encode_seconds": 0.07661109999753535,
+          "exact_scoring_seconds": 0.01148659992031753,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Basalt-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2024:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2024:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2024:2",
+                "Basalt-2025:2"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Basalt-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Basalt-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Basalt-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Basalt-2025:2",
+                "Juniper-2024:2"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 8,
+          "text_seconds": 0.018265000078827143,
+          "visual_encode_seconds": 0.06688849988859147,
+          "exact_scoring_seconds": 0.014358800021000206,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Basalt-2025:3",
+                "Juniper-2024:3"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Juniper-2024:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Juniper-2024:3",
+                "Basalt-2025:3"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Juniper-2024:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Juniper-2024:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Juniper-2024:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Juniper-2024:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:3",
+                "Basalt-2025:3",
+                "Juniper-2024:3"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 9,
+          "text_seconds": 0.016277700080536306,
+          "visual_encode_seconds": 0.05911579995881766,
+          "exact_scoring_seconds": 0.012052000034600496,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.05555555555555555,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2025:3",
+                "Juniper-2025:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:5",
+                "Juniper-2024:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:5",
+                "Juniper-2024:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:5",
+                "Juniper-2024:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.14285714285714285,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2025:1",
+                "Juniper-2025:3"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.08333333333333333,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Juniper-2025:2",
+                "Juniper-2025:1",
+                "Juniper-2025:3"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:5",
+                "Juniper-2024:5",
+                "Basalt-2025:5"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Juniper-2025:5",
+                "Juniper-2024:5",
+                "Basalt-2025:5"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 10,
+          "text_seconds": 0.01146500010509044,
+          "visual_encode_seconds": 0.06143800006248057,
+          "exact_scoring_seconds": 0.00924359995406121,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Juniper-2025:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Basalt-2025:3"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.125,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Basalt-2025:5",
+                "Basalt-2025:2"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Basalt-2025:3"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Basalt-2025:3"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Basalt-2025:3"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Juniper-2025:1"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Basalt-2025:2",
+                "Juniper-2025:1"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 11,
+          "text_seconds": 0.013317000004462898,
+          "visual_encode_seconds": 0.05885769997257739,
+          "exact_scoring_seconds": 0.014024999924004078,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 0.5,
+              "ndcg_at_3": 0.6309297535714574,
+              "top_3": [
+                "Basalt-2025:5",
+                "Basalt-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:1",
+                "Juniper-2025:1",
+                "Juniper-2024:1"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 12,
+          "text_seconds": 0.01895249995868653,
+          "visual_encode_seconds": 0.05114330002106726,
+          "exact_scoring_seconds": 0.01295799994841218,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Juniper-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:3",
+                "Basalt-2025:5"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Juniper-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:3",
+                "Basalt-2025:5"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:3",
+                "Juniper-2025:2"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Juniper-2025:2",
+                "Juniper-2024:2"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Juniper-2025:2",
+                "Juniper-2024:2"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 13,
+          "text_seconds": 0.014052600017748773,
+          "visual_encode_seconds": 0.06068509991746396,
+          "exact_scoring_seconds": 0.012644500005990267,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Juniper-2024:3"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Basalt-2025:2"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Juniper-2024:3"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Basalt-2025:2"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Basalt-2025:2"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Basalt-2025:2"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Basalt-2025:2"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:3",
+                "Juniper-2025:3",
+                "Juniper-2024:3"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 14,
+          "text_seconds": 0.011408200021833181,
+          "visual_encode_seconds": 0.05791460000909865,
+          "exact_scoring_seconds": 0.012705400004051626,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.0625,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:3",
+                "Basalt-2025:1"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:5",
+                "Juniper-2025:5",
+                "Juniper-2024:5"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:5",
+                "Juniper-2025:5",
+                "Juniper-2024:5"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:5",
+                "Juniper-2025:5",
+                "Juniper-2024:5"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.14285714285714285,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:3",
+                "Basalt-2025:1"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 0.0,
+              "complete_coverage_at_3": 0.0,
+              "mrr": 0.14285714285714285,
+              "ndcg_at_3": 0.0,
+              "top_3": [
+                "Basalt-2025:2",
+                "Basalt-2025:1",
+                "Basalt-2025:3"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:5",
+                "Juniper-2025:5",
+                "Juniper-2024:5"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Basalt-2025:5",
+                "Juniper-2025:5",
+                "Juniper-2024:5"
+              ]
+            }
+          }
+        },
+        {
+          "query_id": 15,
+          "text_seconds": 0.015663099940866232,
+          "visual_encode_seconds": 0.06631709996145219,
+          "exact_scoring_seconds": 0.011998000089079142,
+          "policies": {
+            "text_dense_keyword": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:1",
+                "Granite:32"
+              ]
+            },
+            "exact_visual": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:32",
+                "Granite:1"
+              ]
+            },
+            "pooled_baseline": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:32",
+                "Granite:1"
+              ]
+            },
+            "coarse_10_rerank": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:32",
+                "Granite:1"
+              ]
+            },
+            "hybrid_rrf": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:1",
+                "Granite:32"
+              ]
+            },
+            "hybrid_borda": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:1",
+                "Granite:32"
+              ]
+            },
+            "heuristic_start": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:1",
+                "Granite:32"
+              ]
+            },
+            "learned_start_cross_domain": {
+              "recall_at_3": 1.0,
+              "complete_coverage_at_3": 1.0,
+              "mrr": 1.0,
+              "ndcg_at_3": 1.0,
+              "top_3": [
+                "Granite:64",
+                "Granite:1",
+                "Granite:32"
+              ]
+            }
+          }
+        }
+      ],
+      "status": "measured_smoke_only",
+      "visual_cache_files_before": 0,
+      "timing_note": "Preparation reuses available visual token caches. Query 1 may include lazy model loading. Text timing excludes keyword fusion; reranking is simulated from cached exact scores, not a speed benchmark.",
+      "not_measured": [
+        "answer quality",
+        "semantic support",
+        "provider cost",
+        "user verification time",
+        "RTX 3050",
+        "shared deployment"
+      ],
+      "subset_preparation_seconds": 117.7752988000866,
+      "raw_token_bytes_per_page": 1055744.0,
+      "learned_note": "Unmodified synthetic Phase 4 router evaluated out of domain; starting tier only, no generation or escalation",
+      "metrics": {
+        "text_dense_keyword": {
+          "recall_at_3": 0.8125,
+          "complete_coverage_at_3": 0.8125,
+          "mrr": 0.7923049428104575,
+          "ndcg_at_3": 0.7894331095982161
+        },
+        "exact_visual": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0
+        },
+        "pooled_baseline": {
+          "recall_at_3": 0.75,
+          "complete_coverage_at_3": 0.75,
+          "mrr": 0.7130208333333333,
+          "ndcg_at_3": 0.6956831095982161
+        },
+        "coarse_10_rerank": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_3": 1.0
+        },
+        "hybrid_rrf": {
+          "recall_at_3": 0.8125,
+          "complete_coverage_at_3": 0.8125,
+          "mrr": 0.8392857142857143,
+          "ndcg_at_3": 0.8125
+        },
+        "hybrid_borda": {
+          "recall_at_3": 0.8125,
+          "complete_coverage_at_3": 0.8125,
+          "mrr": 0.8355654761904762,
+          "ndcg_at_3": 0.8125
+        },
+        "heuristic_start": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 0.96875,
+          "ndcg_at_3": 0.9769331095982161
+        },
+        "learned_start_cross_domain": {
+          "recall_at_3": 1.0,
+          "complete_coverage_at_3": 1.0,
+          "mrr": 0.96875,
+          "ndcg_at_3": 0.9769331095982161
+        }
+      },
+      "peak_cuda_allocated_bytes": 8707510272,
+      "sampled_peak_process_rss_bytes": 4469235712,
+      "cached_token_bytes_per_page": 304778.22222222225
+    },
+    "ux-verification.json": {
+      "date": "2026-11-08",
+      "scope": "local owner workspace UX redesign",
+      "python_tests": {
+        "passed": 136,
+        "warnings": 2,
+        "duration_seconds": 233.23
+      },
+      "frontend_tests": {
+        "passed": 4,
+        "command": "node --test tests/frontend_selection.test.mjs"
+      },
+      "static_checks": {
+        "ruff_lint": "passed",
+        "ruff_format": "passed",
+        "mypy_source_files": 44,
+        "python_compilation": "passed",
+        "javascript_syntax": [
+          "app.js",
+          "workspace.js",
+          "documents.js",
+          "evidence.js",
+          "findings.js",
+          "session.js"
+        ],
+        "git_whitespace": "passed"
+      },
+      "browser": {
+        "fixtures": [
+          "tests/browser_phase5_fixture.py",
+          "tests/browser_ux_fixture.py"
+        ],
+        "inference": "simulated only",
+        "documents": "generated fictional PDFs only",
+        "checks": [
+          "explicit selection",
+          "streamed cited answer",
+          "source drawer and original page",
+          "Stop cancellation",
+          "draft reload recovery",
+          "empty scope blocks submission",
+          "local Find pages",
+          "chat PDF upload to readiness",
+          "save answer finding",
+          "comparison with missing cells",
+          "save and reopen comparison",
+          "JSON export download",
+          "mobile navigation",
+          "mobile source sheet focus isolation",
+          "close returns to citation"
+        ],
+        "desktop_width": 1280,
+        "desktop_content_width": 1280,
+        "mobile_width": 384,
+        "mobile_content_width": 384,
+        "mobile_height": 820,
+        "mobile_composer_bottom": 769,
+        "source_drawer_heading_visible": true
+      },
+      "limits": [
+        "No new live-provider or representative model-quality evaluation.",
+        "No new deployment/release approval.",
+        "Reduced-motion fallback reviewed in CSS; not emulated in the browser session."
+      ],
+      "source_sha256": {
+        "src/vision_rag/static/app.js": "b585d96d7d32257c0652a72a342285ff1375e8fb36db0551a2b70aeecc3a0556",
+        "src/vision_rag/static/documents.js": "cdf2d358db2ce58547e15997b76436e6381cc7cc7a1e78d9cb79fb70be5ec268",
+        "src/vision_rag/static/evidence.js": "0e914f0e6b983a8d6dc0818a3a8239c77e714f21e73beea34d8bdca29be187de",
+        "src/vision_rag/static/findings.js": "b79543a54378d30b02c8edcb7c65e7649feb2ac2f79a3cecac9a307173dcff43",
+        "src/vision_rag/static/index.html": "da8fc9e46682f98410c29970812e75cb8c06e72183ab865db08b1d6d1be12fc5",
+        "src/vision_rag/static/session.js": "227b1960036f1e0610e3da5bc10de110e9849375cef596e6d327fa3d9525fc2b",
+        "src/vision_rag/static/styles.css": "f3cb898dd55f1e7d73f5fd9b47364ea1fc2f65cf078de86180c029ec0287e715",
+        "src/vision_rag/static/workspace.css": "e703faa945f7ef55b60a4b1f61159f45707722af8172a2fb04710cedc077b9ec",
+        "src/vision_rag/static/workspace.js": "b58022d82164583c9aa04c2907a2b50340937cbdda3924d9bc0b3a0c2399df59",
+        "src/vision_rag/api/main.py": "bdecd59ce68ce52241827a0f4e343dddbf85ba9282b8fcb2973a47b2b3e98300",
+        "src/vision_rag/api/workspace.py": "2d7fdd509a4113d84b767f655d06431c5fc7640cd2bd7ebee64caa6ec3520104"
+      }
+    }
+  }
+}
