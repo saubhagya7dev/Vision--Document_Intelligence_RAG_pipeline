@@ -76,7 +76,7 @@ body { background: radial-gradient(ellipse at 76% 0, #12372a36, transparent 55%)
 .library-toolbar input { flex: 1; min-width: 160px; }.library-toolbar .btn { margin-left: auto; }
 .documents-grid.library-list { display: block; overflow-x: auto; background: #0c1914; border: 1px solid var(--border-medium); border-radius: 12px; }
 .library-table { border-collapse: collapse; width: 100%; min-width: 650px; font-size: 12px; }
-.library-table th { text-align: left; color: #a2b7aa; font-size: 10px; font-weight: 500; background: #11251c; padding: 13px 16px; }
+.library-table th { position: relative; text-align: left; color: #a2b7aa; font-size: 10px; font-weight: 500; background: #11251c; padding: 13px 16px; }
 .library-table td { padding: 16px; border-top: 1px solid var(--border-subtle); vertical-align: top; }
 .library-table tr:hover td { background: #122a1d44; }.library-table .doc-card-name { font-size: 12px; font-weight: 500; max-width: 250px; }.library-table .doc-job-status { font-size: 9px; margin-top: 5px; max-width: 220px; }.library-table .doc-card-date { font-size: 10px; margin-top: 0; }
 .library-state { font-size: 10px; display: inline-flex; color: #d0e4d6; background: #1a3324; border-radius: 99px; padding: 3px 8px; }
