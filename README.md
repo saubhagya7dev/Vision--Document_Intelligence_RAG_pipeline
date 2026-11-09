@@ -7,7 +7,7 @@
 [![ColPali](https://img.shields.io/badge/ColPali-v1.3-orange.svg)](https://huggingface.co/vidore/colpali-v1.3)
 [![Storage](https://img.shields.io/badge/Storage-SQLite%20%2B%20Qdrant-DC244C.svg)](#architecture)
 [![API](https://img.shields.io/badge/API-FastAPI-009688.svg)](#api)
-[![Validation](https://img.shields.io/badge/Python%20tests-136%20recorded-brightgreen.svg)](Docs/Validation.md#recorded-checks)
+[![Validation](https://img.shields.io/badge/Python%20tests-138%20recorded-brightgreen.svg)](Docs/Validation.md#recorded-checks)
 [![Status](https://img.shields.io/badge/Status-local%20workspace-orange.svg)](#status-and-limits)
 
 Vision is a local document workspace with hybrid text and visual retrieval,
@@ -26,7 +26,10 @@ Gemini to generate answers from retrieved evidence.
 **Upgrade history:** [From the original prototype to the current workspace](Docs/Upgrade%20history.md)
 explains every phase, implementation changes, old/new screenshots and measured results.
 
-![Vision workspace with selected documents and cited evidence](Docs/assets/ux-workspace-desktop.png)
+![Vision project landing page with its workspace entry](Docs/assets/luminous-landing-desktop.png)
+
+The root page introduces the project. **Explore Vision** opens the separate
+`/workspace` application with saved chats, documents, comparisons and findings.
 
 ## What you can do
 
@@ -100,7 +103,8 @@ and uses the visual fallback. See [hybrid ingestion setup](Docs/Architecture.md#
 .\.venv\Scripts\python.exe -m vision_rag.api.main
 ```
 
-Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)**. On macOS/Linux, the
+Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** and choose **Explore Vision**
+to enter the workspace. On macOS/Linux, the
 environment executable is `.venv/bin/python`; those profiles are not covered by
 the named Windows verification.
 
@@ -284,6 +288,10 @@ The browser uses persisted turns and SSE rather than the synchronous `/query` ca
 
 ## Verification and measured limits
 
+The [9 November luminous interface record](Docs/evidence/luminous-verification.json)
+reports **138 Python tests and seven frontend tests passed**, plus static and
+desktop/mobile checks for the new landing-to-workspace experience.
+
 The [8 November workspace record](Docs/Validation.md#recorded-checks) reports **136 Python
 tests and four frontend tests passed**, plus lint, format, strict typing,
 compilation and desktop/mobile browser checks. Browser fixtures use fictional
@@ -311,7 +319,7 @@ RTX 3050 hardware remain unmeasured.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
-node --test tests/frontend_selection.test.mjs
+node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs
 .\.venv\Scripts\python.exe -m ruff check src scripts tests
 .\.venv\Scripts\python.exe -m ruff format --check src scripts tests
 .\.venv\Scripts\python.exe -m mypy src

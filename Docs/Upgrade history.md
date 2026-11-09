@@ -471,3 +471,22 @@ implemented, experimental, planned and unverified work.
 The detailed [decision log](Architecture.md#design-decisions) explains tradeoffs, the
 [implementation plan](README.md#current-status) tracks scope, and the
 [current README](../README.md) describes how to run the resulting application.
+
+
+## 10. Luminous project entry and workspace — 9 November
+
+The project now opens on a separate About Project landing page, following the
+approved dark emerald design. Explore Vision enters `/workspace`; project
+sections remain separate from saved chats and owner data. A matching luminous
+workspace adds clear Ask Vision / Find pages controls and a searchable document
+table with real readiness states. Comparisons retain reported context rather
+than adding unimplemented calculated differences.
+
+![Luminous project landing page](assets/luminous-landing-desktop.png)
+
+![Luminous workspace with original cited evidence](assets/luminous-workspace-desktop.png)
+
+The earlier screenshots above document the 8 November interface. The new browser
+captures use generated fictional PDFs and simulated inference. See
+[Validation](Validation.md#recorded-checks) for the 138 Python / seven frontend
+passing checks and [Usage](Usage.md) for the updated entry flow.

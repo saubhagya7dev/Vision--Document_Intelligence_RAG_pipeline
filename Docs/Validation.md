@@ -6,6 +6,25 @@ as part of reorganizing documentation. Historical evidence remains historical.
 
 ## Recorded checks
 
+The **9 November luminous landing/workspace run** recorded **138 Python tests
+and seven frontend tests passed**, Ruff lint/format, strict typing of 44 source
+files and JavaScript syntax checks. New tests cover the public project page,
+separate workspace, protected API data, asset versioning and legacy hash links.
+Browser checks exercised entry/return navigation, selected-document answers,
+citations, local Find pages, library search/status filtering, version history and
+comparison generation. Mobile checks used 384px width: chat and library content
+stayed within the viewport, with table overflow confined to the library panel.
+See the [source-hashed record](evidence/luminous-verification.json),
+[landing](assets/luminous-landing-desktop.png),
+[workspace](assets/luminous-workspace-desktop.png) and
+[library](assets/luminous-library-desktop.png).
+
+The landing's embedded product illustration uses fictional report data. Browser
+inference used disposable generated PDFs and simulated models/providers; no real
+library or paid generation calls were used. This is workflow validation, not a
+new model-quality, deployment or release approval. Existing release fingerprints
+remain tied to their historical source revisions.
+
 The 8 November workspace run recorded 136 passing Python tests, four frontend
 tests, lint/format, strict typing of 44 source files, compilation and desktop/mobile
 browser checks. Those browser fixtures use fictional PDFs and simulated inference.

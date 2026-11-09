@@ -136,6 +136,14 @@ or calculated financial result is introduced.
 
 ## Source map
 
+The browser has two separate entry documents: `/` serves `static/landing.html`
+with project-only CSS/JavaScript; `/workspace` serves the application shell and
+session-aware modules. Both receive content-versioned assets and no-store HTML.
+The landing page does not fetch owner resources. Legacy workspace hash bookmarks
+are forwarded by an allowlist, while project-section anchors stay on the landing
+page. The library table uses the existing readiness API; its search/status filters
+operate on server-returned metadata without changing retrieval scope.
+
 | Responsibility | Code |
 | --- | --- |
 | HTTP/owner boundary | [`api/`](../src/vision_rag/api/) |
