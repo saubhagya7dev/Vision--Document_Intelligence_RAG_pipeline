@@ -113,10 +113,11 @@ if STATIC_DIR.exists():
 # Catch-all route: serve index.html for any non-API, non-static path (SPA routing)
 @app.get("/{full_path:path}", response_model=None)
 async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
-    """Serve the SPA index.html for all frontend routes."""
+    """Keep the public project page separate from the owner's workspace."""
     if full_path.startswith(("api/", "static/")):
         raise HTTPException(404, "Not found")
-    index_file = STATIC_DIR / "index.html"
+    landing = full_path == ""
+    index_file = STATIC_DIR / ("landing.html" if landing else "index.html")
     if index_file.exists():
         html = index_file.read_text(encoding="utf-8")
         for asset in (
@@ -128,6 +129,8 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
             "documents.js",
             "findings.js",
             "session.js",
+            "landing.css",
+            "landing.js",
         ):
             digest = hashlib.sha256((STATIC_DIR / asset).read_bytes()).hexdigest()[:12]
             html = html.replace(f'/static/{asset}"', f'/static/{asset}?v={digest}"')

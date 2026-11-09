@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vision turns selected PDFs into an evidence-linked workspace. Explore hybrid retrieval, original cited pages, report comparisons and saved findings.">
+    <meta name="theme-color" content="#091312">
+    <title>Vision — Luminous Document Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/landing.css">
+    <script src="/static/landing.js" defer></script>
+</head>
+<body>
+    <a class="skip" href="#product">Skip to content</a>
+    <div class="atmosphere" aria-hidden="true"><div class="orbit"></div><div class="ribbon"></div></div>
+    <header class="site-header wrap">
+        <a class="brand" href="/" aria-label="Vision home"><span class="star" aria-hidden="true">✦</span> Vision</a>
+        <nav class="site-nav" aria-label="Project navigation"><a href="#product">Product</a><a href="#features">Features</a><a href="#architecture">Architecture</a><a href="#documentation">Docs</a><a href="https://github.com/saubhagya7dev/Vision---Document-Intelligence-RAG-pipeline" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+        <a class="button primary header-launch" href="/workspace">Launch Workspace <span aria-hidden="true">→</span></a>
+    </header>
+    <main>
+        <section class="hero wrap" id="product" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <p class="eyebrow"><span aria-hidden="true">✦</span> Vision-native document intelligence</p>
+                <h1 id="hero-title">Your Documents.<br>A New Dimension of<br><span>Intelligence.</span></h1>
+                <p class="hero-description">Ask about selected PDFs, explore evidence, compare reports, and keep the findings with Vision’s hybrid text and visual retrieval engine.</p>
+                <div class="hero-actions"><a class="button primary" href="/workspace">Explore Vision <span aria-hidden="true">→</span></a><a class="button secondary" href="https://github.com/saubhagya7dev/Vision---Document-Intelligence-RAG-pipeline" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">⌘</span> View on GitHub</a></div>
+                <p class="hero-note">One local workspace. Your documents, connected to their evidence.</p>
+            </div>
+            <div class="product-preview" aria-label="Illustrative workspace preview using fictional reports">
+                <div class="preview-windowbar"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>Vision / Workspace</span><span class="demo-label">Illustrative preview</span></div>
+                <div class="preview-app">
+                    <aside class="preview-sidebar" aria-hidden="true"><div class="preview-brand"><span class="star">✦</span> Vision</div><span class="preview-nav active">▧ &nbsp; Workspace</span><span class="preview-nav">▤ &nbsp; Documents</span><span class="preview-nav">▥ &nbsp; Comparisons</span><span class="preview-nav">♧ &nbsp; Findings</span><span class="preview-nav">◈ &nbsp; Processing</span><span class="preview-nav">⚙ &nbsp; Settings</span></aside>
+                    <div class="preview-main">
+                        <div class="preview-heading"><strong>Research chat</strong><span class="small-state">Saved</span></div>
+                        <div class="preview-scope"><span>▤ Juniper-2025.pdf · v1</span><span>Ask documents</span></div>
+                        <div class="preview-content">
+                            <div class="preview-answer"><div class="assistant-name"><span class="star">✦</span> Vision</div><p>Juniper reported <strong>€163 million</strong> in revenue for FY2025. <span class="demo-citation">[1]</span></p><p class="preview-muted">The report describes this as consolidated revenue.</p><div class="preview-source">▤ &nbsp; Juniper-2025.pdf <span>p.12 · v1 ↗</span></div><div class="preview-answer-actions">Copy &nbsp; · &nbsp; Save finding</div></div>
+                            <div class="preview-evidence"><div class="preview-file">Original page <span>12 / 28</span></div><div class="preview-paper"><strong>Juniper</strong><small>ANNUAL REPORT 2025</small><hr><b>Financial performance</b><table><tr><th>Metric</th><th>FY2025</th></tr><tr><td>Revenue</td><td>€163 million</td></tr><tr><td>Scope</td><td>Consolidated</td></tr></table><span class="paper-page">12</span></div></div>
+                        </div>
+                        <div class="preview-composer"><span>Ask a follow-up about your documents…</span><span class="preview-send" aria-hidden="true">↗</span></div>
+                    </div>
+                </div>
+                <div class="preview-caption"><span>Selected documents. Original pages. Saved findings.</span><span class="star" aria-hidden="true">✦</span></div>
+            </div>
+        </section>
+
+        <section class="features wrap" id="features" aria-labelledby="features-title">
+            <div class="section-heading"><p class="section-kicker">The complete document workflow</p><h2 id="features-title">Everything you need.<br><span>Evidence at every step.</span></h2><p>From the first PDF to the finding you keep, understand what is happening and where each answer comes from.</p></div>
+            <div class="feature-grid">
+                <article class="feature-card"><span class="feature-icon" aria-hidden="true">▱</span><h3>Persistent document library</h3><p>Keep a structured PDF library with immutable versions, replacements and a recoverable processing history.</p><span class="feature-detail">Upload · Version · Recover</span></article>
+                <article class="feature-card"><span class="feature-icon" aria-hidden="true">ϟ</span><h3>Hybrid retrieval</h3><p>Combine native text, keyword search, BGE embeddings and ColPali visual retrieval. Use optional OCR where needed.</p><span class="feature-detail">Text and visuals, together</span></article>
+                <article class="feature-card"><span class="feature-icon" aria-hidden="true">◈</span><h3>Evidence-linked answers</h3><p>Ask within your selected documents. Follow version-specific citations back to the original pages.</p><span class="feature-detail">Ask · Open source · Inspect</span></article>
+                <article class="feature-card"><span class="feature-icon" aria-hidden="true">⚖</span><h3>Report comparison</h3><p>Compare two to four report versions across selected fields, preserving units, currency, period and missing evidence.</p><span class="feature-detail">Reported context stays visible</span></article>
+                <article class="feature-card"><span class="feature-icon" aria-hidden="true">♧</span><h3>Save &amp; export findings</h3><p>Keep useful answers and comparisons, record your review, and export JSON, CSV or Markdown with source references.</p><span class="feature-detail">Reopen · Review · Export</span></article>
+                <article class="feature-card"><span class="feature-icon" aria-hidden="true">⬡</span><h3>Data control &amp; recovery</h3><p>Clear history, manage page caches or reset the library. Authenticated offline backup and restore are available by command.</p><span class="feature-detail">Clear choices. Recoverable work.</span></article>
+            </div>
+            <div class="technology-strip" aria-label="Project technologies"><span>ColPali v1.3</span><span>BGE embeddings</span><span>SQLite + Qdrant</span><span>FastAPI</span><span>Gemini</span><span>Python</span></div>
+        </section>
+
+        <section class="architecture wrap" id="architecture" aria-labelledby="architecture-title">
+            <div class="section-heading"><p class="section-kicker">Behind the workspace</p><h2 id="architecture-title">A clear path from<br><span>document to evidence.</span></h2><p>Durable local storage and bounded retrieval support the conversation. Gemini generates answers from retrieved evidence; Find pages works without a generation-provider call.</p></div>
+            <ol class="pipeline"><li><span>01</span><h3>Add a PDF</h3><p>Save an immutable original and queue durable processing.</p></li><li><span>02</span><h3>Prepare search</h3><p>Extract text, render visual pages and build an eligible index.</p></li><li><span>03</span><h3>Ask your sources</h3><p>Search an explicit selection of up to six documents.</p></li><li><span>04</span><h3>Inspect &amp; keep</h3><p>Check cited pages, compare reports and save findings.</p></li></ol>
+            <p class="architecture-note">A checked page reference identifies the cited evidence. It does not independently verify that an answer is correct.</p>
+        </section>
+
+        <section class="documentation wrap" id="documentation" aria-labelledby="documentation-title">
+            <div class="section-heading"><p class="section-kicker">Start with understanding</p><h2 id="documentation-title">A workspace you<br><span>can make sense of.</span></h2></div>
+            <div class="guide-grid"><article><h3>Getting started</h3><p>Launch the workspace, start a chat and add a PDF. Write while it prepares; send when all selected documents are searchable.</p><a href="/workspace">Open the workspace →</a></article><article><h3>Working with evidence</h3><p>Use Find pages for local source discovery. Open a citation to inspect its original version, then save the answer as a finding.</p><a href="/workspace#chat">Start a research chat →</a></article><article><h3>Project &amp; implementation</h3><p>Built with FastAPI, SQLite, Qdrant and text/visual models. Explore source code, setup instructions and the documented validation limits.</p><a href="https://github.com/saubhagya7dev/Vision---Document-Intelligence-RAG-pipeline" target="_blank" rel="noopener noreferrer">Explore the repository ↗</a></article></div>
+            <p class="local-note">Designed for one owner and one local application process. Shared deployment and broad answer-quality evaluation remain separate work.</p>
+        </section>
+
+        <section class="closing wrap"><span class="star" aria-hidden="true">✦</span><h2>Your next insight<br>starts with a document.</h2><a class="button primary" href="/workspace">Explore Vision <span aria-hidden="true">→</span></a></section>
+    </main>
+    <footer class="site-footer wrap"><a class="brand" href="/"><span class="star" aria-hidden="true">✦</span> Vision</a><span>Document intelligence, grounded in your sources.</span><a href="#product">Back to top ↑</a></footer>
+</body>
+</html>
