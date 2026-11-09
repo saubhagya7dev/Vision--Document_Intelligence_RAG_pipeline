@@ -17,6 +17,7 @@ from vision_rag.config import settings
 from vision_rag.core.embeddings import BaseEmbeddingModel
 from vision_rag.generate.events import Cancelled, Emit, checkpoint
 from vision_rag.generate.grounding import GroundedSynthesizer
+from vision_rag.generate.provider_errors import ProviderFailure
 from vision_rag.generate.synthesizer import RAGSynthesizer
 from vision_rag.ingest.document_loader import DocumentLoader
 from vision_rag.ingest.ocr import TesseractOCR
@@ -246,6 +247,7 @@ class QueryRequest(BaseModel):
     previous_question: str | None = Field(default=None, max_length=2000)
     tier: Literal["auto", "text", "visual", "hybrid", "rerank"] = "auto"
     evidence_only: bool = False
+    stream_answer: bool = True
 
 
 class QueryResponse(BaseModel):
@@ -722,6 +724,7 @@ def execute_query(
                     (request.page_start, request.page_end),
                     emit,
                     cancelled,
+                    stream_answer=request.stream_answer,
                 )
                 return QueryResponse(**result)
             _, synthesizer = get_components()
@@ -729,6 +732,9 @@ def execute_query(
                 user_query=request.query, top_k=request.top_k
             )
             return QueryResponse(answer=answer, sources=sources)
+    except ProviderFailure as error:
+        logger.warning("Answer provider request failed (HTTP %s)", error.status_code)
+        raise HTTPException(error.status_code, str(error)) from None
     except Conflict as error:
         raise HTTPException(409, str(error)) from None
     except KeyError:

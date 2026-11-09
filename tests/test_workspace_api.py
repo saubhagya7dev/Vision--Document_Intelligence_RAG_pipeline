@@ -1,11 +1,63 @@
 import json
 from threading import Event
 
+from test_phase4_api import FakeProvider
 from test_phase4_api import client as client
 
 from scripts.phase3_fixtures import create_pdf
 from vision_rag.api import routes, workspace
 from vision_rag.generate.events import checkpoint
+from vision_rag.generate.provider_errors import ProviderFailure
+
+
+def test_failed_stream_can_be_retried_without_streaming_and_keeps_scope(
+    client, tmp_path, monkeypatch
+):
+    from vision_rag.models import gemini_generator
+
+    calls = []
+
+    class Provider(FakeProvider):
+        def generate_grounded_stream(self, query, evidence, images, delta, cancelled):
+            calls.append("stream")
+            delta("Unvalidated draft")
+            raise ProviderFailure(
+                504, "The answer provider timed out. Retry without streaming."
+            )
+
+        def generate_grounded(self, query, evidence, images):
+            calls.append("non_stream")
+            return super().generate_grounded(query, evidence, images)
+
+    monkeypatch.setattr(gemini_generator, "GeminiGenerator", lambda **_: Provider())
+    pdf = create_pdf(tmp_path / "report.pdf", ("text", "table"))
+    job = client.post(
+        "/api/v1/ingest", files={"file": ("report.pdf", pdf.read_bytes())}
+    ).json()
+    library = routes.get_library()
+    library.process_one()
+    library.retrieval.queue()
+    library.process_one()
+    conversation = client.post(
+        "/api/v1/conversations", json={"document_ids": [job["document_id"]]}
+    ).json()
+    endpoint = f"/api/v1/conversations/{conversation['id']}/messages"
+    first = client.post(endpoint, json={"query": "ALPHA42"}).json()
+    events = client.get(f"/api/v1/messages/{first['id']}/events").text
+    failed = client.get(f"/api/v1/messages/{first['id']}").json()
+    assert failed["state"] == "failed" and failed["result"] is None
+    assert "timed out" in failed["error"] and "event: error" in events
+    assert calls == ["stream"]  # No automatic second provider request.
+    retry = client.post(
+        endpoint, json={"query": "ALPHA42", "stream_answer": False}
+    ).json()
+    replay = client.get(f"/api/v1/messages/{retry['id']}/events").text
+    completed = client.get(f"/api/v1/messages/{retry['id']}").json()
+    assert completed["state"] == "completed" and completed["result"]["claims"]
+    assert completed["request"]["document_ids"] == [job["document_id"]]
+    assert completed["request"]["stream_answer"] is False
+    assert "Unvalidated draft" not in completed["result"]["answer"]
+    assert "event: final-answer" in replay and calls == ["stream", "non_stream"]
 
 
 def test_saved_chat_scope_event_replay_and_viewer(client, tmp_path, monkeypatch):

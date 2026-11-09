@@ -84,6 +84,7 @@ class GroundedSynthesizer:
         page_range: tuple[int, int] | None = None,
         emit: Emit | None = None,
         cancelled: Cancelled | None = None,
+        stream_answer: bool = True,
     ) -> dict[str, Any]:
         rewritten = followup_query(query, previous)
         start = (
@@ -153,8 +154,14 @@ class GroundedSynthesizer:
                             "answer-delta",
                             {"text": "", "reset": True, "provisional": True},
                         )
-                    if emit and callable(
-                        getattr(type(self.generator), "generate_grounded_stream", None)
+                    if (
+                        emit
+                        and stream_answer
+                        and callable(
+                            getattr(
+                                type(self.generator), "generate_grounded_stream", None
+                            )
+                        )
                     ):
                         raw = self.generator.generate_grounded_stream(
                             rewritten,
