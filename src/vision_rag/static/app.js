@@ -211,6 +211,7 @@
 
         document.body.dataset.findingsView = page === 'findings' ? 'saved' : 'compare';
         document.getElementById('analysis-title').textContent = page === 'findings' ? 'Saved findings' : 'Compare reports';
+        window.dispatchEvent(new CustomEvent('vision-route-changed', {detail: page}));
         closeNavigation();
         // Trigger page-specific init
         if (page === 'dashboard') initDashboard();

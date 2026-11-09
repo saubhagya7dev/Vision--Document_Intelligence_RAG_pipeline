@@ -180,11 +180,11 @@
         evidenceModality();
         el('close-evidence').focus();
     }
-    function closeEvidence() {
+    function closeEvidence(restoreFocus = true) {
         el('chat-evidence').hidden = true;
         document.querySelector('.workspace-layout').classList.remove('has-evidence');
         evidenceModality();
-        if (sourceTrigger?.isConnected) sourceTrigger.focus();
+        if (restoreFocus && sourceTrigger?.isConnected) sourceTrigger.focus();
     }
     function evidenceModality() {
         const modal = !el('chat-evidence').hidden && window.matchMedia('(max-width: 1000px)').matches;
@@ -335,7 +335,10 @@
         });
         el('chat-messages').addEventListener('scroll', () => { el('jump-latest').hidden = atBottom(); });
         el('jump-latest').addEventListener('click', followLatest);
-        el('close-evidence').addEventListener('click', closeEvidence);
+        el('close-evidence').addEventListener('click', () => closeEvidence());
+        window.addEventListener('vision-route-changed', event => {
+            if (event.detail !== 'chat') closeEvidence(false);
+        });
         window.matchMedia('(max-width: 1000px)').addEventListener('change', evidenceModality);
         document.addEventListener('keydown', event => {
             if (event.key === 'Tab' && el('chat-evidence').getAttribute('aria-modal') === 'true') {
