@@ -18,7 +18,7 @@ from vision_rag.models.gemini_generator import GeminiGenerator
 
 
 def main():
-    path = Path("Docs/phase7-answers.json")
+    path = Path("Docs/evidence/phase7-answers.json")
     report = (
         json.loads(path.read_text())
         if path.exists()
