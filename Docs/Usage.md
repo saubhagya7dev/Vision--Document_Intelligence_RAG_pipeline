@@ -31,7 +31,7 @@ executable is normally `.venv/bin/python`.
 The root URL opens the public **About Project** landing page. Choose **Explore
 Vision** or **Launch Workspace** to enter `/workspace`. The project page explains
 features and architecture without requesting library or session data. The
-workspace retains owner sign-in when configured. **About Vision** in its sidebar
+workspace retains owner sign-in when configured. **Settings → About Vision**
 returns to the project page; existing root `#chat`/`#documents` bookmarks redirect
 to the equivalent workspace section.
 
@@ -61,8 +61,13 @@ a visual fallback. Downloaded models/OCR runtimes are not deleted by library res
 
 ## Chat and evidence
 
-The workspace now follows the luminous emerald design, with **Ask Vision** and
-**Find pages** controls beside document selection. Documents uses a searchable
+The workspace uses a compact header: **Dashboard → Upload → Chat → Documents →
+Compare → Findings**. Black and charcoal surfaces keep green for actions and
+status. The header scrolls horizontally on narrow screens. **Recent chats** and
+**New chat** live in the chat toolbar; **Settings** contains Data & history and
+the return to About Vision. Luminous type marks active processing.
+
+**Ask Vision** and **Find pages** sit beside document selection. Documents uses a searchable
 table with status filters and a per-document action menu. On narrow screens the
 table scrolls inside its own panel, preserving readable columns and page width.
 
@@ -77,7 +82,7 @@ table scrolls inside its own panel, preserving readable columns and page width.
    uses a separate source sheet. Navigate, zoom or open the original PDF.
 6. Save a useful completed answer as a finding.
 
-![Current luminous workspace and cited original page](assets/luminous-workspace-desktop.png)
+![Current compact-header workspace and cited original page](assets/header-workspace-desktop.png)
 
 Every submitted turn retains its source set. Saved conversations and events are
 server-owned. Unsent drafts are saved per chat in browser-tab session storage;
