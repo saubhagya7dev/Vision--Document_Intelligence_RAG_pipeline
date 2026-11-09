@@ -12,7 +12,8 @@
             body: body === undefined ? undefined : JSON.stringify(body)});
         if (!response.ok) {
             const error = await response.json().catch(() => ({}));
-            throw new Error(typeof error.detail === 'string' ? error.detail : `Request failed (${response.status})`);
+            const failure = new Error(typeof error.detail === 'string' ? error.detail : `Request failed (${response.status})`);
+            failure.status = response.status; throw failure;
         }
         return response.json();
     }
@@ -139,7 +140,13 @@
             current = await api(`/findings/${encode(id)}`); render();
             if (current.state === 'saved') el('finding-list').value = current.id;
             localStorage.setItem('vr_finding', id); status(`${current.state === 'saved' ? 'Saved finding' : 'Draft comparison'} ready. Inspect citations before marking reviewed.`);
-        } catch (error) { current = null; render(); report(error); }
+        } catch (error) {
+            current = null; render();
+            if (error.status === 404) {
+                localStorage.removeItem('vr_finding');
+                status('The previously opened finding is no longer available. Choose another saved finding or create a comparison.');
+            } else report(error);
+        }
     }
     async function open() {
         if (working) return;
