@@ -6,6 +6,16 @@ as part of reorganizing documentation. Historical evidence remains historical.
 
 ## Recorded checks
 
+The **9 November product-landing rebuild** passed **nine frontend tests** and
+**two targeted landing API tests**. New frontend checks cover tab exclusivity,
+keyboard navigation, next-step actions and citation highlighting. Desktop and
+384px mobile browser checks exercised all four example views, source
+highlighting, contained library-table scrolling, workspace entry, starter tasks,
+a selected-document streamed answer and its original page. The final mobile
+landing content measured 369px within a 384px viewport (including scrollbar).
+See [product verification](evidence/product-verification.json). These are
+simulated workflow checks, not new model-quality or release approval.
+
 The **9 November compact-header follow-up** passed **138 Python tests** (two
 dependency deprecation warnings) and **seven frontend tests**. Browser checks
 covered the six header routes, saved-chat reopening, Settings/Data & history,
