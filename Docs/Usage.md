@@ -102,6 +102,31 @@ Draft recovery is tab-local, not a cross-device sync feature. Cancellation may w
 for an in-flight GPU/provider boundary. Reduced-motion/forced-color fallbacks and
 keyboard focus behavior are implemented; broad accessibility approval is not claimed.
 
+## When answers time out or the provider is unavailable
+
+An HTTP 503 from Gemini or a provider read timeout is different from a missing
+local search index. The failed turn is kept with an actionable error; provisional
+text is not published as a validated answer. Find pages remains provider-free.
+
+For a failed answer, **Retry without streaming** explicitly submits a new turn
+with the same question, source scope and request options. It waits for the complete
+provider response, then applies the same claim/citation validation. It does not
+silently retry or automatically spend another provider request. The API equivalent
+is `stream_answer: false` on a conversation-message request; SSE still delivers
+progress and the final saved answer. `/query` already uses a non-streamed request.
+
+This is an alternative transport path, not a bypass for quotas or unavailable
+models. Retry later for service errors, check model/key permissions for access
+errors, and try fewer documents for slow requests. Administrators can explicitly
+increase `PROVIDER_TIMEOUT_MS` (default 30000, maximum 120000) for genuinely slow
+requests; that does not fix HTTP 503 or quota exhaustion. Restart after changing
+configuration. An in-flight provider call may still finish before cancellation.
+
+The failure → manual retry → cited answer workflow was checked in a disposable
+browser library with fictional documents and simulated provider failures:
+
+![Non-streamed retry completed with a cited answer in the recovery fixture](assets/provider-recovery.png)
+
 ## Comparisons and findings
 
 Compare reports takes two to four explicit retained versions and one to eight
