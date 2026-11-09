@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-09",
+  "scope": "compact workspace header and neutral dark landing/workspace surfaces",
+  "python_tests": {
+    "passed": 138,
+    "warnings": 2,
+    "duration_seconds": 175.02
+  },
+  "frontend_tests": {
+    "passed": 7,
+    "command": "node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs"
+  },
+  "javascript_syntax": [
+    "app.js",
+    "workspace.js",
+    "findings.js"
+  ],
+  "browser": {
+    "fixture": "tests/browser_ux_fixture.py",
+    "inference": "simulated",
+    "real_library_touched": false,
+    "paid_calls": false,
+    "checks": [
+      "six header routes",
+      "saved chat reopened from toolbar",
+      "Settings opens Data & history",
+      "selected-document streamed answer",
+      "original cited page",
+      "mobile source modal isolates header",
+      "browser Back releases source isolation",
+      "new chat upload actions visible",
+      "missing remembered finding recovery",
+      "darker public landing and illustrative top navigation"
+    ],
+    "desktop_viewport": [
+      1280,
+      720
+    ],
+    "mobile_viewport": [
+      384,
+      820
+    ],
+    "mobile_content_width": 384,
+    "mobile_composer_bottom": 786.61
+  },
+  "screenshots": [
+    "Docs/assets/header-workspace-desktop.png",
+    "Docs/assets/header-workspace-mobile.png",
+    "Docs/assets/header-landing-desktop.png"
+  ],
+  "limits": [
+    "Simulated workflow checks do not establish model or answer quality.",
+    "Historical release fingerprints were not renewed."
+  ],
+  "source_sha256": {
+    "src/vision_rag/static/app.js": "c0ab1d4d90e3bd19798fae2f2f2919013f157f04afc8004626396f9022ab1fe7",
+    "src/vision_rag/static/documents.js": "cdf2d358db2ce58547e15997b76436e6381cc7cc7a1e78d9cb79fb70be5ec268",
+    "src/vision_rag/static/emerald.css": "dc6044e16c4b5570010ed9ace12055b4e1fb4d263abc62d09968d7e00bc5c697",
+    "src/vision_rag/static/evidence.js": "0e914f0e6b983a8d6dc0818a3a8239c77e714f21e73beea34d8bdca29be187de",
+    "src/vision_rag/static/findings.js": "a748f768354f5240bb671c704234cee29cdd5565c77b4ecc29758603ae7f1cd5",
+    "src/vision_rag/static/index.html": "194516215aa35257ecdc675e14b533f1a629d12e06f18c14f047ce682093955b",
+    "src/vision_rag/static/landing.css": "9e6c38005033de2bda5537086baa0506b089dff87aaf396fecd790e528ace5d6",
+    "src/vision_rag/static/landing.html": "856d8289dabdcbd75c0c36a4b5c9a84aa770e2a6ad25f80f4489e0dce54a541d",
+    "src/vision_rag/static/landing.js": "47d6307d87bb9d13859b1455b977a292b09fcc016e6cfe0831e753c63d92d7a0",
+    "src/vision_rag/static/session.js": "227b1960036f1e0610e3da5bc10de110e9849375cef596e6d327fa3d9525fc2b",
+    "src/vision_rag/static/styles.css": "f3cb898dd55f1e7d73f5fd9b47364ea1fc2f65cf078de86180c029ec0287e715",
+    "src/vision_rag/static/workspace.css": "e703faa945f7ef55b60a4b1f61159f45707722af8172a2fb04710cedc077b9ec",
+    "src/vision_rag/static/workspace.js": "baa60eb3e49eacda69114a2dd52df0c42cfa8c9f9ed55e45fffc978ac9734dea"
+  }
+}
