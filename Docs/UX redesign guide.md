@@ -2,7 +2,8 @@
 
 Implemented 8 November 2026. The application now opens in chat, using the approved
 ink black, cream and burnt orange palette, square corners, smaller typography
-and quiet dividers. The original README is unchanged.
+and quiet dividers. The [README](../README.md) now describes this workspace and
+the implemented backend phases.
 
 ## Everyday workflow
 

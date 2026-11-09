@@ -154,6 +154,7 @@ are recorded below.
 See [Phase 7 guide](Phase%207%20guide.md), [benchmark](Phase%207%20benchmark.md),
 and [release gates](phase7-release-gates.json). Local implementation is delivered;
 unverified release gates remain false. No production or shared-deployment readiness
-is claimed. The original README was preserved at the user's request.
+is claimed. The README was updated on 9 November 2026 to describe the implemented
+phases and subsequent workspace redesign, following the user's new instruction.
 
 Tests and measurements run throughout each implemented phase. Phase 2 adds a durable local metadata/worker boundary without new extraction dependencies, models, frontend frameworks or distributed services.

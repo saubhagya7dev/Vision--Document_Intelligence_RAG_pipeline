@@ -1,7 +1,8 @@
 # Current feature matrix
 
-Updated 6 November 2026. Implemented means code exists; validation scope is
-separate. The preserved original README describes the project's earlier vision.
+Implementation/validation snapshot: 6 November 2026. Implemented means code
+exists; validation scope is separate. See the [current README](../README.md) and
+[workspace guide](UX%20redesign%20guide.md) for the later interface redesign.
 
 | Capability | State | Validation / limit |
 | --- | --- | --- |

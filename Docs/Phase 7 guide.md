@@ -2,9 +2,9 @@
 
 Closeout: 6 November 2026. The supported validation target is one Windows
 application process, one owner, SQLite and embedded persistent Qdrant. This is a
-local release candidate; production/shared readiness is not established. The
-original README is preserved as requested. Use this guide and the implementation
-plan for current capabilities and limits.
+local release candidate; production/shared readiness is not established. This
+guide records Phase 7 scope and validation. The [current README](../README.md)
+also covers the later workspace redesign and current entry points.
 
 ## Run the application
 
