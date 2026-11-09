@@ -14,7 +14,9 @@ from pathlib import Path
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
-    parser.add_argument("--output", type=Path, default=Path("Docs/phase7-wheel.json"))
+    parser.add_argument(
+        "--output", type=Path, default=Path("Docs/evidence/phase7-wheel.json")
+    )
     args = parser.parse_args()
     wheel = args.wheel.resolve()
     code = """
