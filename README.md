@@ -7,7 +7,7 @@
 [![ColPali](https://img.shields.io/badge/ColPali-v1.3-orange.svg)](https://huggingface.co/vidore/colpali-v1.3)
 [![Storage](https://img.shields.io/badge/Storage-SQLite%20%2B%20Qdrant-DC244C.svg)](#architecture)
 [![API](https://img.shields.io/badge/API-FastAPI-009688.svg)](#api)
-[![Validation](https://img.shields.io/badge/Python%20tests-136%20recorded-brightgreen.svg)](Docs/ux-verification.json)
+[![Validation](https://img.shields.io/badge/Python%20tests-136%20recorded-brightgreen.svg)](Docs/Validation.md#recorded-checks)
 [![Status](https://img.shields.io/badge/Status-local%20workspace-orange.svg)](#status-and-limits)
 
 Vision is a local document workspace with hybrid text and visual retrieval,
@@ -20,13 +20,13 @@ Gemini to generate answers from retrieved evidence.
 > Updated 9 November 2026 for the implemented phases and workspace redesign.
 > The verified profile is one local application process and one owner.
 > Production and shared-deployment release gates remain incomplete.
-> See the [implementation plan](Docs/Implementation%20plan.md) and
-> [feature matrix](Docs/Feature%20matrix.md) for scope and progress.
+> See the [documentation index](Docs/README.md#current-status) and
+> [feature matrix](Docs/Validation.md#feature-status) for scope and progress.
 
 **Upgrade history:** [From the original prototype to the current workspace](Docs/Upgrade%20history.md)
 explains every phase, implementation changes, old/new screenshots and measured results.
 
-![Vision workspace with selected documents and cited evidence](Docs/ux-workspace-desktop.png)
+![Vision workspace with selected documents and cited evidence](Docs/assets/ux-workspace-desktop.png)
 
 ## What you can do
 
@@ -74,7 +74,7 @@ uv pip install --python .venv/Scripts/python.exe -r requirements/cuda-windows-py
 .\.venv\Scripts\python.exe scripts/check_gpu.py
 ```
 
-See [GPU setup](Docs/GPU%20setup.md). PDF rendering runs on the CPU; compatible
+See [GPU setup](Docs/Usage.md#cuda-and-model-setup). PDF rendering runs on the CPU; compatible
 CUDA accelerates ColPali embeddings. `EMBEDDING_DEVICE=auto` selects CUDA, then
 MPS, then CPU when available. CPU inference is supported by the code but is not
 an equivalent performance profile.
@@ -92,7 +92,7 @@ your account. See [.env.example](.env.example) for all settings. Do not commit
 `.env` or real credentials. Model files download on first use.
 
 Optional Tesseract OCR uses `TESSERACT_EXECUTABLE`; missing OCR records a warning
-and uses the visual fallback. See [hybrid ingestion setup](Docs/Phase%203%20guide.md).
+and uses the visual fallback. See [hybrid ingestion setup](Docs/Architecture.md#extraction-and-routing).
 
 ### 3. Start
 
@@ -122,7 +122,7 @@ owning process.
 4. Open citations to inspect original pages. Save useful answers or use Compare
    reports for a cited table across selected versions.
 
-See the [workspace guide](Docs/UX%20redesign%20guide.md) for selection, draft
+See the [workspace guide](Docs/Usage.md#chat-and-evidence) for selection, draft
 recovery, cancellation and mobile behavior.
 
 ## Architecture
@@ -205,7 +205,7 @@ Network use requires additional TLS/proxy configuration and verification; no
 supported shared deployment profile is claimed.
 
 Settings & data separates history clearing, regenerable cache clearing and
-confirmed library reset. See [data controls](Docs/Data%20controls.md).
+confirmed library reset. See [data controls](Docs/Usage.md#data-controls).
 
 ### Backup and recovery
 
@@ -221,7 +221,7 @@ Backup requires an idle persistent local library. Restore requires a new target
 and validates archive authentication, paths, hashes, SQLite, originals and vector
 counts. Keep the key separately: authentication is **not encryption**. Archives
 contain library content; configuration, model downloads and regenerable page
-caches are excluded. See [recovery details](Docs/Phase%207%20guide.md#offline-backup-and-restore).
+caches are excluded. See [recovery details](Docs/Usage.md#backup-and-restore).
 
 ## API
 
@@ -284,12 +284,12 @@ The browser uses persisted turns and SSE rather than the synchronous `/query` ca
 
 ## Verification and measured limits
 
-The [8 November workspace record](Docs/ux-verification.json) reports **136 Python
+The [8 November workspace record](Docs/Validation.md#recorded-checks) reports **136 Python
 tests and four frontend tests passed**, plus lint, format, strict typing,
 compilation and desktop/mobile browser checks. Browser fixtures use fictional
 PDFs and simulated inference, separately from real model/provider measurements.
 
-The [Phase 7 benchmark](Docs/Phase%207%20benchmark.md) records the RTX 4050 Laptop:
+The [Phase 7 benchmark](Docs/Validation.md#retrieval-results) records the RTX 4050 Laptop:
 
 | Small retrieval smoke set | Pooled recall@3 | Hybrid Borda recall@3 | Exact visual recall@3 |
 | --- | ---: | ---: | ---: |
@@ -320,13 +320,13 @@ node --test tests/frontend_selection.test.mjs
 Routine tests require no model downloads or paid API calls. Optional benchmarks
 need the evaluation extra (`uv sync --frozen --extra dev --extra evaluation`),
 followed by reapplying the CUDA overlay for the measured profile.
-See [evaluation commands](Docs/Phase%207%20guide.md#evaluation-and-release-checks).
+See [evaluation commands](Docs/Validation.md#run-checks).
 
 ## Status and limits
 
 - Local document/chat/comparison workflows are implemented. Production release
   approval remains incomplete; passing tests alone does not establish readiness.
-- [Release-gate records](Docs/phase7-release-gates.json) apply to their recorded
+- [Release-gate records](Docs/evidence/phase7-release-gates.json) apply to their recorded
   source revision. Later source changes make them stale; the checker rejects
   stale fingerprints and unverified gates.
 - A wheel and isolated packaged API/static/session smoke passed at Phase 7.
@@ -334,7 +334,7 @@ See [evaluation commands](Docs/Phase%207%20guide.md#evaluation-and-release-check
 - A pinned, non-root Docker CPU recipe exists; container runtime and shared TLS
   deployment were not verified. It binds container loopback; ordinary port
   forwarding alone is not a supported deployment procedure.
-- The [recorded dependency audit](Docs/phase7-dependencies.json) retains an
+- The [recorded dependency audit](Docs/evidence/phase7-dependencies.json) retains an
   Accelerate checkpoint advisory and excludes CUDA wheels. Use trusted pinned
   model files; no clean security audit is claimed.
 - Calculated metrics, region questions, automatic version diffs and similarity
@@ -359,20 +359,19 @@ src/vision_rag/
 tests/             Regression tests and disposable browser fixtures
 scripts/           GPU, retrieval, provider, packaging and release checks
 examples/phase7-demo/  Fictional CC0 PDFs and gold task manifest
-Docs/              Guides, decisions, benchmarks and verification evidence
+Docs/              Six maintained guides; assets/ and evidence/
 data/              Ignored runtime library; never commit user documents
 ```
 
 ## Project documentation
 
+- [Documentation index and current status](Docs/README.md)
 - [Upgrade history — old vs new, pictures and implementation](Docs/Upgrade%20history.md)
-- [Implementation plan](Docs/Implementation%20plan.md) · [Feature matrix](Docs/Feature%20matrix.md)
-- [Current workspace guide](Docs/UX%20redesign%20guide.md)
-- [GPU setup](Docs/GPU%20setup.md) · [Hybrid ingestion](Docs/Phase%203%20guide.md)
-- [Retrieval and grounding](Docs/Phase%204%20guide.md)
-- [Conversations and streaming](Docs/Phase%205%20guide.md)
-- [Comparison and exports](Docs/Phase%206%20guide.md)
-- [Release, access and recovery](Docs/Phase%207%20guide.md) · [Benchmarks](Docs/Phase%207%20benchmark.md)
+- [Usage — setup, workspace, data controls and recovery](Docs/Usage.md)
+- [Architecture and implementation decisions](Docs/Architecture.md)
+- [Validation, benchmarks and release limits](Docs/Validation.md)
+- [Merged research and deferred ideas](Docs/Research.md)
+
 
 Contributions should explain the change and its verification. Keep real documents,
 credentials, runtime data and model caches out of commits. Separate model/provider
