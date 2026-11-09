@@ -123,6 +123,7 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
         for asset in (
             "styles.css",
             "workspace.css",
+            "emerald.css",
             "app.js",
             "workspace.js",
             "evidence.js",

@@ -41,7 +41,7 @@
     }
     function report(error) { status(`Unable to complete: ${error.message}. Your draft and existing chats are kept.`); }
     function busy(value) {
-        ['new-conversation', 'rename-conversation', 'delete-conversation', 'conversation-list', 'query-document-scope'].forEach(id => { el(id).disabled = value; });
+        ['new-conversation', 'rename-conversation', 'delete-conversation', 'conversation-list', 'query-document-scope', 'mode-answer', 'mode-pages'].forEach(id => { el(id).disabled = value; });
         document.querySelectorAll('.recent-chat').forEach(b => { b.disabled = value; });
         el('stop-answer').hidden = !active;
         el('send-btn').hidden = Boolean(active);
@@ -318,6 +318,14 @@
     const showEvidence = (source, restore = false) => { openEvidence(); return evidence.show(source, restore); };
     function setup() {
         evidence.setup(); selection.setup(); restoreDraft();
+        for (const [id, mode] of [['mode-answer', 'answer'], ['mode-pages', 'pages']]) {
+            el(id).addEventListener('click', () => {
+                el('question-mode').value = mode;
+                el('mode-answer').setAttribute('aria-pressed', String(mode === 'answer'));
+                el('mode-pages').setAttribute('aria-pressed', String(mode === 'pages'));
+                status(mode === 'pages' ? 'Find pages searches selected documents locally without generating an answer.' : 'Ask Vision generates an answer from your selected documents.');
+            });
+        }
         el('chat-input').addEventListener('input', saveDraft);
         el('chat-input').addEventListener('keydown', event => {
             if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); ask(); }

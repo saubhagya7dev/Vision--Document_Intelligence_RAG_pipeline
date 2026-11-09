@@ -14,6 +14,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="/static/workspace.css">
+    <link rel="stylesheet" href="/static/emerald.css">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
 </head>
@@ -22,10 +23,11 @@
     <a class="skip-link" href="#app-main">Skip to main content</a>
     <button id="menu-toggle" class="mobile-menu btn-icon" aria-label="Open navigation" aria-controls="app-header" aria-expanded="false">☰</button>
     <header id="app-header" class="app-sidebar" aria-label="Workspace navigation">
-        <a href="#chat" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M1 5h6l7 14H8zM17 5h6l-8 14-3-6z"/></svg></span><span class="logo-text">Vision</span></a>
+        <a href="#chat" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a>
         <p class="brand-caption">Document intelligence</p>
         <button id="new-conversation" class="btn btn-primary sidebar-new">＋ New chat</button>
         <nav id="main-nav" aria-label="Main navigation">
+            <a href="#chat" class="nav-item" data-page="chat"><span aria-hidden="true">▧</span> Workspace</a>
             <a href="#documents" class="nav-item" data-page="documents"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h9l5 5v13H5zM14 3v6h5M8 13h8M8 17h6"/></svg></span> Documents <span id="library-count" class="nav-count"></span></a>
             <a href="#analysis" class="nav-item" data-page="analysis"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h7v16H3zM14 4h7v16h-7zM6 8h1M17 8h1M6 12h1M17 12h1"/></svg></span> Compare reports</a>
             <a href="#findings" class="nav-item" data-page="findings"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span> Saved findings</a>
@@ -37,6 +39,7 @@
             <a href="#upload" class="nav-item" data-page="upload">Processing &amp; search</a>
             <a href="#dashboard" class="nav-item" data-page="dashboard">Workspace activity</a>
             <button class="quiet-action" id="data-controls-btn">Settings &amp; data</button>
+            <a href="/" class="nav-item">About Vision ↗</a>
             <button class="quiet-action" id="sign-out" hidden>Sign out</button>
         </div>
     </header>
@@ -243,7 +246,7 @@
                 </div></details>
                 <select id="conversation-list" aria-label="Saved conversations" hidden><option value="">Choose a conversation</option></select>
             </header>
-            <div class="selection-toolbar"><p id="selected-summary">Choose documents to begin</p><button class="quiet-action" id="choose-documents">Choose documents</button></div>
+            <div class="selection-toolbar"><p id="selected-summary">Choose documents to begin</p><button class="quiet-action" id="choose-documents">Choose documents</button><div class="mode-switch" role="group" aria-label="Question mode"><button id="mode-answer" type="button" aria-pressed="true">Ask Vision</button><button id="mode-pages" type="button" aria-pressed="false">Find pages</button></div></div>
             <p id="workspace-status" role="status" aria-live="polite"></p>
             <div class="chat-layout workspace-layout">
                 <div class="chat-main">
@@ -258,7 +261,7 @@
                         <textarea id="chat-input" rows="2" maxlength="8000" autocomplete="off" placeholder="Ask a follow-up about your documents…" required></textarea>
                         <div class="composer-actions">
                             <button class="btn-icon" id="attach-document" type="button" aria-label="Upload PDF">＋</button>
-                            <label class="composer-mode"><span class="sr-only">Question mode</span><select id="question-mode"><option value="answer">Ask documents</option><option value="pages">Find pages</option></select></label>
+                            <label class="composer-mode" hidden><span class="sr-only">Question mode</span><select id="question-mode"><option value="answer">Ask documents</option><option value="pages">Find pages</option></select></label>
                             <button class="quiet-action" id="find-pages-btn" type="button" hidden>Find pages</button>
                             <span id="send-readiness" class="composer-hint"></span>
                             <button class="btn btn-primary" id="send-btn" type="submit" aria-label="Send question">↑</button>
