@@ -9,10 +9,10 @@ follow-up fixes, and the workspace redesign verified on 8 November. These are
 implementation milestones, not invented release numbers: the package metadata
 still identifies the project as `0.1.0`.
 
-The baseline is taken from the [original code review](Project%20understanding.md),
+The baseline is taken from the [original code review](Research.md#original-code-baseline),
 not from treating the old README's intended features as shipped behavior. The
 [current README](../README.md) is the entry point for setup; the
-[implementation plan](Implementation%20plan.md) tracks phase completion and limits.
+[implementation plan](README.md#current-status) tracks phase completion and limits.
 
 Navigate: [Pictures](#2-old-and-new-pictures) ·
 [Before/after table](#3-before-and-after-at-a-glance) ·
@@ -48,7 +48,7 @@ establish multi-user authorization, production readiness or general answer accur
 
 | Original interface — October 2026 | Current workspace — November 2026 |
 | --- | --- |
-| ![Original dashboard with green accents, top navigation and illustrative analytics](../Screenshots/Screenshot%202026-10-20%20061731.png) | ![Current workspace with sidebar chats, selected document, cited answer and source drawer](ux-workspace-desktop.png) |
+| ![Original dashboard with green accents, top navigation and illustrative analytics](../Screenshots/Screenshot%202026-10-20%20061731.png) | ![Current workspace with sidebar chats, selected document, cited answer and source drawer](assets/ux-workspace-desktop.png) |
 
 The old dashboard led with a promotional hero and illustrative activity bars.
 The new entry point is chat, with recent conversations, document selection,
@@ -66,7 +66,7 @@ the source; it was not a calibrated confidence probability.
 
 ### Current evidence workflow
 
-![Current desktop chat with a saved conversation, explicit document chip and version-specific evidence drawer](ux-workspace-desktop.png)
+![Current desktop chat with a saved conversation, explicit document chip and version-specific evidence drawer](assets/ux-workspace-desktop.png)
 
 The current desktop view connects a submitted question, selected document,
 inline citation, original page and retained version. A source drawer supports
@@ -76,7 +76,7 @@ page navigation, thumbnails, zoom and original PDF access without discarding the
 
 | Chat and composer | Original source page |
 | --- | --- |
-| ![Current mobile chat and document-scoped composer](ux-chat-mobile.png) | ![Current mobile source sheet with version, page controls and original page](ux-source-mobile.png) |
+| ![Current mobile chat and document-scoped composer](assets/ux-chat-mobile.png) | ![Current mobile source sheet with version, page controls and original page](assets/ux-source-mobile.png) |
 
 Mobile navigation replaces the old hidden navigation pill. Source inspection uses
 a separate sheet with focus isolation and a return to the citation when closed.
@@ -85,7 +85,7 @@ a separate sheet with focus isolation and a return to the citation when closed.
 20 October. The new pictures come from the 8 November isolated browser checks,
 using generated fictional PDFs and simulated inference. They demonstrate the
 interface and workflow, not real-provider answer accuracy. No images were generated
-to imply capabilities that do not exist. See [UX verification](ux-verification.json).
+to imply capabilities that do not exist. See [UX verification](evidence/history.json).
 
 ## 3. Before and after at a glance
 
@@ -190,7 +190,7 @@ work; this is not a claim that every operation became faster.
 Implementation: [`document_loader.py`](../src/vision_rag/ingest/document_loader.py),
 [`colpali_embedder.py`](../src/vision_rag/models/colpali_embedder.py),
 [`runtime.py`](../src/vision_rag/runtime.py), [`telemetry.py`](../src/vision_rag/telemetry.py).
-Evidence: [Phase 1 results](Phase%201%20results.md), [GPU setup](GPU%20setup.md).
+Evidence: [Phase 1 results](Validation.md#historical-rendering-and-gpu-checks), [GPU setup](Usage.md#cuda-and-model-setup).
 
 ### Phase 2 — make documents and work durable
 
@@ -211,7 +211,7 @@ Implementation: [`library.py`](../src/vision_rag/storage/library.py),
 [`metadata.py`](../src/vision_rag/storage/metadata.py),
 [`ownership.py`](../src/vision_rag/storage/ownership.py),
 [`qdrant_store.py`](../src/vision_rag/vector_stores/qdrant_store.py).
-Details: [Phase 2 guide](Phase%202%20guide.md).
+Details: [Phase 2 guide](Architecture.md#storage-and-jobs).
 
 ### Phase 3 — retain text and route difficult pages deliberately
 
@@ -227,7 +227,7 @@ The routing rules are conservative heuristics, not a general table-understanding
 
 Implementation: [`ingest/`](../src/vision_rag/ingest/),
 [`processing.py`](../src/vision_rag/storage/processing.py).
-Details: [Phase 3 guide](Phase%203%20guide.md).
+Details: [Phase 3 guide](Architecture.md#extraction-and-routing).
 
 ### Phase 4 — add hybrid retrieval and reference-grounded answers
 
@@ -254,7 +254,7 @@ independently establish semantic support or numerical correctness.
 Implementation: [`retrieval/`](../src/vision_rag/retrieval/),
 [`retrieval_models.py`](../src/vision_rag/models/retrieval_models.py),
 [`grounding.py`](../src/vision_rag/generate/grounding.py).
-Details: [Phase 4 guide](Phase%204%20guide.md).
+Details: [Phase 4 guide](Architecture.md#retrieval-and-grounding).
 
 ### Phase 5 — make the evidence workspace persistent and recoverable
 
@@ -275,7 +275,7 @@ Implementation: [`workspace.py`](../src/vision_rag/api/workspace.py),
 [`conversations.py`](../src/vision_rag/storage/conversations.py),
 [`workspace.js`](../src/vision_rag/static/workspace.js),
 [`evidence.js`](../src/vision_rag/static/evidence.js).
-Details: [Phase 5 guide](Phase%205%20guide.md).
+Details: [Phase 5 guide](Usage.md#chat-and-evidence).
 
 ### Phase 6 — complete an evidence-linked comparison workflow
 
@@ -296,7 +296,7 @@ new calculated metrics are not silently presented as reported facts.
 Implementation: [`analysis/`](../src/vision_rag/analysis/),
 [`findings.py`](../src/vision_rag/storage/findings.py),
 [`API findings`](../src/vision_rag/api/findings.py).
-Details: [Phase 6 guide](Phase%206%20guide.md).
+Details: [Phase 6 guide](Usage.md#comparisons-and-findings).
 
 ### Phase 7 — evaluate, protect and package the local application
 
@@ -325,7 +325,7 @@ Implementation: [`security.py`](../src/vision_rag/api/security.py),
 [`backup.py`](../src/vision_rag/backup.py),
 [`evaluation runner`](../scripts/evaluate_phase7.py),
 [`release checker`](../scripts/check_release.py), [`Dockerfile`](../Dockerfile).
-Details: [Phase 7 guide](Phase%207%20guide.md), [benchmark](Phase%207%20benchmark.md).
+Details: [Phase 7 guide](Usage.md#access-and-deployment), [benchmark](Validation.md#retrieval-results).
 
 ### Follow-up — the current workspace redesign
 
@@ -343,7 +343,7 @@ It does not automatically repeat a failed provider request.
 
 Implementation: [`static/`](../src/vision_rag/static/),
 [`workspace readiness API`](../src/vision_rag/api/workspace.py).
-Details: [UX guide](UX%20redesign%20guide.md), [verification](ux-verification.json).
+Details: [UX guide](Usage.md#chat-and-evidence), [verification](evidence/history.json).
 
 ## 6. What the measurements actually show
 
@@ -362,7 +362,7 @@ The full-render preview's recorded peak working set was 353.5 MiB versus 127.2 M
 for the requested-page case. Batches of two lowered image-buffer pressure, but
 populating lossless caches increased first-pass work. These are CPU PDF fixture
 measurements, not end-to-end answer latency or a GPU speedup. See the
-[raw benchmark](phase1-benchmark.json) and [interpretation](Phase%201%20results.md).
+[raw benchmark](evidence/history.json) and [interpretation](Validation.md#historical-rendering-and-gpu-checks).
 
 ### Retrieval after hybrid and MaxSim support
 
@@ -377,12 +377,12 @@ gold-enriched and pinned; it is not an official full-corpus ViDoRe score. Hybrid
 misses three fictional scan questions that exact visual retrieval finds, so the
 upgrade has a measured tradeoff rather than a universal accuracy win.
 
-![Measured retrieval-policy comparison on small public and fictional candidate pools](phase7-retrieval-comparison.png)
+![Measured retrieval-policy comparison on small public and fictional candidate pools](assets/phase7-retrieval-comparison.png)
 
 Only the RTX 4050 Laptop was measured. CUDA allocator peaks are not physically
 resident VRAM measurements, and the runs do not prove a workload fits a 4 GiB
 RTX 3050. First-load, warm-cache and simulated-rerank timings are separated in
-the [benchmark report](Phase%207%20benchmark.md); no router cost advantage is claimed.
+the [benchmark report](Validation.md#retrieval-results); no router cost advantage is claimed.
 
 ### Verification growth and remaining gaps
 
@@ -391,7 +391,7 @@ did not match that count. Four loader/retriever tests passed in the initial
 diagnostic run, while that run did not verify the two API tests. We do not turn
 the old badge into a measured baseline.
 
-The [8 November verification](ux-verification.json) records **136 Python tests and
+The [8 November verification](evidence/history.json) records **136 Python tests and
 four frontend tests passed**, lint/format/type checks and desktop/mobile browser
 workflows. Earlier records include real disk/restart checks, backup/search/history
 restoration, actual CUDA model checks and an isolated packaged-wheel smoke.
@@ -405,8 +405,8 @@ completed samples. Usage is recorded where supplied; dollar cost is unknown.
 
 No independent semantic-support study, representative abstention assessment or
 human time-to-verify study was completed. Mocked UI inference is not evidence
-that a real model answers accurately. See [provider records](phase7-provider.json),
-[product answers](phase7-answers.json) and [recorded gates](phase7-release-gates.json).
+that a real model answers accurately. See [provider records](evidence/phase7-provider.json),
+[product answers](evidence/phase7-answers.json) and [recorded gates](evidence/phase7-release-gates.json).
 
 ## 7. Changes developers and existing users need to know
 
@@ -433,7 +433,7 @@ confirm readiness before asking questions. Do not delete the original library
 merely because a restore command succeeded; inspect the restored copy first.
 
 Current startup, configuration and API examples are in the [README](../README.md).
-The [Phase 7 guide](Phase%207%20guide.md) covers backup, owner access and packaging.
+The [Phase 7 guide](Usage.md#access-and-deployment) covers backup, owner access and packaging.
 
 ## 8. What is deliberately not claimed complete
 
@@ -450,7 +450,7 @@ The [Phase 7 guide](Phase%207%20guide.md) covers backup, owner access and packag
 
 The release checker intentionally fails closed for missing evidence or stale
 source fingerprints. Its historical green local checks do not approve later
-source changes automatically. The [feature matrix](Feature%20matrix.md) separates
+source changes automatically. The [feature matrix](Validation.md#feature-status) separates
 implemented, experimental, planned and unverified work.
 
 ## 9. Where to inspect the implementation
@@ -468,6 +468,6 @@ implemented, experimental, planned and unverified work.
 | Routine and disposable browser checks | [`tests/`](../tests/) |
 | GPU, quality, packaging and release runners | [`scripts/`](../scripts/) |
 
-The detailed [decision log](Decisions.md) explains tradeoffs, the
-[implementation plan](Implementation%20plan.md) tracks scope, and the
+The detailed [decision log](Architecture.md#design-decisions) explains tradeoffs, the
+[implementation plan](README.md#current-status) tracks scope, and the
 [current README](../README.md) describes how to run the resulting application.
