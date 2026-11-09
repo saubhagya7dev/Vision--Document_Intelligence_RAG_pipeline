@@ -149,11 +149,19 @@ class GroundedSynthesizer:
                 try:
                     checkpoint(cancelled)
                     if emit:
-                        emit("progress", {"stage": "generating", "tier": current})
                         emit(
-                            "answer-delta",
-                            {"text": "", "reset": True, "provisional": True},
+                            "progress",
+                            {
+                                "stage": "generating",
+                                "tier": current,
+                                "stream_answer": stream_answer,
+                            },
                         )
+                        if stream_answer:
+                            emit(
+                                "answer-delta",
+                                {"text": "", "reset": True, "provisional": True},
+                            )
                     if (
                         emit
                         and stream_answer

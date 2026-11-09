@@ -304,7 +304,9 @@
                     const dataLine = block.split('\n').find(l => l.startsWith('data: '));
                     if (!type || !dataLine) continue;
                     const data = JSON.parse(dataLine.slice(6));
-                    if (type === 'progress') progress(({queued: 'Waiting to search…', retrieving: 'Searching selected documents…', generating: 'Writing answer…', validating: 'Checking page references…'})[data.stage] || 'Working on your question…', true);
+                    if (type === 'progress') progress(data.stage === 'generating' && data.stream_answer === false
+                        ? 'Preparing a complete answer without streaming…'
+                        : ({queued: 'Waiting to search…', retrieving: 'Searching selected documents…', generating: 'Writing answer…', validating: 'Checking page references…'})[data.stage] || 'Working on your question…', true);
                     if (type === 'answer-delta') {
                         if (data.reset) draft = ''; draft += data.text;
                         const follow = atBottom();

@@ -57,6 +57,7 @@ def test_failed_stream_can_be_retried_without_streaming_and_keeps_scope(
     assert completed["request"]["document_ids"] == [job["document_id"]]
     assert completed["request"]["stream_answer"] is False
     assert "Unvalidated draft" not in completed["result"]["answer"]
+    assert "event: answer-delta" not in replay
     assert "event: final-answer" in replay and calls == ["stream", "non_stream"]
 
 
