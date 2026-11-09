@@ -92,8 +92,11 @@ Insufficient evidence has an abstention path. References resolve immutable
 version/pages; that is not independent semantic entailment. Document instructions
 remain untrusted data; there is no claim that prompt injection is solved.
 
-Original and rewritten follow-ups are retained. Provider timeout/SDK retries and
-generation escalation are bounded; a per-request timeout is not a total query SLA
+Original and rewritten follow-ups are retained. Application retries use one total
+attempt budget, with SDK retries disabled to avoid multiplication. Temporary network
+and selected server errors can recover; identified short rate limits honor bounded
+delays. Known daily quota holds avoid repeated calls until the reported reset.
+Generation escalation remains separate; a per-request timeout is not a total query SLA
 including model load and retries. The experimental local softmax router chooses
 a starting tier and can escalate on unusable evidence/answers. It is off by
 default. The retained 150-DPI router artifact cannot simply be applied to a default
@@ -102,8 +105,9 @@ default. The retained 150-DPI router artifact cannot simply be applied to a defa
 ## Conversations, comparisons and exports
 
 Server records own conversations, immutable turn source scope, results and ordered
-events. SSE exposes progress, provisional deltas and an authoritative validated
-final answer. Disconnect/restart/cancel paths produce explicit interrupted states.
+events. Full answers are the default. SSE exposes progress and the authoritative
+validated final answer; explicit provider-streaming opt-in can add provisional
+deltas. Disconnect/restart/cancel paths produce explicit interrupted states.
 GPU/provider work may finish before cancellation reaches a safe boundary.
 
 The current frontend requires explicit selection for new questions, saves tab-local
