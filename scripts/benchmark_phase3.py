@@ -1,7 +1,7 @@
 """Compare real pooled ColPali ingestion with selective and native-only paths.
 
 Uses generated PDFs, isolated disk stores, cached model weights, no provider calls.
-Run: python scripts/benchmark_phase3.py --output Docs/phase3-benchmark.json
+Run: python scripts/benchmark_phase3.py --output Docs/evidence/phase3-benchmark.json
 """
 
 import argparse
