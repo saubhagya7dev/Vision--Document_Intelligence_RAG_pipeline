@@ -191,8 +191,7 @@
         document.querySelector('.chat-main').inert = modal;
         document.querySelector('.workspace-toolbar').inert = modal;
         document.querySelector('.selection-toolbar').inert = modal;
-        // Sidebar is also inaccessible while the mobile evidence sheet is open.
-        el('app-header').inert = modal || (window.matchMedia('(max-width: 700px)').matches && !document.body.classList.contains('navigation-open'));
+        el('app-header').inert = modal;
         if (modal) { el('chat-evidence').setAttribute('role', 'dialog'); el('chat-evidence').setAttribute('aria-modal', 'true'); }
         else { el('chat-evidence').removeAttribute('role'); el('chat-evidence').removeAttribute('aria-modal'); }
     }
@@ -203,6 +202,7 @@
             saveDraft(); evidence.reset(); closeEvidence();
             await selection.refresh();
             current = await api(`/conversations/${encode(id)}`);
+            el('chat-history').open = false;
             localStorage.setItem('vr_conversation', id);
             restoreDraft(); progress(''); scope(); render(); await list();
             sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
@@ -221,6 +221,7 @@
         saveDraft(); busy(true); evidence.reset(); closeEvidence();
         const oldDraft = !current ? el('chat-input').value : '';
         current = await api('/conversations', 'POST', {title: 'New conversation', document_ids: []});
+        el('chat-history').open = false;
         el('chat-input').value = oldDraft; saveDraft(); progress('');
         localStorage.setItem('vr_conversation', current.id);
         scope(); render(); sources([]); await list(); status('Choose documents, then ask a question.');

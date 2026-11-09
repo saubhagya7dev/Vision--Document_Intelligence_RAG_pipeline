@@ -21,29 +21,25 @@
 
 <body>
     <a class="skip-link" href="#app-main">Skip to main content</a>
-    <button id="menu-toggle" class="mobile-menu btn-icon" aria-label="Open navigation" aria-controls="app-header" aria-expanded="false">☰</button>
-    <header id="app-header" class="app-sidebar" aria-label="Workspace navigation">
-        <a href="#chat" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a>
-        <p class="brand-caption">Document intelligence</p>
-        <button id="new-conversation" class="btn btn-primary sidebar-new">＋ New chat</button>
-        <nav id="main-nav" aria-label="Main navigation">
-            <a href="#chat" class="nav-item" data-page="chat"><span aria-hidden="true">▧</span> Workspace</a>
-            <a href="#documents" class="nav-item" data-page="documents"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 3h9l5 5v13H5zM14 3v6h5M8 13h8M8 17h6"/></svg></span> Documents <span id="library-count" class="nav-count"></span></a>
-            <a href="#analysis" class="nav-item" data-page="analysis"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h7v16H3zM14 4h7v16h-7zM6 8h1M17 8h1M6 12h1M17 12h1"/></svg></span> Compare reports</a>
-            <a href="#findings" class="nav-item" data-page="findings"><span aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span> Saved findings</a>
+    <header id="app-header" class="app-topbar" aria-label="Workspace navigation">
+        <a href="#dashboard" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a>
+        <nav id="main-nav" class="header-nav" aria-label="Main navigation">
+            <a href="#dashboard" class="nav-item" data-page="dashboard"><span aria-hidden="true">▦</span> Dashboard</a>
+            <a href="#upload" class="nav-item" data-page="upload"><span aria-hidden="true">↥</span> Upload</a>
+            <a href="#chat" class="nav-item" data-page="chat"><span aria-hidden="true">▱</span> Chat</a>
+            <a href="#documents" class="nav-item" data-page="documents"><span aria-hidden="true">▤</span> Documents <span id="library-count" class="nav-count"></span></a>
+            <a href="#analysis" class="nav-item" data-page="analysis"><span aria-hidden="true">▥</span> Compare</a>
+            <a href="#findings" class="nav-item" data-page="findings"><span aria-hidden="true">♧</span> Findings</a>
         </nav>
-        <p class="sidebar-caption">Recent chats</p>
-        <nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav>
-        <div class="sidebar-footer">
-            <div class="status-indicator" id="api-status"><span class="status-dot"></span><span class="status-text">Checking connection…</span></div>
-            <a href="#upload" class="nav-item" data-page="upload">Processing &amp; search</a>
-            <a href="#dashboard" class="nav-item" data-page="dashboard">Workspace activity</a>
-            <button class="quiet-action" id="data-controls-btn">Settings &amp; data</button>
-            <a href="/" class="nav-item">About Vision ↗</a>
-            <button class="quiet-action" id="sign-out" hidden>Sign out</button>
+        <div class="header-tools">
+            <div class="status-indicator" id="api-status"><span class="status-dot"></span><span class="status-text">Checking…</span></div>
+            <details id="workspace-menu" class="header-menu"><summary>Settings</summary><div>
+                <button class="quiet-action" id="data-controls-btn">Data &amp; history</button>
+                <a href="/" class="quiet-action">About Vision ↗</a>
+                <button class="quiet-action" id="sign-out" hidden>Sign out</button>
+            </div></details>
         </div>
     </header>
-    <button id="navigation-backdrop" class="navigation-backdrop" aria-label="Close navigation" hidden></button>
 
     <!-- ===== TOAST CONTAINER ===== -->
     <div id="toast-container"></div>
@@ -178,7 +174,7 @@
         <!-- ========== UPLOAD PAGE ========== -->
         <section id="page-upload" class="page">
             <div class="page-header">
-                <h1 class="page-title">Processing &amp; search</h1>
+                <h1 class="page-title">Upload documents</h1>
                 <p class="page-subtitle">Upload PDFs and inspect preparation details. You can also upload directly in a chat.</p>
             </div>
 
@@ -240,10 +236,14 @@
         <section id="page-chat" class="page">
             <header class="workspace-toolbar">
                 <div><p class="eyebrow">Workspace / conversation</p><h1 class="page-title" id="conversation-title">New conversation</h1></div>
+                <div class="chat-tools">
+                    <button id="new-conversation" class="btn btn-secondary">＋ New chat</button>
+                    <details id="chat-history" class="header-menu history-menu"><summary>Recent chats</summary><nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav></details>
                 <details class="chat-actions"><summary>Chat actions</summary><div>
                     <button id="rename-conversation" class="quiet-action">Rename chat</button>
                     <button id="delete-conversation" class="quiet-action">Delete chat</button>
                 </div></details>
+                </div>
                 <select id="conversation-list" aria-label="Saved conversations" hidden><option value="">Choose a conversation</option></select>
             </header>
             <div class="selection-toolbar"><p id="selected-summary">Choose documents to begin</p><button class="quiet-action" id="choose-documents">Choose documents</button><div class="mode-switch" role="group" aria-label="Question mode"><button id="mode-answer" type="button" aria-pressed="true">Ask Vision</button><button id="mode-pages" type="button" aria-pressed="false">Find pages</button></div></div>
