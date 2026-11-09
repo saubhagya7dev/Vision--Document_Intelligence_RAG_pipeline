@@ -49,8 +49,9 @@ The root page introduces the project. **Explore Vision** opens the separate
 - **Manage data:** clear history or regenerable caches, perform a confirmed
   library reset, or create an authenticated offline backup.
 
-Answers stream as provisional claim text; final validated citations are
-authoritative. Stop requests cancellation at a safe boundary. Chats and submitted
+Answers use the complete-response path by default, with progress events while
+waiting. Explicit API streaming can show provisional claim text; final validated
+citations are authoritative. Stop requests cancellation at a safe boundary. Chats and submitted
 turns persist on the server; unsent drafts use browser-tab session storage.
 Access tokens are not stored there.
 
@@ -286,10 +287,11 @@ Set `evidence_only` to `$false` to request a generated answer. Sources carry
 version IDs and page references; retrieval scores are not confidence probabilities.
 The browser uses persisted turns and SSE rather than the synchronous `/query` call.
 
-If a streamed answer fails, **Retry without streaming** creates an explicit new
-turn with the original question and scope. The API option is `stream_answer: false`
-on a conversation-message request. It still validates the final claims/citations;
-it does not bypass provider quotas or automatically repeat a paid request.
+New chats and UI retries use `stream_answer: false` by default. Explicit API clients
+can opt into `stream_answer: true`. Temporary full-answer failures recover within
+`PROVIDER_ATTEMPTS` (default two total attempts), with no nested SDK retry loop.
+Known short rate limits can wait within that budget; daily quotas and access/model
+errors are not blindly retried. Final claims/citations are still validated.
 
 ## Verification and measured limits
 
