@@ -1,6 +1,6 @@
 """Reproduce Phase 1 PDF timings without model weights or provider calls.
 
-Run: python scripts/benchmark_phase1.py --output Docs/phase1-benchmark.json
+Run: python scripts/benchmark_phase1.py --output Docs/evidence/phase1-benchmark.json
 Each case runs in a fresh process. Synthetic pages are deliberately not a
 retrieval quality dataset. Cold cases bypass the app cache, not the OS cache.
 """
