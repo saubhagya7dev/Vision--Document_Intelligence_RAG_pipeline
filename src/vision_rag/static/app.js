@@ -673,78 +673,54 @@
     // =========================
     // DOCUMENTS
     // =========================
-    async function initDocuments() {
+    let libraryDocuments = [], libraryLoading = false;
+    async function initDocuments(quiet = false) {
+        if (libraryLoading) return;
+        libraryLoading = true;
         const grid = document.getElementById('documents-grid');
-        const emptyState = document.getElementById('docs-empty-state');
-
-        // Show loading skeleton
-        grid.innerHTML = Array.from({ length: 3 }, () => `
-            <div class="doc-card">
-                <div class="doc-card-header">
-                    <div class="skeleton" style="width: 44px; height: 44px;"></div>
-                    <div class="doc-card-title" style="flex:1">
-                        <div class="skeleton" style="height: 16px; width: 80%; margin-bottom: 6px;"></div>
-                        <div class="skeleton" style="height: 12px; width: 50%;"></div>
-                    </div>
-                </div>
-                <div class="doc-card-meta">
-                    <div class="skeleton" style="height: 24px; width: 70px;"></div>
-                    <div class="skeleton" style="height: 24px; width: 60px;"></div>
-                </div>
-            </div>
-        `).join('');
-
+        if (!quiet) grid.innerHTML = '<p class="library-empty luminous">Loading your documents…</p>';
         try {
             const readiness = await api.get('/workspace/readiness');
-            const docs = readiness.documents;
-
-            if (!docs || docs.length === 0) {
-                grid.innerHTML = '';
-                grid.appendChild(createEmptyDocsState());
-                return;
+            libraryDocuments = readiness.documents;
+            // Do not replace a menu or keyboard target while somebody is using it.
+            if (!quiet || (!grid.contains(document.activeElement) && !grid.querySelector('details[open]'))) renderDocuments();
+        } catch (error) {
+            if (!quiet) {
+                grid.replaceChildren();
+                const p = document.createElement('p'); p.className = 'library-empty'; p.textContent = `Library unavailable: ${error.message}. Your documents have not been removed.`;
+                const retry = document.createElement('button'); retry.className = 'job-action'; retry.textContent = 'Retry loading library';
+                retry.addEventListener('click', () => initDocuments()); grid.append(p, retry);
             }
-
-            grid.innerHTML = docs.map(doc => `
-                <div class="doc-card" data-document-job="${escapeHtml(doc.job_id || '')}" data-filename="${escapeHtml(doc.filename)}">
-                    <div class="doc-card-header">
-                        <div class="doc-card-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        </div>
-                        <div class="doc-card-title">
-                            <div class="doc-card-name" title="${escapeHtml(doc.filename)}">${escapeHtml(doc.filename)}</div>
-                            <div class="doc-card-date">${timeAgo(doc.uploaded_at)}</div>
-                        </div>
-                    </div>
-                    <div class="doc-card-meta">
-                        <span class="doc-meta-tag">${doc.page_count} page${doc.page_count !== 1 ? 's' : ''}</span>
-                        <span class="doc-meta-tag">${formatBytes(doc.size_bytes)}</span>
-                        <span class="doc-meta-tag">Version ${doc.version || '?'} · ${escapeHtml(({ready: 'Ready to ask', reading: 'Reading pages', preparing: 'Preparing search', failed: 'Preparation stopped', empty: 'No searchable pages'})[doc.search_state] || 'Check preparation')}</span>
-                    </div>
-                    <p class="doc-job-status">${doc.search_state === 'ready' ? `${doc.searchable_pages} searchable pages` : `${doc.pages_done || 0}/${doc.total_pages || doc.page_count} pages processed`}${doc.error ? ' · ' + escapeHtml(doc.error) : ''}</p>
-                    ${doc.active_version_id && doc.active_version_id !== doc.version_id ? '<p class="doc-job-status">The previous ready version remains searchable.</p>' : ''}
-                    <div class="doc-card-actions">
-                        <button class="job-action" data-chat-document="${escapeHtml(doc.id)}">Ask about this</button>
-                        ${doc.active_version_id ? `<a class="job-action" href="/api/v1/versions/${encodeURIComponent(doc.active_version_id)}/file" target="_blank" rel="noopener">Original PDF ↗</a>` : ''}
-                        <button class="job-action" data-document-versions="${escapeHtml(doc.id)}">Version history</button>
-                        <span data-job-buttons>${doc.job_id ? jobButtons({id: doc.job_id, kind: 'ingest', state: doc.state, cancel_requested: doc.cancel_requested}) : ''}</span>
-                        <button class="job-action" data-version-for="${escapeHtml(doc.id)}">New version</button>
-                        ${doc.active_version_id ? `<button class="job-action" data-processing-version="${escapeHtml(doc.active_version_id)}">Page processing</button>` : ''}
-                        <button class="doc-delete-btn" data-doc-delete="${escapeHtml(doc.id)}" data-filename="${escapeHtml(doc.filename)}">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-
-        } catch (err) {
-            grid.innerHTML = '';
-            const failure = document.createElement('p');
-            failure.textContent = `Library unavailable: ${err.message}. Your documents have not been removed.`;
-            failure.setAttribute('role', 'status');
-            const retry = document.createElement('button'); retry.className = 'job-action'; retry.textContent = 'Retry loading library';
-            retry.addEventListener('click', initDocuments); grid.append(failure, retry);
-        }
+        } finally { libraryLoading = false; }
+    }
+    function renderDocuments() {
+        const grid = document.getElementById('documents-grid');
+        const search = document.getElementById('library-search').value.trim().toLocaleLowerCase();
+        const filter = document.getElementById('library-filter').value;
+        const docs = libraryDocuments.filter(doc => doc.filename.toLocaleLowerCase().includes(search) &&
+            (filter === 'all' || (filter === 'ready' && doc.search_state === 'ready') ||
+             (filter === 'processing' && ['reading', 'preparing'].includes(doc.search_state)) ||
+             (filter === 'failed' && ['failed', 'empty'].includes(doc.search_state))));
+        if (!libraryDocuments.length) { grid.replaceChildren(createEmptyDocsState()); return; }
+        const scroll = grid.scrollLeft;
+        const labels = {ready: 'Ready to ask', reading: 'Reading pages', preparing: 'Preparing search', failed: 'Preparation stopped', empty: 'No searchable pages'};
+        grid.innerHTML = `<table class="library-table"><thead><tr><th scope="col">Document</th><th scope="col">Version</th><th scope="col">Pages</th><th scope="col">Status</th><th scope="col">Updated</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>${docs.map(doc => `
+            <tr data-document-job="${escapeHtml(doc.job_id || '')}" data-filename="${escapeHtml(doc.filename)}">
+                <td><div class="doc-card-name">▤ &nbsp;${escapeHtml(doc.filename)}</div><p class="doc-job-status">${doc.search_state === 'ready' ? `${doc.searchable_pages} searchable pages` : `${doc.pages_done || 0}/${doc.total_pages || doc.page_count} pages processed`}${doc.error ? ' · ' + escapeHtml(doc.error) : ''}</p>${doc.active_version_id && doc.active_version_id !== doc.version_id ? '<small>Previous version retained</small>' : ''}</td>
+                <td>v${doc.version || '?'}</td><td>${doc.page_count}</td>
+                <td><span class="library-state${['reading', 'preparing'].includes(doc.search_state) ? ' luminous' : ''}">${escapeHtml(labels[doc.search_state] || 'Check preparation')}</span></td>
+                <td><span class="doc-card-date">${timeAgo(doc.uploaded_at)}</span></td>
+                <td><details class="library-row-actions"><summary aria-label="Actions for ${escapeHtml(doc.filename)}">•••</summary><div>
+                    <button class="job-action" data-chat-document="${escapeHtml(doc.id)}">Ask about this</button>
+                    ${doc.active_version_id ? `<a class="job-action" href="/api/v1/versions/${encodeURIComponent(doc.active_version_id)}/file" target="_blank" rel="noopener">Original PDF ↗</a>` : ''}
+                    <button class="job-action" data-document-versions="${escapeHtml(doc.id)}">Version history</button>
+                    <span data-job-buttons>${doc.job_id ? jobButtons({id: doc.job_id, kind: 'ingest', state: doc.state, cancel_requested: doc.cancel_requested}) : ''}</span>
+                    <button class="job-action" data-version-for="${escapeHtml(doc.id)}">New version</button>
+                    ${doc.active_version_id ? `<button class="job-action" data-processing-version="${escapeHtml(doc.active_version_id)}">Page processing</button>` : ''}
+                    <button class="doc-delete-btn" data-doc-delete="${escapeHtml(doc.id)}" data-filename="${escapeHtml(doc.filename)}">Delete document</button>
+                </div></details></td>
+            </tr>`).join('') || '<tr><td colspan="6" class="library-empty">No documents match this search and status.</td></tr>'}</tbody></table>`;
+        grid.scrollLeft = scroll;
     }
 
     async function showVersions(id) {
@@ -932,6 +908,9 @@
         catch { document.getElementById('api-status').textContent = 'Offline — reload after reconnecting'; return; }
         // Setup event listeners
         document.getElementById('close-versions').addEventListener('click', () => document.getElementById('versions-dialog').close());
+        document.getElementById('library-search').addEventListener('input', renderDocuments);
+        document.getElementById('library-filter').addEventListener('change', renderDocuments);
+        setInterval(() => { if (!document.hidden && getPageFromHash() === 'documents') initDocuments(true); }, 5000);
         setupNavigation();
         setupUpload();
         setupChat();

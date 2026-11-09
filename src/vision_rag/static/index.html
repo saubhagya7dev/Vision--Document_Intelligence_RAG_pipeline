@@ -354,11 +354,16 @@ Operating margin</textarea>
         <!-- ========== DOCUMENTS PAGE ========== -->
         <section id="page-documents" class="page">
             <div class="page-header">
-                <h1 class="page-title">Document Library</h1>
+                <h1 class="page-title">Documents</h1>
                 <p class="page-subtitle">Manage your uploaded documents.</p>
             </div>
 
-            <div class="documents-grid" id="documents-grid">
+            <div class="library-toolbar">
+                <label class="sr-only" for="library-search">Search documents</label><input id="library-search" type="search" placeholder="Search documents…" autocomplete="off">
+                <label class="sr-only" for="library-filter">Document status</label><select id="library-filter"><option value="all">All documents</option><option value="ready">Ready to ask</option><option value="processing">Processing</option><option value="failed">Needs attention</option></select>
+                <a class="btn btn-primary" href="#upload">＋ Upload PDF</a>
+            </div>
+            <div class="documents-grid library-list" id="documents-grid" tabindex="0" aria-label="Document library">
                 <div class="empty-state" id="docs-empty-state">
                     <div class="empty-icon">
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
