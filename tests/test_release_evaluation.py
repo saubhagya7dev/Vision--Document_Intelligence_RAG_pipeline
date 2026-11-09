@@ -24,10 +24,10 @@ def test_release_gates_fail_closed_without_measurements(tmp_path):
     assert not any(result["gates"].values())
     project = tmp_path / "project"
     docs = project / "Docs"
-    docs.mkdir(parents=True)
+    (docs / "evidence").mkdir(parents=True)
     config = project / "pyproject.toml"
     config.write_text("first configuration")
-    (docs / "phase7-verification.json").write_text(
+    (docs / "evidence" / "phase7-verification.json").write_text(
         json.dumps({"source_fingerprint": fingerprint(project)})
     )
     assert gates(docs)["gates"]["source_matches_verification"] is True

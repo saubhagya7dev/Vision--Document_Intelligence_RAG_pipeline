@@ -31,7 +31,7 @@ def fingerprint(project: Path):
 
 def gates(root: Path):
     def read(name):
-        path = root / name
+        path = root / "evidence" / name
         return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
     checks = read("phase7-verification.json")
@@ -72,7 +72,8 @@ def main():
     parser.add_argument("--require-release", action="store_true")
     args = parser.parse_args()
     result = gates(args.docs)
-    (args.docs / "phase7-release-gates.json").write_text(
+    (args.docs / "evidence").mkdir(parents=True, exist_ok=True)
+    (args.docs / "evidence" / "phase7-release-gates.json").write_text(
         json.dumps(result, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(result, indent=2))

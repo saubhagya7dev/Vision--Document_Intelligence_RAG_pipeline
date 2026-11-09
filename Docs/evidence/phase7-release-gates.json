@@ -1,6 +1,6 @@
 {
   "gates": {
-    "source_matches_verification": true,
+    "source_matches_verification": false,
     "routine_checks": true,
     "backup_restore": true,
     "owner_browser": true,
