@@ -152,7 +152,7 @@ def test_data_controls_confirmation_history_and_reset(hybrid_client, tmp_path):
 
 
 def test_current_frontend_assets_are_versioned(hybrid_client):
-    response = hybrid_client.get("/")
+    response = hybrid_client.get("/workspace")
     assert response.headers["cache-control"] == "no-store"
     assert "/static/styles.css?v=" in response.text
     assert "/static/app.js?v=" in response.text
