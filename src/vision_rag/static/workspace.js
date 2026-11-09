@@ -115,15 +115,23 @@
         messages.replaceChildren(); title();
         if (!current?.messages.length) {
             const welcome = document.createElement('div'); welcome.className = 'welcome';
-            welcome.innerHTML = '<p class="eyebrow">Your document workspace</p><h2>A clearer view<br>of your documents.</h2><p>Add a PDF or choose from your library to begin.</p>';
+            welcome.innerHTML = '<p class="eyebrow">Your document workspace</p><h2>What will you discover?</h2><p>Bring a report, a research paper, or a question.<br>Your answers begin with the documents you choose.</p>';
             const actions = document.createElement('div'); actions.className = 'welcome-actions';
             actions.append(button('↑ Upload PDF', () => el('attach-document').click(), 'btn btn-primary'),
                 button('Choose from library ↗', () => selection.pick().catch(report), 'quiet-action'));
             const suggestions = document.createElement('div'); suggestions.className = 'suggestions';
-            for (const [label, query] of [['Summarize this report', 'Summarize the main points in the selected report.'], ['Find a reported number', 'What revenue is reported, and for which period?']]) {
-                suggestions.append(button(label, () => { el('chat-input').value = query; saveDraft(); el('chat-input').focus(); }, 'quiet-action'));
+            for (const [label, detail, query] of [
+                ['Understand a report', 'Summarize the main points, with sources.', 'Summarize the main points in the selected report.'],
+                ['Find a specific detail', 'Trace a reported number to its page.', 'What revenue is reported, and for which period?'],
+            ]) {
+                const card = button('', () => { el('chat-input').value = query; saveDraft(); el('chat-input').focus(); }, 'starter-card');
+                const heading = document.createElement('strong'); heading.textContent = label + ' ↗';
+                const description = document.createElement('span'); description.textContent = detail;
+                card.append(heading, description); suggestions.append(card);
             }
-            welcome.append(actions, suggestions); messages.append(welcome); return;
+            const guide = document.createElement('div'); guide.className = 'welcome-guide';
+            guide.innerHTML = '<span><b>01</b> Choose PDFs</span><i>→</i><span><b>02</b> Ask or find pages</span><i>→</i><span><b>03</b> Inspect &amp; save</span>';
+            welcome.append(actions, suggestions, guide); messages.append(welcome); return;
         }
         for (const turn of current.messages) {
             const article = document.createElement('article'); article.className = 'saved-turn';
