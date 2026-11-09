@@ -23,6 +23,9 @@ Gemini to generate answers from retrieved evidence.
 > See the [implementation plan](Docs/Implementation%20plan.md) and
 > [feature matrix](Docs/Feature%20matrix.md) for scope and progress.
 
+**Upgrade history:** [From the original prototype to the current workspace](Docs/Upgrade%20history.md)
+explains every phase, implementation changes, old/new screenshots and measured results.
+
 ![Vision workspace with selected documents and cited evidence](Docs/ux-workspace-desktop.png)
 
 ## What you can do
@@ -362,6 +365,7 @@ data/              Ignored runtime library; never commit user documents
 
 ## Project documentation
 
+- [Upgrade history — old vs new, pictures and implementation](Docs/Upgrade%20history.md)
 - [Implementation plan](Docs/Implementation%20plan.md) · [Feature matrix](Docs/Feature%20matrix.md)
 - [Current workspace guide](Docs/UX%20redesign%20guide.md)
 - [GPU setup](Docs/GPU%20setup.md) · [Hybrid ingestion](Docs/Phase%203%20guide.md)

@@ -1,6 +1,12 @@
 # Vision implementation checklist
 
-Current scope: the core Phase 6 workflow is implemented. Stop before Phase 7 and optional analytical extensions. The earlier quota-limited prompted-router comparison has not been resumed. Existing research documents are reference material, not shipped features. Preserve the original README; current upgrade instructions live in this Docs directory.
+Current scope: Phases 1–7 local implementation and the subsequent workspace
+redesign are delivered; unverified release gates remain open. The Phase 7
+prompted-router checkpoint contains 20 of 24 routes, with remaining provider
+checks interrupted by HTTP 503. Research documents are proposals, not evidence
+of shipped features. The [current README](../README.md) covers setup, and the
+[upgrade history](Upgrade%20history.md) compares the original prototype with the
+implemented workspace, including pictures and validation limits.
 
 ## Phase 1 — diagnosis and performance foundations
 
