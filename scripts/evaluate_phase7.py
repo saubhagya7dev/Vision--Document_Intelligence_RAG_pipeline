@@ -177,7 +177,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--work-dir", type=Path, default=Path(".tools/vidore-v3"))
     parser.add_argument(
-        "--output", type=Path, default=Path("docs/phase7-retrieval.json")
+        "--output", type=Path, default=Path("Docs/evidence/phase7-retrieval.json")
     )
     parser.add_argument("--internal", action="store_true")
     args = parser.parse_args()
@@ -317,7 +317,7 @@ def main():
                 "rerank": fuse([text_rank, rerank], "rrf"),
             }
             rankings["heuristic_start"] = tiers[heuristic(query["query"])]
-            router = CostRouter.load(Path("docs/phase4-router.json"))
+            router = CostRouter.load(Path("Docs/evidence/phase4-router.json"))
             rankings["learned_start_cross_domain"] = tiers[
                 router.choose(query["query"], len(sources))
             ]
