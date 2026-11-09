@@ -286,6 +286,11 @@ Set `evidence_only` to `$false` to request a generated answer. Sources carry
 version IDs and page references; retrieval scores are not confidence probabilities.
 The browser uses persisted turns and SSE rather than the synchronous `/query` call.
 
+If a streamed answer fails, **Retry without streaming** creates an explicit new
+turn with the original question and scope. The API option is `stream_answer: false`
+on a conversation-message request. It still validates the final claims/citations;
+it does not bypass provider quotas or automatically repeat a paid request.
+
 ## Verification and measured limits
 
 The [9 November luminous interface record](Docs/evidence/luminous-verification.json)
