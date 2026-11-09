@@ -9,6 +9,7 @@ from PIL import Image
 
 from vision_rag.core.generator import BaseVLMGenerator
 from vision_rag.generate.events import Cancelled, checkpoint
+from vision_rag.generate.provider_errors import provider_request
 
 
 class GeminiGenerator(BaseVLMGenerator):
@@ -51,6 +52,7 @@ class GeminiGenerator(BaseVLMGenerator):
             ),
         )
 
+    @provider_request
     def generate_grounded(
         self,
         query: str,
@@ -155,6 +157,7 @@ class GeminiGenerator(BaseVLMGenerator):
     ) -> dict[str, Any]:
         return self.generate_grounded(query, evidence, images, on_delta, cancelled)
 
+    @provider_request
     def generate_comparison(
         self,
         request: dict[str, Any],
@@ -227,6 +230,7 @@ class GeminiGenerator(BaseVLMGenerator):
             self.last_usage = response.usage_metadata.model_dump(mode="json")
         return dict(json.loads(response.text or "{}"))
 
+    @provider_request
     def route_query(self, query: str) -> str:
         response = self.client.models.generate_content(
             model=self.model_name,
@@ -259,6 +263,7 @@ class GeminiGenerator(BaseVLMGenerator):
         )
         return str(json.loads(response.text or "{}")["tier"])
 
+    @provider_request
     def judge_support(
         self, claims: list[dict[str, Any]], images: list[Image.Image]
     ) -> dict[str, Any]:
@@ -295,6 +300,7 @@ class GeminiGenerator(BaseVLMGenerator):
         )
         return result
 
+    @provider_request
     def generate(self, query: str, images: List[Image.Image]) -> str:
         """Generate a response from a question and retrieved page images."""
 
