@@ -40,6 +40,21 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+The **11 November architecture wireframe** passed **15 frontend tests** and
+**two targeted landing API tests** (two dependency deprecation warnings).
+The new controller checks cover the six-stage loop, manual inspection, pause/play,
+reduced motion, offscreen/background suspension, page lifecycle cleanup and
+observer fallback. Browser inspection confirmed advancing stages, moving SVG
+stroke packets, manual pause, desktop/mobile rendering, and offscreen suspension
+with no captured console errors. At a 384px mobile viewport, the page content
+was 369px wide; the 940px diagram scrolled within a 335px panel. Python lint/format,
+JavaScript syntax and structural/link checks passed. See
+[wireframe verification](evidence/wireframe-verification.json) and the
+[desktop](assets/wireframe-desktop.png) / [mobile](assets/wireframe-mobile.png) captures.
+The full Python suite and real-provider quality evaluations were not rerun for
+this public illustration; reduced-motion behavior was verified in controller
+tests and the stylesheet rather than OS-level browser preference emulation.
+
 The **9 November product-landing rebuild** passed **nine frontend tests** and
 **two targeted landing API tests**. New frontend checks cover tab exclusivity,
 keyboard navigation, next-step actions and citation highlighting. Desktop and
@@ -193,7 +208,7 @@ by routine tests or mocked inference.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
-node --test tests/frontend_selection.test.mjs
+node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs
 .\.venv\Scripts\python.exe -m ruff check src scripts tests
 .\.venv\Scripts\python.exe -m ruff format --check src scripts tests
 .\.venv\Scripts\python.exe -m mypy src
