@@ -19,21 +19,21 @@
     --border-active: rgba(255, 255, 255, 0.15);
 
     /* Accent */
-    --accent: #D9541E;
-    --accent-hover: #ef713e;
-    --accent-glow: rgba(217, 84, 30, 0.15);
-    --accent-soft: rgba(217, 84, 30, 0.08);
+    --accent: #706c64;
+    --accent-hover: #8d887e;
+    --accent-glow: rgba(108, 108, 108, 0.15);
+    --accent-soft: rgba(108, 108, 108, 0.08);
 
     /* Danger */
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --danger-glow: rgba(239, 68, 68, 0.15);
+    --danger: #686868;
+    --danger-hover: #4d4d4d;
+    --danger-glow: rgba(104, 104, 104, 0.15);
 
     /* Text */
-    --text-primary: #F3EEE3;
-    --text-body: #e4dfd5;
-    --text-muted: #a39f96;
-    --text-subtle: #929087;
+    --text-primary: #f6eedd;
+    --text-body: #e7dfcf;
+    --text-muted: #a59f94;
+    --text-subtle: #959086;
 
     /* Fonts */
     --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -85,7 +85,7 @@ body {
 
 ::selection {
     background: var(--accent);
-    color: #000;
+    color: #000000;
 }
 
 /* Scrollbar */
@@ -315,7 +315,7 @@ h3 {
 .badge-green {
     background: var(--accent-soft);
     color: var(--accent);
-    border: 1px solid rgba(217, 84, 30, 0.2);
+    border: 1px solid rgba(108, 108, 108, 0.2);
 }
 
 /* === BUTTONS === */
@@ -365,7 +365,7 @@ h3 {
 
 .btn-danger {
     background: var(--danger);
-    color: #fff;
+    color: #ffffff;
     border-color: var(--danger);
 }
 
@@ -595,7 +595,7 @@ h3 {
     height: 42px;
     border-radius: 0;
     background: var(--accent-soft);
-    border: 1px solid rgba(217, 84, 30, 0.15);
+    border: 1px solid rgba(108, 108, 108, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -877,12 +877,12 @@ h3 {
 
 .status-badge.success {
     background: var(--accent);
-    color: #000;
+    color: #000000;
 }
 
 .status-badge.error {
     background: var(--danger);
-    color: #fff;
+    color: #ffffff;
 }
 
 .status-badge.processing {
@@ -1200,7 +1200,7 @@ h3 {
     border-radius: 0;
     border: none;
     background: var(--accent);
-    color: #000;
+    color: #000000;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1319,7 +1319,7 @@ h3 {
     font-size: 0.7rem;
     font-weight: 600;
     background: var(--accent);
-    color: #000;
+    color: #000000;
 }
 
 /* === DOCUMENTS === */
@@ -1357,7 +1357,7 @@ h3 {
     height: 44px;
     border-radius: 0;
     background: var(--accent-soft);
-    border: 1px solid rgba(217, 84, 30, 0.15);
+    border: 1px solid rgba(108, 108, 108, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1643,7 +1643,7 @@ h3 {
 
 /* === SKELETON LOADING === */
 .skeleton {
-    background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+    background: linear-gradient(90deg, #1a1a1a 25%, #222222 50%, #1a1a1a 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
     border-radius: 0;
@@ -1717,14 +1717,14 @@ h3 {
         grid-template-columns: 1fr;
     }
 }
-.processing-dialog { background: var(--bg-secondary, #151a22); color: var(--text-primary, #eee); border: 1px solid var(--border-color, #334); border-radius: 0; width: min(850px, 92vw); max-height: 90vh; padding: 24px; overflow: auto; }
-.processing-dialog::backdrop { background: #000a; }
+.processing-dialog { background: var(--bg-secondary, #1a1a1a); color: var(--text-primary, #eeeeee); border: 1px solid var(--border-color, #343434); border-radius: 0; width: min(850px, 92vw); max-height: 90vh; padding: 24px; overflow: auto; }
+.processing-dialog::backdrop { background: #000000aa; }
 .processing-dialog p { margin: 12px 0; }
 .processing-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
 .processing-controls label { display: flex; flex-direction: column; gap: 6px; }
-.processing-controls input, .processing-controls select { color: inherit; background: #202630; border: 1px solid #566; border-radius: 0; padding: 10px; }
+.processing-controls input, .processing-controls select { color: inherit; background: #252525; border: 1px solid #626262; border-radius: 0; padding: 10px; }
 .processing-controls input { width: 90px; }
-#processing-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 42vh; overflow: auto; padding: 16px; background: #0c1018; font-size: 13px; }
+#processing-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 42vh; overflow: auto; padding: 16px; background: #101010; font-size: 13px; }
 .processing-dialog :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .data-dialog { max-width: 640px; background: var(--bg-card); }
 .data-dialog fieldset { border: 1px solid var(--border-medium); border-radius: 0; padding: 12px; margin: 16px 0; }
@@ -1757,7 +1757,7 @@ h3 {
 
 /* Persistent conversation and evidence workspace */
 .session-dialog { max-width: 440px; width: calc(100% - 32px); background: var(--bg-card); color: var(--text-body); border: 1px solid var(--border-active); border-radius: 0; padding: 28px; margin: auto; }
-.session-dialog::backdrop { background: rgba(0,0,0,.88); }
+.session-dialog::backdrop { background: rgba(0, 0, 0,.88); }
 .session-dialog form { display: grid; gap: 14px; }
 .session-dialog input { width: 100%; background: var(--bg-input); color: var(--text-body); border: 1px solid var(--border-active); padding: 12px; }
 .findings-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 16px 0; }
@@ -1773,7 +1773,7 @@ h3 {
 .comparison-result caption { text-align: left; color: var(--text-muted); margin: 10px 0; }
 .comparison-result th, .comparison-result td { text-align: left; vertical-align: top; border: 1px solid var(--border-subtle); padding: 10px; min-width: 150px; max-width: 300px; overflow-wrap: anywhere; }
 .comparison-result td[data-status="missing"] { color: var(--text-muted); }
-.comparison-result td[data-status="conflicting"] { border-color: #b58943; }
+.comparison-result td[data-status="conflicting"] { border-color: #928d83; }
 .comparison-result dt { color: var(--text-muted); font-size: .75rem; }
 .comparison-result dd { margin: 0 0 8px; }
 .finding-hash { font-size: .7rem; overflow-wrap: anywhere; color: var(--text-muted); }
