@@ -326,7 +326,7 @@ RTX 3050 hardware remain unmeasured.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
-node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs
+node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs
 .\.venv\Scripts\python.exe -m ruff check src scripts tests
 .\.venv\Scripts\python.exe -m ruff format --check src scripts tests
 .\.venv\Scripts\python.exe -m mypy src
