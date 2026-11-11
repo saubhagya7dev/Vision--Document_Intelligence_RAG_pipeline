@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-11",
+  "scope": "public original animated SVG architecture illustration",
+  "frontend_tests": {
+    "passed": 15,
+    "command": "node --test tests/frontend_wireframe.test.mjs tests/frontend_landing.test.mjs tests/frontend_selection.test.mjs"
+  },
+  "targeted_python_tests": {
+    "passed": 2,
+    "warnings": 2,
+    "command": ".venv/Scripts/python.exe -m pytest tests/test_landing.py -q"
+  },
+  "static_checks": [
+    "Python Ruff lint and format (two changed Python files)",
+    "JavaScript syntax",
+    "HTML/SVG structural balance",
+    "unique IDs",
+    "six modules and stage controls",
+    "local documentation links",
+    "Git whitespace"
+  ],
+  "browser": {
+    "fixture": "tests/browser_ux_fixture.py",
+    "paid_calls": false,
+    "owner_library_touched": false,
+    "checks": [
+      "automatic stage advancement",
+      "running SVG packet animation with changing dash offsets",
+      "stage selection pauses tour",
+      "play resumes tour",
+      "six-stage explanatory copy",
+      "mobile stage selection pans diagram",
+      "offscreen tour suspension",
+      "no console errors"
+    ],
+    "mobile_viewport": [
+      384,
+      820
+    ],
+    "mobile_page_content_width": 369,
+    "mobile_diagram_scroll_width": 940,
+    "mobile_diagram_panel_width": 335,
+    "mobile_index_stage_scroll_left": 224,
+    "offscreen_running": false,
+    "console_errors": []
+  },
+  "accessibility": [
+    "SVG title and description",
+    "keyboard-operable native stage buttons",
+    "manual-selection live announcement",
+    "no live announcement of automatic stage changes",
+    "reduced-motion static CSS and controller path"
+  ],
+  "screenshots": {
+    "Docs/assets/wireframe-desktop.png": [
+      1265,
+      712
+    ],
+    "Docs/assets/wireframe-mobile.png": [
+      369,
+      788
+    ]
+  },
+  "limits": [
+    "Diagram is an illustrative explanation, not a live processing monitor.",
+    "Reduced-motion mode tested with the controller harness and CSS, not OS browser preference emulation.",
+    "No new real-provider, quality or deployment measurements.",
+    "Full Python suite not rerun for this bounded UI and asset-fingerprinting update."
+  ],
+  "source_sha256": {
+    "src/vision_rag/api/main.py": "8b9dc18d9e3614b31a24d5d19b5e26e69cefb0a4d283c2b6f0be18b58cda46fa",
+    "src/vision_rag/static/app.js": "c0ab1d4d90e3bd19798fae2f2f2919013f157f04afc8004626396f9022ab1fe7",
+    "src/vision_rag/static/documents.js": "cdf2d358db2ce58547e15997b76436e6381cc7cc7a1e78d9cb79fb70be5ec268",
+    "src/vision_rag/static/emerald.css": "87b2d9929f49cbbfcc25eaa15dfb01a7cfccf48417eb4c58c66fe01518273ff3",
+    "src/vision_rag/static/evidence.js": "0e914f0e6b983a8d6dc0818a3a8239c77e714f21e73beea34d8bdca29be187de",
+    "src/vision_rag/static/findings.js": "a748f768354f5240bb671c704234cee29cdd5565c77b4ecc29758603ae7f1cd5",
+    "src/vision_rag/static/index.html": "194516215aa35257ecdc675e14b533f1a629d12e06f18c14f047ce682093955b",
+    "src/vision_rag/static/landing.css": "fca643dc4f1d6a01cb71b16b3456585e8437db946bf70c06209b1d0756ec0888",
+    "src/vision_rag/static/landing.html": "3877f4b175bad903543300bd05fe771721ca7bb4f73c8a00cfe8705b8ea1bffc",
+    "src/vision_rag/static/landing.js": "615f4130e51b268fffee106b415da664849a4a48ff58da3e46ea449da06cec38",
+    "src/vision_rag/static/session.js": "227b1960036f1e0610e3da5bc10de110e9849375cef596e6d327fa3d9525fc2b",
+    "src/vision_rag/static/styles.css": "f3cb898dd55f1e7d73f5fd9b47364ea1fc2f65cf078de86180c029ec0287e715",
+    "src/vision_rag/static/wireframe.css": "917f89f3dbfda44fecdc36dac749c67d74714c7203b42da234228a5b46c4a177",
+    "src/vision_rag/static/wireframe.js": "5e3547051dce9347bb58d42665f5d4b272f613f823639baeb3b7dd598c3c66d6",
+    "src/vision_rag/static/workspace.css": "e703faa945f7ef55b60a4b1f61159f45707722af8172a2fb04710cedc077b9ec",
+    "src/vision_rag/static/workspace.js": "273a41006b9f1242e76b503a5974f6ea312f72dcd3d95662206f613a8d8a4938"
+  }
+}
