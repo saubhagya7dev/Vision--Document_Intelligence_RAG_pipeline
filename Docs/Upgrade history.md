@@ -525,3 +525,21 @@ position reset when opening a new chat.
 
 See [Usage](Usage.md) for walkthrough controls and
 [Validation](Validation.md#recorded-checks) for the checks on this revision.
+
+## 13. Animated architecture wireframe — 11 November
+
+Added an original SVG system map to the landing page's Architecture section.
+PDF versions branch into native text and visual pages, converge on complementary
+search indexes and ranked evidence, then lead to grounded answers, comparisons
+and saved findings. Separate paths show local Find pages and retained original
+page references. Moving packets, scanning and illuminated vector cells explain
+the connections without a video asset or animation dependency.
+
+The six selectable stages include explanations and technology labels. Pause/play,
+offscreen suspension, reduced-motion support and contained mobile panning keep
+the illustration inspectable. It is explicitly illustrative, not live processing.
+
+![Vision's original animated architecture map](assets/wireframe-desktop.png)
+
+See [Usage](Usage.md) for controls and [Validation](Validation.md#recorded-checks)
+for the source-hashed verification record and mobile capture.
