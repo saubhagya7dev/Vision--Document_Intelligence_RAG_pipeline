@@ -235,5 +235,8 @@
         window.addEventListener('online', () => { if (opened && !working) open(); });
         window.addEventListener('offline', () => status('Offline. Reconnect to load, save or export server findings.'));
     }
-    window.VisionFindings = {open, setup};
+    window.VisionFindings = {open, setup, async show(id) {
+        if (working) return;
+        await load(id); location.hash = '#findings';
+    }};
 })();
