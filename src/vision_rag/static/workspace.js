@@ -243,7 +243,7 @@
         el('chat-input').focus();
     }
     async function open() {
-        if (opening || active || creating || selection.isLocked()) return;
+        if (opening || active || creating || navigating || selection.isLocked()) return;
         opening = true; busy(true); status('Loading saved conversations…');
         try {
             await selection.refresh();
@@ -401,7 +401,11 @@
         window.addEventListener('online', () => { if (!active) open(); });
         list().then(() => busy(false)).catch(report);
     }
-    window.VisionWorkspace = {open, setup, async useDocument(id) {
+    window.VisionWorkspace = {open, setup, async resume(id) {
+        if (working() || selection.isLocked()) { status('Finish the current question or upload before switching chats.'); return; }
+        try { const switching = openConversation(id); location.hash = '#chat'; await switching; }
+        catch (error) { report(error); }
+    }, async useDocument(id) {
         if (working() || selection.isLocked()) { status('Finish the current question or upload before starting another chat.'); return; }
         try { location.hash = '#chat'; await create(); await selection.change([id]); await selection.refresh(); }
         catch (error) { report(error); }
