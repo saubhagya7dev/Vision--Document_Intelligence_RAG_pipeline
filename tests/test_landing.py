@@ -11,6 +11,9 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert 'href="/workspace"' in home.text
     assert "/static/landing.css?v=" in home.text
     assert "/static/landing.js?v=" in home.text
+    assert "/static/wireframe.css?v=" in home.text
+    assert "/static/wireframe.js?v=" in home.text
+    assert 'id="vision-wireframe"' in home.text
     assert "/static/session.js" not in home.text
     assert 'id="chat-input"' not in home.text
     assert 'id="features"' in home.text
@@ -24,6 +27,8 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert home.headers["cache-control"] == "no-store"
     assert client.get("/static/landing.css").status_code == 200
     assert client.get("/static/landing.js").status_code == 200
+    assert client.get("/static/wireframe.css").status_code == 200
+    assert client.get("/static/wireframe.js").status_code == 200
 
 
 def test_public_landing_does_not_open_owner_data(client, monkeypatch):
