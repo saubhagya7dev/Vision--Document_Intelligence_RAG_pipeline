@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="stylesheet" href="/static/workspace.css">
     <link rel="stylesheet" href="/static/emerald.css">
+    <link rel="stylesheet" href="/static/charcoal.css">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
 </head>
@@ -48,127 +49,21 @@
     <main id="app-main" tabindex="-1">
 
         <!-- ========== DASHBOARD PAGE ========== -->
-        <section id="page-dashboard" class="page active">
-            <div class="dashboard-hero">
-                <div class="hero-content">
-                    <span class="badge badge-green">WORKSPACE ACTIVITY</span>
-                    <h1 class="hero-heading">Your workspace at a glance</h1>
-                    <p class="hero-subtitle">Your documents, saved answers and recent processing activity. Continue a chat or inspect your library.</p>
-                    <div class="hero-actions">
-                        <a href="#upload" class="btn btn-primary" id="hero-upload-btn">
-                            Upload Document
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                                <polyline points="12 5 19 12 12 19" />
-                            </svg>
-                        </a>
-                        <a href="#chat" class="btn btn-secondary" id="hero-chat-btn">
-                            Start Querying
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="hero-card">
-                    <div class="card-dark">
-                        <div class="card-header">
-                            <h3>Library activity</h3>
-                            <button class="btn-icon" id="refresh-stats-btn" title="Refresh">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="23 4 23 10 17 10" />
-                                    <polyline points="1 20 1 14 7 14" />
-                                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
-                                </svg>
-                            </button>
-                        </div>
-                        <p id="live-library-summary" class="live-library-summary" role="status">Loading persisted library metrics…</p>
-                        <div class="analytics-footer">
-                            <div class="analytics-stat">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <polyline points="12 6 12 12 16 14" />
-                                </svg>
-                                <span>Total</span>
-                            </div>
-                            <div class="analytics-value">
-                                <span class="stat-number" id="hero-total-pages">0</span>
-                                <span class="stat-unit">document pages</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <section id="page-dashboard" class="page active" aria-labelledby="dashboard-title">
+            <div class="dashboard-heading"><div><p class="eyebrow">YOUR RESEARCH DESK</p><h1 id="dashboard-title">Pick up where you left off.</h1><p>What’s ready, what needs attention, and the work worth returning to.</p></div><div class="dashboard-heading-actions"><a href="#upload" class="btn btn-primary">＋ Upload PDF</a><button id="refresh-stats-btn" class="btn btn-secondary" type="button">↻ Refresh</button></div></div>
+            <p id="dashboard-status" class="dashboard-status" role="status">Loading your workspace…</p>
+            <div class="desk-metrics" aria-label="Workspace totals">
+                <div><span>Ready to ask</span><strong id="desk-ready">—</strong><small id="desk-ready-note">Checking library</small></div><div><span>Preparing</span><strong id="desk-preparing">—</strong><small id="desk-preparing-note">Document &amp; search preparation</small></div><div><span>Completed answers</span><strong id="desk-answers">—</strong><small>Saved in your conversations</small></div><div><span>Saved findings</span><strong id="desk-findings">—</strong><small>Answers &amp; comparisons you kept</small></div>
             </div>
-
-            <!-- Stats Cards -->
-            <div class="stats-row" id="stats-row">
-                <div class="stat-card" id="stat-documents">
-                    <div class="stat-card-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                        </svg>
-                    </div>
-                    <div class="stat-card-content">
-                        <span class="stat-card-value" id="stat-doc-count">—</span>
-                        <span class="stat-card-label">Documents</span>
-                    </div>
-                </div>
-                <div class="stat-card" id="stat-pages">
-                    <div class="stat-card-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="3" width="20" height="14" rx="2" />
-                            <line x1="8" y1="21" x2="16" y2="21" />
-                            <line x1="12" y1="17" x2="12" y2="21" />
-                        </svg>
-                    </div>
-                    <div class="stat-card-content">
-                        <span class="stat-card-value" id="stat-pages-count">—</span>
-                        <span class="stat-card-label">Document Pages</span>
-                    </div>
-                </div>
-                <div class="stat-card" id="stat-queries">
-                    <div class="stat-card-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-                        </svg>
-                    </div>
-                    <div class="stat-card-content">
-                        <span class="stat-card-value" id="stat-queries-count">0</span>
-                        <span class="stat-card-label">Saved Answers</span>
-                    </div>
-                </div>
-                <div class="stat-card" id="stat-status">
-                    <div class="stat-card-icon icon-status">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                        </svg>
-                    </div>
-                    <div class="stat-card-content">
-                        <span class="stat-card-value stat-status-badge" id="stat-system-status">—</span>
-                        <span class="stat-card-label">System Status</span>
-                    </div>
-                </div>
+            <div class="desk-main-grid">
+                <section class="desk-panel desk-readiness" aria-labelledby="desk-readiness-title"><div class="desk-panel-heading"><div><span class="desk-kicker">01 / LIBRARY READINESS</span><h2 id="desk-readiness-title">A clear starting point.</h2></div><a href="#upload">Processing ↗</a></div><div id="desk-readiness-content"><p class="desk-empty">Checking what’s searchable…</p></div></section>
+                <section class="desk-panel" aria-labelledby="desk-chats-title"><div class="desk-panel-heading"><div><span class="desk-kicker">02 / CONTINUE RESEARCH</span><h2 id="desk-chats-title">Recent conversations</h2></div><a href="#chat">Open chat ↗</a></div><div id="desk-chats"><p class="desk-empty">Loading saved conversations…</p></div></section>
             </div>
-
-            <!-- Recent Activity -->
-            <div class="section-block">
-                <h2 class="section-title">Recent Activity</h2>
-                <div class="activity-list" id="activity-list">
-                    <div class="empty-state small">
-                        <p>No recent activity yet. Upload a document to get started.</p>
-                    </div>
-                </div>
+            <div class="desk-lower-grid">
+                <section class="desk-panel" aria-labelledby="desk-library-title"><div class="desk-panel-heading"><div><span class="desk-kicker">03 / YOUR SOURCES</span><h2 id="desk-library-title">Document library</h2></div><a href="#documents">View all ↗</a></div><div id="desk-library"><p class="desk-empty">Loading your PDFs…</p></div></section>
+                <section class="desk-panel" aria-labelledby="desk-findings-title"><div class="desk-panel-heading"><div><span class="desk-kicker">04 / KEPT FOR LATER</span><h2 id="desk-findings-title">Saved findings</h2></div><a href="#findings">View all ↗</a></div><div id="desk-saved-findings"><p class="desk-empty">Loading saved work…</p></div></section>
             </div>
+            <nav class="desk-shortcuts" aria-label="Research actions"><a href="#chat"><span>01</span><div><strong>Ask your documents</strong><small>Choose PDFs, ask a question, inspect citations.</small></div><b>↗</b></a><a href="#analysis"><span>02</span><div><strong>Compare reports</strong><small>Explore reported fields across two to four versions.</small></div><b>↗</b></a><a href="#findings"><span>03</span><div><strong>Review &amp; export</strong><small>Return to findings and their original references.</small></div><b>↗</b></a></nav>
         </section>
 
         <!-- ========== UPLOAD PAGE ========== -->
@@ -493,6 +388,7 @@ Operating margin</textarea>
     <script src="/static/documents.js"></script>
     <script src="/static/workspace.js"></script>
     <script src="/static/findings.js"></script>
+    <script src="/static/dashboard.js"></script>
     <script src="/static/app.js"></script>
 </body>
 
