@@ -264,54 +264,11 @@
     // DASHBOARD
     // =========================
     async function initDashboard() {
-        // Update session query count
-        document.getElementById('stat-queries-count').textContent = '—';
-
-        // Render activity
-        renderActivity();
-
-        // Fetch live stats
-        try {
-            const stats = await api.get('/stats');
-            document.getElementById('stat-doc-count').textContent = stats.total_documents || 0;
-            document.getElementById('stat-queries-count').textContent = stats.completed_queries || 0;
-            document.getElementById('live-library-summary').textContent = `${stats.total_documents} documents · ${stats.pending_jobs} jobs in progress · ${stats.completed_queries} saved answers`;
-            document.getElementById('stat-pages-count').textContent = stats.total_pages || 0;
-            document.getElementById('hero-total-pages').textContent = stats.total_pages || 0;
-
-            const statusEl = document.getElementById('stat-system-status');
-            const status = stats.collection_status || 'unknown';
-            statusEl.textContent = status === 'green' || status === 'CollectionStatus.GREEN' ? 'Healthy' : status;
-            statusEl.style.color = (status === 'green' || status === 'CollectionStatus.GREEN') ? '#10b981' : '#737373';
-        } catch (e) {
-            document.getElementById('stat-doc-count').textContent = '—';
-            document.getElementById('stat-pages-count').textContent = '—';
-            document.getElementById('stat-system-status').textContent = 'Error';
-        }
+        return window.VisionDashboard.refresh();
     }
 
     function renderActivity() {
-        const container = document.getElementById('activity-list');
-        if (activityLog.length === 0) {
-            container.innerHTML = '<div class="empty-state small"><p>No recent activity yet. Upload a document to get started.</p></div>';
-            return;
-        }
-
-        container.innerHTML = activityLog.slice(0, 10).map(item => {
-            const iconSvg = item.type === 'upload'
-                ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
-                : item.type === 'query'
-                    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>'
-                    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>';
-
-            return `
-                <div class="activity-item">
-                    <div class="activity-icon">${iconSvg}</div>
-                    <span class="activity-text">${escapeHtml(item.text)}</span>
-                    <span class="activity-time">${timeAgo(item.time)}</span>
-                </div>
-            `;
-        }).join('');
+        if (document.getElementById('page-dashboard').classList.contains('active')) window.VisionDashboard.refresh();
     }
 
     // =========================
@@ -882,10 +839,7 @@
     }
 
     function setupDashboardControls() {
-        document.getElementById('refresh-stats-btn').addEventListener('click', () => {
-            initDashboard();
-            toast.show('Stats refreshed', 'info', 2000);
-        });
+        window.VisionDashboard.setup();
     }
 
     // =========================
