@@ -43,6 +43,15 @@ own PDF and workspace links enter the real application; the public demonstration
 never loads your library. New workspace chats offer starter questions and the
 three-step path from document selection to inspecting and saving evidence.
 
+The landing page's **Architecture** section contains an original animated
+wireframe of the complete document-to-evidence flow. Its six stages are Preserve,
+Prepare, Index, Retrieve, Ground and Keep. The guided tour advances automatically
+while visible; choose any stage to pause and read its explanation, or use
+**Pause animation / Play animation**. On smaller screens the drawing scrolls
+inside its own panel, and selecting a stage brings that module into view.
+Panning pauses the tour. Reduced-motion preferences show a static, selectable
+diagram. This public illustration does not process documents or fetch owner data.
+
 ## CUDA and model setup
 
 For the measured Windows/Python 3.14 profile, stop processes using this environment
