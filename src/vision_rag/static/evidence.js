@@ -5,6 +5,22 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
     const el = id => document.getElementById(prefix + id);
     const encode = encodeURIComponent;
     let viewer = null, viewerToken = 0, savedScroll = null, saveTimer;
+    function setZoom(value) {
+        value = Math.max(.25, Math.min(3, Number(value) || 1));
+        const zoom = String(Math.round(value * 10000) / 10000);
+        if (![...el('viewer-zoom').options].some(option => option.value === zoom)) {
+            el('viewer-zoom').add(new Option(`${Math.round(Number(zoom) * 100)}%`, zoom));
+        }
+        el('viewer-zoom').value = zoom;
+        el('viewer-image').style.width = `${Number(zoom) * 100}%`;
+    }
+    function fitPage() {
+        const image = el('viewer-image'), box = el('viewer-scroll');
+        if (!image.naturalWidth || !image.naturalHeight || !box.clientWidth || !box.clientHeight) return;
+        const width = Math.max(1, box.clientWidth - 32), height = Math.max(1, box.clientHeight - 32);
+        setZoom(Math.min(1, height * image.naturalWidth / image.naturalHeight / width));
+        box.scrollTop = 0; box.scrollLeft = 0; saveViewer();
+    }
     function button(text, action) {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'job-action';
         b.textContent = text; b.addEventListener('click', action); return b;
@@ -71,6 +87,10 @@ window.createEvidenceViewer = function(api, getCurrent, report, prefix) {
         el('viewer-next').addEventListener('click', () => page(Number(el('viewer-page').value) + 1));
         el('viewer-page').addEventListener('change', e => page(e.target.value));
         el('viewer-zoom').addEventListener('change', () => { el('viewer-image').style.width = `${Number(el('viewer-zoom').value) * 100}%`; saveViewer(); });
+        el('viewer-fit-page')?.addEventListener('click', fitPage);
+        el('viewer-fit-width')?.addEventListener('click', () => {
+            setZoom(1); el('viewer-scroll').scrollLeft = 0; saveViewer();
+        });
         el('viewer-scroll').addEventListener('scroll', saveViewer);
         el('viewer-image').addEventListener('load', () => {
             if (!viewer) return;
