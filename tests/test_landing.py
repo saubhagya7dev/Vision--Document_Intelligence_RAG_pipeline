@@ -14,6 +14,9 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert "/static/wireframe.css?v=" in home.text
     assert "/static/wireframe.js?v=" in home.text
     assert "/static/charcoal.css?v=" in home.text
+    assert "/static/hero-simulation.css?v=" in home.text
+    assert "/static/hero-simulation.js?v=" in home.text
+    assert 'id="hero-simulation"' in home.text
     assert 'id="vision-wireframe"' in home.text
     assert (
         home.text.index('id="product"')
@@ -32,6 +35,11 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert "/static/emerald.css?v=" in workspace.text
     assert "/static/charcoal.css?v=" in workspace.text
     assert "/static/dashboard.js?v=" in workspace.text
+    assert "/static/chat-studio.css?v=" in workspace.text
+    assert 'aria-label="Home — About Vision"' in workspace.text
+    assert 'id="expand-evidence"' in workspace.text
+    assert 'id="viewer-fit-page"' in workspace.text
+    assert 'id="viewer-fit-width"' in workspace.text
     assert home.headers["cache-control"] == "no-store"
     assert client.get("/static/landing.css").status_code == 200
     assert client.get("/static/landing.js").status_code == 200
@@ -39,6 +47,9 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert client.get("/static/wireframe.js").status_code == 200
     assert client.get("/static/charcoal.css").status_code == 200
     assert client.get("/static/dashboard.js").status_code == 200
+    assert client.get("/static/chat-studio.css").status_code == 200
+    assert client.get("/static/hero-simulation.css").status_code == 200
+    assert client.get("/static/hero-simulation.js").status_code == 200
 
 
 def test_public_landing_does_not_open_owner_data(client, monkeypatch):
