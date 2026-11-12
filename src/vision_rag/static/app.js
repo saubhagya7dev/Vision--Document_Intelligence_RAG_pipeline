@@ -237,6 +237,7 @@
             if (event.target.closest('a, #data-controls-btn, #sign-out')) closeNavigation();
         });
         document.addEventListener('click', event => {
+            if (event.target.closest('#data-controls-btn, #sign-out')) closeNavigation();
             document.querySelectorAll('#workspace-menu[open], .chat-actions[open]').forEach(menu => {
                 if (!menu.contains(event.target)) menu.open = false;
             });

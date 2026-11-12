@@ -111,3 +111,5 @@ body.reader-resizing,body.reader-resizing * { cursor:col-resize!important; user-
 }
 /* Bring the broader workspace closer to document-tool scale. */
 #page-dashboard .dashboard-heading h1 { font-size:30px; }.page>.page-title,.page-header>.page-title { font-size:27px; }
+/* Keep the footer menu inside the rail so it cannot be clipped by its boundary. */
+.workspace-utilities .header-menu>div { left:auto; right:0; width:160px; min-width:160px; }
