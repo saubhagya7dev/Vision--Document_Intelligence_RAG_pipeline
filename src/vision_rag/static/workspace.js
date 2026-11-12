@@ -7,6 +7,11 @@
     const el = id => document.getElementById(id);
     let current = null, active = null, controller = null;
     let opening = false, creating = null, submitting = false, navigating = false, sourceTrigger = null;
+    let pinnedChats = new Set();
+    try {
+        const saved = JSON.parse(localStorage.getItem('vr_pinned_chats') || '[]');
+        if (Array.isArray(saved)) pinnedChats = new Set(saved.filter(id => typeof id === 'string'));
+    } catch { /* History remains usable when browser storage is unavailable. */ }
     const terminal = new Set(['completed', 'failed', 'cancelled', 'interrupted']);
     const status = text => { el('workspace-status').textContent = text; };
     const progress = (text, running = false) => {
@@ -66,6 +71,18 @@
         el('rename-conversation').disabled = !current || working();
         el('delete-conversation').disabled = !current || working();
     }
+    function filterHistory() {
+        const query = el('history-search').value.trim().toLocaleLowerCase();
+        const pinnedOnly = el('history-pinned').getAttribute('aria-pressed') === 'true';
+        let visible = 0;
+        document.querySelectorAll('.history-row').forEach(row => {
+            const match = row.dataset.title.toLocaleLowerCase().includes(query) && (!pinnedOnly || pinnedChats.has(row.dataset.id));
+            row.hidden = !match; if (match) visible++;
+            row.style.order = pinnedChats.has(row.dataset.id) ? '-1' : '0';
+        });
+        el('history-count').textContent = String(visible);
+        el('history-empty').hidden = visible > 0 || !document.querySelector('.history-row');
+    }
     async function list() {
         const conversations = await api('/conversations');
         el('conversation-list').replaceChildren(new Option('Choose a conversation', ''));
@@ -78,12 +95,27 @@
             }, 'recent-chat');
             b.dataset.conversationId = c.id;
             if (c.id === current?.id) b.setAttribute('aria-current', 'page');
-            b.disabled = working(); recent.append(b);
+            b.title = c.title;
+            const row = document.createElement('div'); row.className = 'history-row';
+            row.dataset.id = c.id; row.dataset.title = c.title;
+            const pin = button('', () => {
+                if (pinnedChats.has(c.id)) pinnedChats.delete(c.id); else pinnedChats.add(c.id);
+                try { localStorage.setItem('vr_pinned_chats', JSON.stringify([...pinnedChats])); } catch { /* Session-only pinning still works. */ }
+                updatePin(); filterHistory();
+            }, 'history-pin');
+            function updatePin() {
+                const pinned = pinnedChats.has(c.id);
+                pin.textContent = pinned ? '◆' : '◇';
+                pin.setAttribute('aria-label', `${pinned ? 'Unpin' : 'Pin'} chat: ${c.title}`);
+                pin.setAttribute('aria-pressed', String(pinned));
+                pin.title = pinned ? 'Unpin chat' : 'Pin chat';
+            }
+            updatePin(); b.disabled = working(); row.append(b, pin); recent.append(row);
         }
         if (!conversations.length) {
             const p = document.createElement('p'); p.className = 'sidebar-empty'; p.textContent = 'Your chats will appear here.'; recent.append(p);
         }
-        el('conversation-list').value = current?.id || ''; title();
+        filterHistory(); el('conversation-list').value = current?.id || ''; title();
         return conversations;
     }
     function scope() {
@@ -237,8 +269,7 @@
             saveDraft(); evidence.reset(); closeEvidence();
             await selection.refresh();
             current = await api(`/conversations/${encode(id)}`);
-            el('chat-history').open = !window.matchMedia('(max-width: 700px)').matches;
-            localStorage.setItem('vr_conversation', id);
+                localStorage.setItem('vr_conversation', id);
             restoreDraft(); progress(''); scope(); render(); await list();
             sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
             status(current.document_ids === null ? 'Choose documents for your next question. Earlier answers keep their original sources.' : 'Saved on this server.');
@@ -256,7 +287,6 @@
         saveDraft(); busy(true); evidence.reset(); closeEvidence();
         const oldDraft = !current ? el('chat-input').value : '';
         current = await api('/conversations', 'POST', {title: 'New conversation', document_ids: []});
-        el('chat-history').open = !window.matchMedia('(max-width: 700px)').matches;
         el('chat-input').value = oldDraft; saveDraft(); progress('');
         localStorage.setItem('vr_conversation', current.id);
         scope(); render(); sources([]); await list(); status('Choose documents, then ask a question.');
@@ -426,10 +456,13 @@
         });
         window.addEventListener('offline', () => status('Offline. Your draft is kept; reconnect to reopen saved chats.'));
         window.addEventListener('online', () => { if (!active) open(); });
-        const compactHistory = window.matchMedia('(max-width: 700px)');
-        const syncHistory = () => { el('chat-history').open = !compactHistory.matches; };
-        compactHistory.addEventListener('change', syncHistory);
-        syncHistory();
+        el('history-search').addEventListener('input', filterHistory);
+        for (const id of ['history-all', 'history-pinned']) el(id).addEventListener('click', () => {
+            el('history-all').setAttribute('aria-pressed', String(id === 'history-all'));
+            el('history-pinned').setAttribute('aria-pressed', String(id === 'history-pinned'));
+            filterHistory();
+        });
+        window.VisionReaderLayout.setup(document.querySelector('.chat-workbench'), el('chat-evidence'), el('reader-resize'));
         list().then(() => busy(false)).catch(report);
     }
     window.VisionWorkspace = {open, setup, async resume(id) {
