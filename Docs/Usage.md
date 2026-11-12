@@ -53,16 +53,17 @@ inside its own panel, and selecting a stage brings that module into view.
 Panning pauses the tour. Reduced-motion preferences show a static, selectable
 diagram. This public illustration does not process documents or fetch owner data.
 
-The hero also illustrates a fictional report flowing through text and visual
-retrieval to a cited answer. **Pause simulation** stops its motion. It pauses
+Small wireframe animations flank the hero: a scanned document on the left and
+retrieval paths on the right. **Pause motion** stops them. Motion pauses
 offscreen and in background tabs, and respects reduced-motion preferences.
 
 ### Reading a conversation and its evidence
 
-Chat provides a spacious conversation column and an anchored composer with the
-selected documents visible. Click an answer citation or **Inspect evidence** to
-open the original, version-specific page. On desktop the reader occupies more
-than half the available width; **Expand reader** opens a larger reading surface.
+Chat uses compact typography and square controls, with recent conversations in
+a left rail and selected documents above the anchored composer. The history rail
+becomes a disclosure on mobile. Click an answer citation or **Inspect evidence**
+to open the original, version-specific page. On desktop the reader is a narrower,
+full-height right column; **Expand reader** opens a larger reading surface.
 On narrow screens the reader opens full screen. **Fit page** shows the whole
 page, while **Fit width** makes its content wider for reading. Zoom, page controls
 and the original PDF link remain available. Expand the retrieved-source summary
