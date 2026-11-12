@@ -26,7 +26,10 @@ Gemini to generate answers from retrieved evidence.
 **Upgrade history:** [From the original prototype to the current workspace](Docs/Upgrade%20history.md)
 explains every phase, implementation changes, old/new screenshots and measured results.
 
-![Vision project landing page with its workspace entry](Docs/assets/balanced-hero-desktop.png)
+![Vision template preview showing the landing page, dashboard and chat with original-page evidence](Docs/assets/vision-template-preview.png)
+
+*Latest promotional template preview from the Vision UI UX chat: an AI-generated
+composition based on the updated interface, with fictional example content.*
 
 The root page introduces the project. **Explore Vision** opens the separate
 `/workspace` application with a library-backed dashboard, saved chats, documents,
