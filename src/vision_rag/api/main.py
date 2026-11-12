@@ -137,6 +137,7 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
             "charcoal.css",
             "dashboard.js",
             "chat-studio.css",
+            "reader-layout.js",
             "hero-simulation.css",
             "hero-simulation.js",
         ):
