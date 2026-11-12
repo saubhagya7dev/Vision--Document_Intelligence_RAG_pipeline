@@ -14,13 +14,20 @@
         el('answer-progress').classList.toggle('luminous', running);
     };
     const working = () => Boolean(active || submitting || creating || opening || navigating);
+    function sizeComposer() {
+        const input = el('chat-input');
+        input.style.height = '0px';
+        input.style.height = `${Math.min(input.scrollHeight, 112)}px`;
+    }
     function saveDraft() {
+        sizeComposer();
         try { sessionStorage.setItem(`vr_draft_${current?.id || 'new'}`, el('chat-input').value); }
         catch { /* Storage full: the visible draft stays editable. */ }
     }
     function restoreDraft() {
         try { el('chat-input').value = sessionStorage.getItem(`vr_draft_${current?.id || 'new'}`) || ''; }
         catch { el('chat-input').value = ''; }
+        sizeComposer();
     }
     const encode = encodeURIComponent;
     async function api(path, method = 'GET', data) {
