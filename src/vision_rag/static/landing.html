@@ -13,6 +13,8 @@
     <script src="/static/landing.js" defer></script>
     <link rel="stylesheet" href="/static/wireframe.css">
     <link rel="stylesheet" href="/static/charcoal.css">
+    <link rel="stylesheet" href="/static/hero-simulation.css">
+    <script src="/static/hero-simulation.js" defer></script>
     <script src="/static/wireframe.js" defer></script>
 </head>
 <body>
@@ -31,6 +33,15 @@
                 <p class="hero-description">Your reports, research and ideas. One connected workspace.<br> Ask questions, compare documents, and follow every answer back to the page.</p>
                 <div class="hero-actions"><a class="button primary" href="/workspace">Explore Vision <span aria-hidden="true">→</span></a><a class="button secondary" href="https://github.com/saubhagya7dev/Vision---Document-Intelligence-RAG-pipeline" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m8 5-7 7 7 7M16 5l7 7-7 7M14 3l-4 18"/></svg> View on GitHub</a></div>
                 <p class="hero-note"><span>PDFs, tables &amp; charts</span><i>·</i><span>Text + visual search</span><i>·</i><span>Original-page citations</span></p>
+            </div>
+            <div class="hero-simulation" id="hero-simulation" data-running="false" aria-label="Illustrative document-to-answer simulation using fictional Juniper report data">
+                <div class="hero-sim-heading"><span>AN ORIGINAL PAGE. AN ANSWER YOU CAN TRACE.</span><button type="button" id="hero-motion" hidden>Pause simulation</button></div>
+                <div class="hero-sim-content">
+                    <div class="hero-document-stack"><span class="hero-sheet-back" aria-hidden="true"></span><div class="hero-sample-paper"><span>JUNIPER</span><small>ANNUAL REPORT / FY2025</small><hr><h3>Financial performance</h3><p>Consolidated results</p><table><tr><th>Metric</th><th>FY2025</th></tr><tr><td>Revenue</td><td>€163 million</td></tr></table><div class="hero-paper-lines" aria-hidden="true"></div><span class="hero-page-number">12</span><i class="hero-page-scan" aria-hidden="true"></i></div><span class="hero-document-label">Juniper-2025.pdf / v1</span></div>
+                    <div class="hero-signal-wrap"><svg viewBox="0 0 360 190" aria-hidden="true" class="hero-signal-map"><defs><pattern id="hero-signal-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20"/></pattern></defs><rect width="360" height="190" fill="url(#hero-signal-grid)" class="hero-map-grid"/><g class="hero-map-guides"><path d="M0 95H360M70 20V170M290 20V170" stroke-dasharray="2 8"/></g><path d="M0 95H45L90 55H135" class="hero-map-line"/><path d="M0 95H45L90 55H135" class="hero-map-packet"/><path d="M45 95L90 135H135" class="hero-map-line"/><path d="M45 95L90 135H135" class="hero-map-packet"/><path d="M225 55H265L310 95H360" class="hero-map-line"/><path d="M225 55H265L310 95H360" class="hero-map-packet"/><path d="M225 135H265L310 95" class="hero-map-line"/><path d="M225 135H265L310 95" class="hero-map-packet"/><g class="hero-map-core"><path d="M135 60H205V140H135ZM135 60l20-18h70v80l-20 18M205 60l20-18M155 42v80h70M135 140l20-18"/><path d="M149 60V140M135 76H205M149 60l20-18M205 76l20-18"/><path d="M163 60V140M135 92H205M163 60l20-18M205 92l20-18"/><path d="M177 60V140M135 108H205M177 60l20-18M205 108l20-18"/><path d="M191 60V140M135 124H205M191 60l20-18M205 124l20-18"/><rect x="143" y="68" width="7" height="7" class="hero-token" style="--token-delay:0.0s"/><rect x="171" y="84" width="7" height="7" class="hero-token" style="--token-delay:0.6s"/><rect x="185" y="116" width="7" height="7" class="hero-token" style="--token-delay:1.2s"/><rect x="157" y="100" width="7" height="7" class="hero-token" style="--token-delay:1.7999999999999998s"/><rect x="210" y="51" width="7" height="7" class="hero-token" style="--token-delay:2.4s"/></g><text x="82" y="32">TEXT</text><text x="72" y="167">VISUALS</text><text x="234" y="32">RETRIEVE</text><text x="234" y="167">CITE</text></svg><span class="hero-map-label">TEXT + VISUAL EVIDENCE</span></div>
+                    <div class="hero-sample-answer"><span class="hero-sample-question">What revenue did Juniper report?</span><div class="hero-answer-brand"><span aria-hidden="true">✦</span> Vision</div><p><strong>€163 million</strong> in consolidated revenue for FY2025. <span class="hero-sim-cite">[1]</span></p><span class="hero-sim-reference">▤ Original page 12 <span>Version 1 ↗</span></span><a href="#how-it-works">Explore the product example →</a></div>
+                </div>
+                <div class="hero-sim-caption"><span>Fictional example · Motion illustrates the flow</span><span>Selected sources → relevant evidence → cited answer</span></div>
             </div>
         </section>
 
