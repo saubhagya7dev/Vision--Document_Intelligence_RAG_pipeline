@@ -543,3 +543,24 @@ the illustration inspectable. It is explicitly illustrative, not live processing
 
 See [Usage](Usage.md) for controls and [Validation](Validation.md#recorded-checks)
 for the source-hashed verification record and mobile capture.
+
+## 14. Charcoal theme and useful dashboard — 12 November
+
+Moved the architecture animation directly below the hero. Removed the green
+surface treatment across the landing, wireframe and owner workspace in favor
+of charcoal backgrounds and cream text, controls and motion. The composition
+takes inspiration from [Isoquant](https://isoquant.ai/) and
+[ArtCraft](https://getartcraft.com/apps) while retaining Vision's original diagram.
+
+The dashboard now surfaces persisted library readiness, preparing/attention
+states, completed-question and saved-finding totals, recent conversations, ready
+PDFs and findings. Ask, Resume and Open go to the selected record. Clear empty
+and unavailable states replace illustrative activity, with refresh limited to
+the visible dashboard and explicit actions.
+
+![Charcoal landing with architecture directly after the hero](assets/charcoal-landing-desktop.png)
+
+![Research desk backed by persisted fixture data](assets/charcoal-dashboard-desktop.png)
+
+See [Dashboard usage](Usage.md#dashboard) and
+[Validation](Validation.md#recorded-checks) for full-suite and browser evidence.
