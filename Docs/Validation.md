@@ -40,6 +40,27 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+The **12 November adjustable research desk update** passed the two affected
+API/landing tests and all **29 frontend tests**, including new resize-bound,
+keyboard persistence, container resize and pointer-cancellation checks. Changed
+Python lint/format, JavaScript syntax and whitespace checks passed. The full
+Python suite was not rerun for this frontend update.
+
+Disposable browser checks verified pointer drag (391px → 451px), keyboard
+adjustment, persisted width after reload (431px), pinned-chat persistence,
+search/no-results and Pinned filtering, permanent history, sidebar Settings and
+its Data & history dialog, utilities on Dashboard, and mobile evidence dismissal.
+At 1280px, the message scrollbar boundary matched the conversation boundary
+(both 823px from the left at a 431px reader width); the header was 64px high.
+At 384×820, document width remained 384px, recent chats stayed visible, Home
+ended at 370px, and the composer ended at 790px. No console warnings/errors were
+captured. Generated PDFs and simulated inference were used; no real library,
+credentials, provider or answer-quality measurements were involved.
+
+See [adjustable desk evidence](evidence/research-desk-verification.json),
+[desktop preview](assets/resizable-research-desk.png) and
+[mobile preview](assets/research-desk-mobile.png).
+
 The **12 November compact chat and flanking hero correction** passed the two
 affected API/landing tests and all **26 frontend tests**, plus changed-Python
 lint/format, JavaScript syntax and whitespace checks. The full Python suite was
