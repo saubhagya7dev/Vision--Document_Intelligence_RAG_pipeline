@@ -4,6 +4,8 @@ Consolidated 9 November 2026 from phase designs, guides and architectural decisi
 The [upgrade history](Upgrade%20history.md) records the old/new diagrams and each
 phase. [Usage](Usage.md) contains setup and operational procedures.
 
+Updated 12 November 2026 for dashboard and browser workspace state.
+
 ## Storage and jobs
 
 One process owns each library. SQLite owns document identity, immutable original
@@ -129,6 +131,21 @@ immutable content and hashes with mutable title/review metadata. Export routes
 check source availability and owner access, and sanitize spreadsheet/Markdown
 outputs. Missing evidence is not a computed zero; no implicit currency conversion
 or calculated financial result is introduced.
+
+### Browser preferences and reading layout
+
+Conversations and submitted turns remain server-owned. Chat pins
+(`vr_pinned_chats`), the remembered conversation (`vr_conversation`) and preferred
+reader width (`vr_reader_width`) use browser-local storage; unsent drafts use
+per-tab session storage. Pins and reader width are UI preferences, not new server
+records or cross-device synchronization.
+
+`static/reader-layout.js` bounds the pointer/keyboard-adjustable reader against
+the available conversation width and reapplies it on resize. The composer grows
+from its draft content, while pending, failed and completed turns retain a common
+reading column. These layout changes do not alter retrieval, provider retries or
+persisted turn state. `static/dashboard.js` presents saved-data summaries and
+readiness; it does not generate dashboard metrics through a model.
 
 ## Design decisions
 
