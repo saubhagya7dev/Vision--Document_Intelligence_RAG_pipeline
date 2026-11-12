@@ -52,6 +52,10 @@
     function title() {
         el('conversation-title').textContent = current?.title || 'New conversation';
         el('conversation-title').title = current?.title || 'New conversation';
+        document.querySelectorAll('.recent-chat').forEach(b => {
+            if (b.dataset.conversationId === current?.id) b.setAttribute('aria-current', 'page');
+            else b.removeAttribute('aria-current');
+        });
         el('rename-conversation').disabled = !current || working();
         el('delete-conversation').disabled = !current || working();
     }
@@ -65,6 +69,7 @@
                 if (working() || selection.isLocked()) return;
                 location.hash = '#chat'; openConversation(c.id).catch(report);
             }, 'recent-chat');
+            b.dataset.conversationId = c.id;
             if (c.id === current?.id) b.setAttribute('aria-current', 'page');
             b.disabled = working(); recent.append(b);
         }
@@ -206,8 +211,9 @@
         if (restoreFocus && sourceTrigger?.isConnected) sourceTrigger.focus();
     }
     function evidenceModality() {
-        const modal = !el('chat-evidence').hidden && (window.matchMedia('(max-width: 1100px)').matches || el('chat-evidence').classList.contains('reader-expanded'));
+        const modal = !el('chat-evidence').hidden && (window.matchMedia('(max-width: 1000px)').matches || el('chat-evidence').classList.contains('reader-expanded'));
         document.querySelector('.chat-main').inert = modal;
+        document.querySelector('.chat-rail').inert = modal;
         document.querySelector('.workspace-toolbar').inert = modal;
         document.querySelector('.selection-toolbar').inert = modal;
         el('app-header').inert = modal;
@@ -373,7 +379,7 @@
         window.addEventListener('vision-route-changed', event => {
             if (event.detail !== 'chat') closeEvidence(false);
         });
-        window.matchMedia('(max-width: 1100px)').addEventListener('change', evidenceModality);
+        window.matchMedia('(max-width: 1000px)').addEventListener('change', evidenceModality);
         document.addEventListener('keydown', event => {
             if (event.key === 'Tab' && el('chat-evidence').getAttribute('aria-modal') === 'true') {
                 const items = [...el('chat-evidence').querySelectorAll('button:not(:disabled), a[href], input, select, summary, [tabindex="0"]')].filter(node => node.getClientRects().length);
