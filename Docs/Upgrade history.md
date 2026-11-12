@@ -1,11 +1,12 @@
 # Vision upgrade history — from PDF chat prototype to document workspace
 
-Written 9 November 2026. This document explains what changed, why it changed,
+Written 9 November 2026; updated 12 November 2026. This document explains what changed, why it changed,
 how it was implemented, and what has actually been verified.
 
 **Before** means the original prototype inspected on 2 November 2026, with the
 October UI screenshots below. **After** means the implemented Phases 1–7,
-follow-up fixes, and the workspace redesign verified on 8 November. These are
+follow-up fixes, and the landing, dashboard and research desk updates through
+12 November. These are
 implementation milestones, not invented release numbers: the package metadata
 still identifies the project as `0.1.0`.
 
@@ -48,11 +49,12 @@ establish multi-user authorization, production readiness or general answer accur
 
 | Original interface — October 2026 | Current workspace — November 2026 |
 | --- | --- |
-| ![Original dashboard with green accents, top navigation and illustrative analytics](../Screenshots/Screenshot%202026-10-20%20061731.png) | ![Current workspace with sidebar chats, selected document, cited answer and source drawer](assets/ux-workspace-desktop.png) |
+| ![Original dashboard with green accents, top navigation and illustrative analytics](../Screenshots/Screenshot%202026-10-20%20061731.png) | ![Current workspace with sidebar chats, selected document, cited answer and source drawer](assets/resizable-research-desk.png) |
 
 The old dashboard led with a promotional hero and illustrative activity bars.
-The new entry point is chat, with recent conversations, document selection,
-processing/readiness feedback, citations and access to saved findings. Workspace
+The public landing now opens a separate workspace with a saved-data dashboard
+and chat, permanent searchable history, document selection, readiness feedback,
+citations and saved findings. Workspace
 activity now describes persisted library activity rather than invented analytics.
 
 ### Original chat and source cards
@@ -66,7 +68,7 @@ the source; it was not a calibrated confidence probability.
 
 ### Current evidence workflow
 
-![Current desktop chat with a saved conversation, explicit document chip and version-specific evidence drawer](assets/ux-workspace-desktop.png)
+![Current desktop chat with a saved conversation, explicit document chip and version-specific evidence drawer](assets/resizable-research-desk.png)
 
 The current desktop view connects a submitted question, selected document,
 inline citation, original page and retained version. A source drawer supports
@@ -76,16 +78,19 @@ page navigation, thumbnails, zoom and original PDF access without discarding the
 
 | Chat and composer | Original source page |
 | --- | --- |
-| ![Current mobile chat and document-scoped composer](assets/ux-chat-mobile.png) | ![Current mobile source sheet with version, page controls and original page](assets/ux-source-mobile.png) |
+| ![Current mobile chat and document-scoped composer](assets/research-desk-mobile.png) | ![Current mobile source sheet with version, page controls and original page](assets/studio-reader-mobile.png) |
 
 Mobile navigation replaces the old hidden navigation pill. Source inspection uses
 a separate sheet with focus isolation and a return to the citation when closed.
 
 **Image provenance:** the old pictures are existing repository screenshots from
-20 October. The new pictures come from the 8 November isolated browser checks,
+20 October. The current desktop/mobile pictures above come from the 12 November
+isolated browser checks,
 using generated fictional PDFs and simulated inference. They demonstrate the
 interface and workflow, not real-provider answer accuracy. No images were generated
-to imply capabilities that do not exist. See [UX verification](evidence/history.json).
+to imply capabilities that do not exist. See [current verification](Validation.md#recorded-checks)
+and the [earlier UX record](evidence/history.json). Later sections retain earlier
+interface screenshots as dated milestones.
 
 ## 3. Before and after at a glance
 
@@ -617,3 +622,21 @@ isolated desktop/mobile verification.
 ![Small simulations beside the hero](assets/balanced-hero-desktop.png)
 
 ![Compact chat with history and a balanced evidence reader](assets/balanced-chat-desktop.png)
+
+## 18. Composer and turn alignment corrections - 12 November
+
+The composer now starts with a 30px single-line input, grows with draft content
+up to 112px, and shrinks after sending or clearing, including after reader or
+viewport resizing. SVG action icons and equal mode segments keep the compact
+controls readable.
+
+Pending, failed and completed turns now use the same available reading width
+(up to 700px) and avoid vertical flex shrinking. A delayed answer therefore
+keeps the conversation aligned while waiting and after completion. This CSS
+correction does not change backend restart recovery or provider behavior.
+
+![Completed and delayed turns sharing the same reading column](assets/aligned-pending-turns.png)
+
+The latest layout and targeted restart checks are recorded in
+[Validation](Validation.md#recorded-checks). No new real-provider quality or
+retrieval benchmark is claimed by these interface updates.
