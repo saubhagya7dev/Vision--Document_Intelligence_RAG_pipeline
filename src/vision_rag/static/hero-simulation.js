@@ -9,7 +9,7 @@
     function sync() {
         root.dataset.running = String(visible && !paused && !document.hidden && !preference.matches);
         button.hidden = preference.matches;
-        button.textContent = paused ? 'Play simulation' : 'Pause simulation';
+        button.textContent = paused ? 'Play motion' : 'Pause motion';
     }
     button.addEventListener('click', () => { paused = !paused; sync(); });
     preference.addEventListener('change', sync);
