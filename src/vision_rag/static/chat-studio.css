@@ -92,7 +92,7 @@
 /* The message pane owns its scrollbar, at its right edge rather than beside the text. */
 .workspace-layout .chat-main,.has-evidence .chat-main { padding:0 0 10px; }
 .workspace-layout .chat-messages,.has-evidence .chat-messages { width:100%; max-width:none; margin:0; padding:18px 18px 24px; overflow-y:auto; scrollbar-gutter:stable; scrollbar-color:#474137 #171717; }
-.chat-messages>.saved-turn { max-width:700px; margin-inline:auto; }.saved-turn { margin-bottom:23px; }.saved-answer,.has-evidence .saved-answer { font-size:13px; line-height:1.7; }.saved-turn h3 { font-size:12px; }.user-message { padding:7px 10px; margin-bottom:19px; }.assistant-label { margin-bottom:8px; }
+.chat-messages>.saved-turn { width:100%; max-width:700px; min-width:0; flex:0 0 auto; margin-inline:auto; }.saved-turn { margin-bottom:23px; }.saved-answer,.has-evidence .saved-answer { font-size:13px; line-height:1.7; }.saved-turn h3 { font-size:12px; }.user-message { padding:7px 10px; margin-bottom:19px; }.assistant-label { margin-bottom:8px; }
 #question-form { width:calc(100% - 24px); max-width:700px; }.composer-footnote,#answer-progress,#chat-preparation { width:calc(100% - 24px); max-width:700px; margin-inline:auto; }.welcome { margin-top:24px; }.welcome h2 { font-size:26px; }.welcome .eyebrow { border:0; background:none; padding:0; }
 .workspace-layout #chat-evidence { position:relative; padding-left:17px; overflow:visible; }
 #reader-resize { position:absolute; left:-5px; top:0; bottom:0; width:10px; z-index:4; cursor:col-resize; touch-action:none; background:transparent; }
