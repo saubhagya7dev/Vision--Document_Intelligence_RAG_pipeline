@@ -40,6 +40,27 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+The **12 November charcoal theme and research dashboard** passed the full
+**163-test Python suite** (two dependency deprecation warnings) and **20 frontend
+tests**. New dashboard checks cover search eligibility, empty/unknown states,
+partial request failure, coalesced refreshes, safe title rendering and record
+actions. API checks verify the hero → architecture → walkthrough order and
+fingerprinted shared-theme/dashboard assets. JavaScript syntax and changed-Python
+lint/format checks passed.
+
+Browser checks used generated PDFs and simulated inference. They verified Ask
+with the correct PDF selected, a completed answer, saving a finding, resuming the
+correct conversation, opening that finding and its exports, and the neutral
+landing/animation placement. Narrow layouts contained dashboard content at a
+383px CSS viewport (378px content); the landing used a 384px viewport (369px content).
+The diagram retained contained horizontal scrolling. See
+[source-hashed verification](evidence/charcoal-verification.json),
+[dashboard](assets/charcoal-dashboard-desktop.png),
+[mobile dashboard](assets/charcoal-dashboard-mobile.png) and
+[landing](assets/charcoal-landing-desktop.png). No real owner library or paid
+provider calls were used. Empty-library and partial-failure states were exercised
+in the frontend harness, not by deleting library data in the browser.
+
 The **11 November architecture wireframe** passed **15 frontend tests** and
 **two targeted landing API tests** (two dependency deprecation warnings).
 The new controller checks cover the six-stage loop, manual inspection, pause/play,
@@ -208,7 +229,7 @@ by routine tests or mocked inference.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
-node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs
+node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs tests/frontend_dashboard.test.mjs
 .\.venv\Scripts\python.exe -m ruff check src scripts tests
 .\.venv\Scripts\python.exe -m ruff format --check src scripts tests
 .\.venv\Scripts\python.exe -m mypy src
