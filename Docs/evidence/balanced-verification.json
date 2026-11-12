@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-12",
+  "scope": "Flanking hero graphics and compact history/conversation/evidence layout",
+  "targeted_python_tests": 2,
+  "frontend_tests": 26,
+  "full_python_suite_rerun": false,
+  "checks": [
+    "Home navigation",
+    "History selection and switching",
+    "Responsive history disclosure",
+    "Citation opening",
+    "Expanded reader and Fit page",
+    "Escape focus restoration and history inert state",
+    "Motion pause",
+    "No console warnings or errors"
+  ],
+  "desktop_css_px": {
+    "reader_height": 644,
+    "canvas_height": 321,
+    "viewport": [
+      1280,
+      720
+    ],
+    "reader_width": 371.1875,
+    "conversation_width": 670.8125,
+    "history_width": 182
+  },
+  "mobile_css_px": {
+    "document_width": 384,
+    "viewport": [
+      384,
+      820
+    ],
+    "composer_bottom": 790.203125,
+    "reader_width": 384
+  },
+  "limitations": [
+    "Disposable generated PDFs with simulated inference",
+    "No real library or .env changes",
+    "No new provider or answer-quality measurements"
+  ],
+  "source_sha256": {
+    "src/vision_rag/static/landing.html": "f391e660cd63713ffd1dd98416aaef9e684105950e73fc505827e4e0eeb94f57",
+    "src/vision_rag/static/hero-simulation.css": "746fc2604679aab11404d58dea0a137c9fc77d99cad0825cacc1f89780b8456b",
+    "src/vision_rag/static/hero-simulation.js": "a4cd6e37e4d76998e0567f7d0212f82dfba58fd50be6ec704955c42d9c6e85ea",
+    "src/vision_rag/static/index.html": "774969b6d731d90e983239d126c013344ed11b6dc9be07982bce7ca70bfdbe7f",
+    "src/vision_rag/static/chat-studio.css": "1668619f8bbd82cc49e93bb69f942cb8d67bcb2cdd57e5db6361ccf0efa0f847",
+    "src/vision_rag/static/workspace.js": "e5b2eab91ee23cd7bda00c5f1cbe35bb59a6241c27d5055cb1bd03b98cc3f8e3"
+  }
+}

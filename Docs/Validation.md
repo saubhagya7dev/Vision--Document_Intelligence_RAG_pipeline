@@ -40,6 +40,25 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+The **12 November compact chat and flanking hero correction** passed the two
+affected API/landing tests and all **26 frontend tests**, plus changed-Python
+lint/format, JavaScript syntax and whitespace checks. The full Python suite was
+not rerun for this presentation-only correction; its earlier result is below.
+
+Disposable browser checks verified the side animations and pause control,
+Home navigation, conversation switching and selected-history state, citation
+opening, expansion, Fit page and Escape focus restoration. At 1280×720 CSS pixels,
+history measured 182px, conversation 671px and evidence 371px; the reader used
+644px of height with a 321px page canvas. At 384×820, the document width was 384px
+and the composer bottom was 790px. History collapsed when entering mobile and
+reopened on desktop. Mobile evidence remained full screen. No console warnings
+or errors were captured. Tests used generated PDFs and simulated inference;
+they make no new provider or answer-quality claims.
+
+See [correction evidence](evidence/balanced-verification.json),
+[revised hero](assets/balanced-hero-desktop.png) and
+[three-column chat](assets/balanced-chat-desktop.png).
+
 The **12 November hero and chat reader update** passed **163 Python tests**
 (two dependency deprecation warnings) and **26 frontend tests**. Reader tests
 cover page fitting, bounded zoom persistence, width reset and shared findings
