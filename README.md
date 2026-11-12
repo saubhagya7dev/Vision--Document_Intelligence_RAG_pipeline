@@ -17,7 +17,7 @@ Gemini to generate answers from retrieved evidence.
 
 </div>
 
-> Updated 9 November 2026 for the implemented phases and workspace redesign.
+> Updated 12 November 2026 for Phases 1–7 and the latest research desk updates.
 > The verified profile is one local application process and one owner.
 > Production and shared-deployment release gates remain incomplete.
 > See the [documentation index](Docs/README.md#current-status) and
@@ -26,13 +26,22 @@ Gemini to generate answers from retrieved evidence.
 **Upgrade history:** [From the original prototype to the current workspace](Docs/Upgrade%20history.md)
 explains every phase, implementation changes, old/new screenshots and measured results.
 
-![Vision project landing page with its workspace entry](Docs/assets/luminous-landing-desktop.png)
+![Vision project landing page with its workspace entry](Docs/assets/balanced-hero-desktop.png)
 
 The root page introduces the project. **Explore Vision** opens the separate
-`/workspace` application with saved chats, documents, comparisons and findings.
+`/workspace` application with a library-backed dashboard, saved chats, documents,
+comparisons and findings. The charcoal landing includes small document/retrieval
+animations and an interactive architecture map with motion controls.
+
+![Current research desk with searchable history and an adjustable evidence reader](Docs/assets/resizable-research-desk.png)
+
+Screenshots use fictional PDFs and simulated inference; they demonstrate the
+interface, not provider answer quality.
 
 ## What you can do
 
+- **Resume your research:** use the dashboard’s ready-document actions, search
+  saved chat titles, and pin frequent conversations in the current browser.
 - **Keep a persistent PDF library:** immutable versions, replacements, deletion,
   background jobs, progress, retry and cancellation.
 - **Ask within an explicit source set:** select up to six documents and submit
@@ -40,7 +49,7 @@ The root page introduces the project. **Explore Vision** opens the separate
 - **Find pages locally:** retrieve evidence without a generation-provider call;
   local embedding models are still required.
 - **Inspect cited originals:** version-specific page previews, navigation, zoom
-  and original PDF access in a desktop drawer or mobile sheet.
+  and original PDF access in a resizable desktop reader or full-screen mobile view.
 - **Compare reports or retained versions:** select two to four versions and one
   to eight fields; keep citations, units, currency, period, scope and explicit
   missing evidence in the resulting table.
@@ -295,7 +304,15 @@ errors are not blindly retried. Final claims/citations are still validated.
 
 ## Verification and measured limits
 
-The [9 November luminous interface record](Docs/evidence/luminous-verification.json)
+The [12 November studio record](Docs/evidence/studio-verification.json) reports
+**163 Python tests and 26 frontend tests passed**. Later research-desk changes
+record **29 frontend tests and two affected API/landing tests**, followed by two
+conversation storage/restart checks for turn alignment. The full Python suite
+was not rerun for those later frontend changes. See the
+[recorded checks](Docs/Validation.md#recorded-checks) for scope and limitations.
+These are recorded results, not a fresh full-suite run for this documentation update.
+
+The historical [9 November luminous interface record](Docs/evidence/luminous-verification.json)
 reports **138 Python tests and seven frontend tests passed**, plus static and
 desktop/mobile checks for the new landing-to-workspace experience.
 
