@@ -40,6 +40,26 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+The **12 November hero and chat reader update** passed **163 Python tests**
+(two dependency deprecation warnings) and **26 frontend tests**. Reader tests
+cover page fitting, bounded zoom persistence, width reset and shared findings
+controls. Hero tests cover manual pause, visibility, lifecycle and reduced motion.
+Changed Python lint/format and JavaScript syntax checks passed.
+
+Browser verification used disposable generated PDFs and simulated inference,
+without touching the real library or making provider calls. Home returned from
+workspace to landing. At a 1280px CSS viewport the split reader measured 692px
+wide; expanded mode measured 1228px. Fit page rendered a 454px image inside a
+486px canvas. Fit width, previous/next page and Escape focus restoration worked.
+At 384px the chat had no document overflow and the source reader used the full
+viewport width. The landing was contained at 383px. No console warnings/errors
+were captured. These are UI checks, not new answer-quality measurements.
+
+See the [source-hashed verification record](evidence/studio-verification.json),
+[hero](assets/studio-hero-desktop.png), [chat](assets/studio-chat-desktop.png),
+[expanded reader](assets/studio-reader-expanded.png) and
+[mobile reader](assets/studio-reader-mobile.png).
+
 The **12 November charcoal theme and research dashboard** passed the full
 **163-test Python suite** (two dependency deprecation warnings) and **20 frontend
 tests**. New dashboard checks cover search eligibility, empty/unknown states,
@@ -229,7 +249,7 @@ by routine tests or mocked inference.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
-node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs tests/frontend_dashboard.test.mjs
+node --test tests/frontend_*.test.mjs
 .\.venv\Scripts\python.exe -m ruff check src scripts tests
 .\.venv\Scripts\python.exe -m ruff format --check src scripts tests
 .\.venv\Scripts\python.exe -m mypy src

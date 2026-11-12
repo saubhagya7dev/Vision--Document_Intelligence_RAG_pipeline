@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-12",
+  "scope": "Hero simulation, visible Home, conversation and original-page reader",
+  "python_tests": 163,
+  "frontend_tests": 26,
+  "python_warnings": 2,
+  "lint_format_syntax": "passed",
+  "browser": {
+    "fixture": "tests/browser_ux_fixture.py; disposable generated PDFs and simulated inference",
+    "home_navigation": "passed",
+    "split_reader_width_css_px": 692.3125,
+    "expanded_reader_width_css_px": 1228,
+    "fit_page_canvas_height_css_px": 486,
+    "fit_page_image_height_css_px": 453.953125,
+    "desktop_viewport_css_px": [
+      1280,
+      900
+    ],
+    "chat_mobile_viewport_css_px": [
+      384,
+      820
+    ],
+    "mobile_reader_width_css_px": 384,
+    "chat_mobile_document_width_css_px": 384,
+    "landing_mobile_viewport_css_px": [
+      383,
+      820
+    ],
+    "landing_mobile_document_width_css_px": 365,
+    "checks": [
+      "Fit page",
+      "Fit width",
+      "Previous and next page",
+      "Escape restores citation focus",
+      "Modal background inert",
+      "Mobile full-screen reader",
+      "Hero pause and resume"
+    ],
+    "console_warnings_errors": 0
+  },
+  "limitations": [
+    "No live provider or answer-quality measurements",
+    "Real library and .env untouched"
+  ],
+  "source_sha256": {
+    "src/vision_rag/api/main.py": "ac501e134a2fff3e07aae2c40eb8a72dbd3303152a0467f9897496a9b69e718f",
+    "src/vision_rag/static/index.html": "3ae7ffc77c74ef70aa1940c2beb29d6ffdb61069fa9858ca8ddc88f46d49ae97",
+    "src/vision_rag/static/landing.html": "9ff83cec33babce3e31736400e77a76f7d3a8fa3f1843a21b5ead3ad88a7c84b",
+    "src/vision_rag/static/chat-studio.css": "0d3b4c6aee96bbb4c168cdc0234a058c33bfdd64ded9f619a164667d74a17cc6",
+    "src/vision_rag/static/workspace.js": "3a9527b2165413f570908814806fd51b620405b28702cbdf5b374f0889ac1ab0",
+    "src/vision_rag/static/evidence.js": "19687c532949bf3d6d82682186d4998674e70438c56d67182c4690565b3167bc",
+    "src/vision_rag/static/hero-simulation.css": "5263244bc1635956c1764985555004d910f4b3e7a767c865756a852e5fce0b65",
+    "src/vision_rag/static/hero-simulation.js": "dfd129ed351847e559378d797a44d1d5daba05ccd30094ab1a0015189c6fb954"
+  }
+}
