@@ -42,3 +42,13 @@
     .workspace-layout>.chat-main { grid-column:1; grid-row:4; padding-right:0; }
     .workspace-layout>#chat-evidence { grid-column:2; grid-row:1 / 5; padding-top:20px; }
 }
+/* Single-line composer; document chips and longer drafts add space only as needed. */
+#question-form { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:0 8px; padding:5px 8px; }
+#composer-documents { grid-column:1 / -1; }#composer-documents:empty { display:none; }
+#composer-documents:not(:empty) { padding-bottom:4px; }
+#chat-input { min-height:30px; height:30px; max-height:112px; padding:4px 0; resize:none; overflow-y:auto; box-sizing:border-box; margin:0; }
+#question-form .composer-actions { align-self:end; height:30px; gap:5px; }
+#question-form .composer-actions .btn-icon { width:27px; height:28px; }
+#question-form #send-readiness { display:none; }
+#question-form #send-btn { width:27px; height:27px; min-height:27px; }
+#question-form #stop-answer { padding:4px 7px; min-height:27px; font-size:10px; }
