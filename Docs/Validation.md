@@ -40,6 +40,18 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+The **12 November turn alignment correction** explicitly gives every turn the
+same available width (up to 700px) and prevents vertical flex shrinking. Previously,
+auto horizontal margins let short pending/error text produce a narrower turn
+than a longer completed answer. A disposable fake provider delayed the second
+answer for eight seconds: completed and pending turns both measured 700px at
+the same 296.875px left edge. Their widths/left edges also matched after completion
+and in a narrow layout, with no horizontal document overflow. The two conversation
+storage/restart-recovery tests passed. Genuine restart interruption remains a
+recoverable terminal state; no backend behavior was changed by this CSS correction.
+
+![Aligned completed and pending turns](assets/aligned-pending-turns.png)
+
 The **12 November adjustable research desk update** passed the two affected
 API/landing tests and all **29 frontend tests**, including new resize-bound,
 keyboard persistence, container resize and pointer-cancellation checks. Changed
