@@ -104,6 +104,14 @@ default. The retained 150-DPI router artifact cannot simply be applied to a defa
 
 ## Conversations, comparisons and exports
 
+The owner dashboard reads stats, selected-version readiness, conversation
+summaries and saved-finding summaries through existing authenticated endpoints.
+Readiness, not upload completion, determines Ask eligibility. Independent request
+failures leave explicit unavailable sections and unknown totals, with no fictional
+analytics or stale success toast. Dashboard refreshes coalesce and automatic
+refresh runs only while the page is visible. The separate public landing animation
+uses local illustrative content and makes no owner-data requests.
+
 Server records own conversations, immutable turn source scope, results and ordered
 events. Full answers are the default. SSE exposes progress and the authoritative
 validated final answer; explicit provider-streaming opt-in can add provisional
