@@ -178,6 +178,7 @@
     }
     function sources(items) {
         const list = el('source-list'); list.replaceChildren();
+        el('source-count').textContent = `${items.length} retrieved source${items.length === 1 ? '' : 's'}`;
         if (!items.length) { list.textContent = 'No cited evidence for this answer.'; return; }
         for (const s of items) {
             const b = button(`${s.source} · page ${s.page}`, () => showEvidence(s), 'source-card');
@@ -188,7 +189,7 @@
         }
     }
     function openEvidence() {
-        sourceTrigger = document.activeElement;
+        if (el('chat-evidence').hidden || !el('chat-evidence').contains(document.activeElement)) sourceTrigger = document.activeElement;
         el('chat-evidence').hidden = false;
         el('chat-evidence').scrollTop = 0;
         document.querySelector('.workspace-layout').classList.add('has-evidence');
@@ -197,16 +198,22 @@
     }
     function closeEvidence(restoreFocus = true) {
         el('chat-evidence').hidden = true;
+        el('chat-evidence').classList.remove('reader-expanded');
+        el('expand-evidence').setAttribute('aria-expanded', 'false');
+        el('expand-evidence').textContent = 'Expand reader ↗';
         document.querySelector('.workspace-layout').classList.remove('has-evidence');
         evidenceModality();
         if (restoreFocus && sourceTrigger?.isConnected) sourceTrigger.focus();
     }
     function evidenceModality() {
-        const modal = !el('chat-evidence').hidden && window.matchMedia('(max-width: 1000px)').matches;
+        const modal = !el('chat-evidence').hidden && (window.matchMedia('(max-width: 1100px)').matches || el('chat-evidence').classList.contains('reader-expanded'));
         document.querySelector('.chat-main').inert = modal;
         document.querySelector('.workspace-toolbar').inert = modal;
         document.querySelector('.selection-toolbar').inert = modal;
         el('app-header').inert = modal;
+        el('workspace-status').inert = modal;
+        el('reader-backdrop').hidden = !modal;
+        if (modal && !el('chat-evidence').contains(document.activeElement)) el('close-evidence').focus();
         if (modal) { el('chat-evidence').setAttribute('role', 'dialog'); el('chat-evidence').setAttribute('aria-modal', 'true'); }
         else { el('chat-evidence').removeAttribute('role'); el('chat-evidence').removeAttribute('aria-modal'); }
     }
@@ -356,13 +363,20 @@
         el('chat-messages').addEventListener('scroll', () => { el('jump-latest').hidden = atBottom(); });
         el('jump-latest').addEventListener('click', followLatest);
         el('close-evidence').addEventListener('click', () => closeEvidence());
+        el('reader-backdrop').addEventListener('click', () => closeEvidence());
+        el('expand-evidence').addEventListener('click', () => {
+            const expanded = el('chat-evidence').classList.toggle('reader-expanded');
+            el('expand-evidence').setAttribute('aria-expanded', String(expanded));
+            el('expand-evidence').textContent = expanded ? 'Back to split view ↙' : 'Expand reader ↗';
+            evidenceModality();
+        });
         window.addEventListener('vision-route-changed', event => {
             if (event.detail !== 'chat') closeEvidence(false);
         });
-        window.matchMedia('(max-width: 1000px)').addEventListener('change', evidenceModality);
+        window.matchMedia('(max-width: 1100px)').addEventListener('change', evidenceModality);
         document.addEventListener('keydown', event => {
             if (event.key === 'Tab' && el('chat-evidence').getAttribute('aria-modal') === 'true') {
-                const items = [...el('chat-evidence').querySelectorAll('button:not(:disabled), a[href], input, select, [tabindex="0"]')].filter(node => node.getClientRects().length);
+                const items = [...el('chat-evidence').querySelectorAll('button:not(:disabled), a[href], input, select, summary, [tabindex="0"]')].filter(node => node.getClientRects().length);
                 const first = items[0], last = items.at(-1);
                 if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
                 else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
