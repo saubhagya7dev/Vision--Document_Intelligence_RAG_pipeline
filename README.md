@@ -7,7 +7,7 @@
 [![ColPali](https://img.shields.io/badge/ColPali-v1.3-orange.svg)](https://huggingface.co/vidore/colpali-v1.3)
 [![Storage](https://img.shields.io/badge/Storage-SQLite%20%2B%20Qdrant-DC244C.svg)](#architecture)
 [![API](https://img.shields.io/badge/API-FastAPI-009688.svg)](#api)
-[![Validation](https://img.shields.io/badge/Python%20tests-138%20recorded-brightgreen.svg)](Docs/Validation.md#recorded-checks)
+[![Validation](https://img.shields.io/badge/Python%20tests-163%20recorded-lightgrey.svg)](Docs/Validation.md#recorded-checks)
 [![Status](https://img.shields.io/badge/Status-local%20workspace-orange.svg)](#status-and-limits)
 
 Vision is a local document workspace with hybrid text and visual retrieval,
@@ -326,7 +326,7 @@ RTX 3050 hardware remain unmeasured.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
-node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs
+node --test tests/frontend_selection.test.mjs tests/frontend_landing.test.mjs tests/frontend_wireframe.test.mjs tests/frontend_dashboard.test.mjs
 .\.venv\Scripts\python.exe -m ruff check src scripts tests
 .\.venv\Scripts\python.exe -m ruff format --check src scripts tests
 .\.venv\Scripts\python.exe -m mypy src
