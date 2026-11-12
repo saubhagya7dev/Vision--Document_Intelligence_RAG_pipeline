@@ -21,6 +21,7 @@
     const working = () => Boolean(active || submitting || creating || opening || navigating);
     function sizeComposer() {
         const input = el('chat-input');
+        if (!input.value) { input.style.height = '30px'; return; }
         input.style.height = '0px';
         input.style.height = `${Math.min(input.scrollHeight, 112)}px`;
     }
@@ -400,6 +401,11 @@
             });
         }
         el('chat-input').addEventListener('input', saveDraft);
+        let composerWidth = 0;
+        new ResizeObserver(entries => {
+            const width = entries[0].contentRect.width;
+            if (width > 0 && width !== composerWidth) { composerWidth = width; sizeComposer(); }
+        }).observe(el('chat-input'));
         el('chat-input').addEventListener('keydown', event => {
             if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); ask(); }
         });
