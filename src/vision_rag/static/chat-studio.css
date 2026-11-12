@@ -52,3 +52,13 @@
 #question-form #send-readiness { display:none; }
 #question-form #send-btn { width:27px; height:27px; min-height:27px; }
 #question-form #stop-answer { padding:4px 7px; min-height:27px; font-size:10px; }
+/* Explicit icon geometry avoids platform-dependent glyph baselines. */
+#question-form #send-btn,#question-form #attach-document { display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; min-height:30px; padding:0; margin:0; line-height:1; border-radius:0; transition:background .15s,color .15s,border-color .15s; }
+#question-form #send-btn svg,#question-form #attach-document svg { display:block; flex:none; }
+#question-form #send-btn { background:#e9e0cf; color:#171717; border:1px solid #e9e0cf; box-shadow:none; }
+#question-form #send-btn:hover:not(:disabled) { background:#fff7e8; border-color:#fff7e8; transform:none; }
+#question-form #send-btn:disabled { opacity:1; background:#292929; border-color:#3c3933; color:#817b70; }
+#question-form #attach-document { color:#b6ad9e; border:1px solid transparent; background:transparent; }
+#question-form #attach-document:hover:not(:disabled) { background:#2b2a27; border-color:#49443b; color:#f3eee3; }
+#question-form #attach-document:disabled { opacity:1; color:#6f6a60; }
+#question-form #send-btn[hidden],#question-form #attach-document[hidden] { display:none; }
