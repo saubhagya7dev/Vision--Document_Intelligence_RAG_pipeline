@@ -136,6 +136,9 @@ async def serve_spa(full_path: str) -> HTMLResponse | dict[str, str]:
             "wireframe.js",
             "charcoal.css",
             "dashboard.js",
+            "chat-studio.css",
+            "hero-simulation.css",
+            "hero-simulation.js",
         ):
             digest = hashlib.sha256((STATIC_DIR / asset).read_bytes()).hexdigest()[:12]
             html = html.replace(f'/static/{asset}"', f'/static/{asset}?v={digest}"')
