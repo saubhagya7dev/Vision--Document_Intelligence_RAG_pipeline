@@ -43,7 +43,7 @@ own PDF and workspace links enter the real application; the public demonstration
 never loads your library. New workspace chats offer starter questions and the
 three-step path from document selection to inspecting and saving evidence.
 
-The landing page's **Architecture** section contains an original animated
+Directly below the hero, the landing page's **Architecture** section contains an original animated
 wireframe of the complete document-to-evidence flow. Its six stages are Preserve,
 Prepare, Index, Retrieve, Ground and Keep. The guided tour advances automatically
 while visible; choose any stage to pause and read its explanation, or use
@@ -51,6 +51,23 @@ while visible; choose any stage to pause and read its explanation, or use
 inside its own panel, and selecting a stage brings that module into view.
 Panning pauses the tour. Reduced-motion preferences show a static, selectable
 diagram. This public illustration does not process documents or fetch owner data.
+
+## Dashboard
+
+The Dashboard is a research desk backed by your persisted library. It shows
+searchable documents, documents still preparing, completed questions and saved
+findings. Readiness separates preparation from issues needing attention; a
+successfully uploaded PDF is not treated as searchable until its index is eligible.
+Use **Ask** beside a ready PDF to start a chat with that source selected,
+**Resume** to reopen a specific conversation, or **Open** to inspect a saved
+finding. Processing and library links lead to the corresponding workspace views.
+
+Counts refresh on entry, with **Refresh**, and periodically while the dashboard
+is visible. Failed requests show unavailable sections and unknown totals as **—**;
+empty libraries show starting actions. Public landing examples remain fictional;
+the owner dashboard uses real saved data. All surfaces use charcoal with cream text.
+
+![Charcoal research dashboard using generated browser-fixture documents](assets/charcoal-dashboard-desktop.png)
 
 ## CUDA and model setup
 
@@ -79,8 +96,8 @@ a visual fallback. Downloaded models/OCR runtimes are not deleted by library res
 ## Chat and evidence
 
 The workspace uses a compact header: **Dashboard → Upload → Chat → Documents →
-Compare → Findings**. Black and charcoal surfaces keep green for actions and
-status. The header scrolls horizontally on narrow screens. **Recent chats** and
+Compare → Findings**. Charcoal surfaces use cream text, controls and motion
+highlights. The header scrolls horizontally on narrow screens. **Recent chats** and
 **New chat** live in the chat toolbar; **Settings** contains Data & history and
 the return to About Vision. Luminous type marks active processing.
 
@@ -99,7 +116,7 @@ table scrolls inside its own panel, preserving readable columns and page width.
    uses a separate source sheet. Navigate, zoom or open the original PDF.
 6. Save a useful completed answer as a finding.
 
-![Current compact-header workspace and cited original page](assets/header-workspace-desktop.png)
+![Earlier compact-header chat and cited page, before the charcoal palette](assets/header-workspace-desktop.png)
 
 Every submitted turn retains its source set. Saved conversations and events are
 server-owned. Unsent drafts are saved per chat in browser-tab session storage;
