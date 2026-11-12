@@ -62,3 +62,11 @@
 #question-form #attach-document:hover:not(:disabled) { background:#2b2a27; border-color:#49443b; color:#f3eee3; }
 #question-form #attach-document:disabled { opacity:1; color:#6f6a60; }
 #question-form #send-btn[hidden],#question-form #attach-document[hidden] { display:none; }
+/* Flat mode selector: one frame, equal segments, no nested pill treatment. */
+#page-chat .mode-switch { display:inline-grid; grid-template-columns:1fr 1fr; flex:none; gap:0; padding:0; border:1px solid #eee4cf26; border-radius:0; background:#191919; overflow:visible; }
+#page-chat .mode-switch button { display:flex; align-items:center; justify-content:center; min-width:72px; min-height:28px; margin:0; padding:5px 9px; border:0; border-radius:0; background:transparent; color:#a99f8e; font-size:10px; font-weight:500; line-height:1.2; box-shadow:none; white-space:nowrap; }
+#page-chat .mode-switch button+button { border-left:1px solid #eee4cf26; }
+#page-chat .mode-switch button[aria-pressed=true] { background:#e9e0cf; color:#191919; font-weight:500; }
+#page-chat .mode-switch button:hover:not(:disabled):not([aria-pressed=true]) { background:#282621; color:#eee6d8; }
+#page-chat .mode-switch button:focus-visible { outline:2px solid #c8baa0; outline-offset:2px; position:relative; z-index:1; }
+@media(max-width:700px) { #page-chat .mode-switch button { min-width:65px; min-height:28px; padding:5px 7px; font-size:9px; } }
