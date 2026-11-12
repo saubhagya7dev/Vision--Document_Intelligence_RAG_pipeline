@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-12",
+  "scope": "charcoal/cream site-wide styling, hero-adjacent architecture and owner research dashboard",
+  "python_tests": {
+    "passed": 163,
+    "warnings": 2,
+    "duration_seconds": 99.74,
+    "command": ".venv/Scripts/python.exe -m pytest -q"
+  },
+  "frontend_tests": {
+    "passed": 20,
+    "command": "node --test tests/frontend_dashboard.test.mjs tests/frontend_wireframe.test.mjs tests/frontend_landing.test.mjs tests/frontend_selection.test.mjs"
+  },
+  "static_checks": [
+    "JavaScript syntax (dashboard, app, workspace, findings)",
+    "Ruff lint/format for changed Python files",
+    "balanced landing/workspace HTML",
+    "unique IDs",
+    "balanced CSS blocks",
+    "no dominant green hex colors in active CSS",
+    "hero then architecture then walkthrough",
+    "local documentation links",
+    "Git whitespace"
+  ],
+  "browser": {
+    "fixture": "tests/browser_ux_fixture.py",
+    "documents": "generated fictional PDFs",
+    "inference": "simulated",
+    "owner_library_touched": false,
+    "paid_calls": false,
+    "checks": [
+      "initial dashboard starting states",
+      "real fixture readiness and totals",
+      "Ask selects the right PDF",
+      "completed cited answer",
+      "saved answer finding",
+      "Resume opens the right chat",
+      "Open finding opens the right answer and exports",
+      "refreshed dashboard totals",
+      "neutral theme on landing and workspace",
+      "architecture immediately follows hero",
+      "mobile dashboard containment",
+      "mobile landing and contained diagram panning"
+    ],
+    "desktop_css_viewport": [
+      1280,
+      900
+    ],
+    "desktop_dashboard_content_width": 1274,
+    "mobile_dashboard_css_viewport": [
+      384,
+      820
+    ],
+    "mobile_dashboard_content_width": 378,
+    "mobile_landing_css_viewport": [
+      384,
+      820
+    ],
+    "mobile_landing_content_width": 369,
+    "computed_body_rgb": [
+      17,
+      17,
+      17
+    ],
+    "computed_dashboard_heading_rgb": [
+      243,
+      238,
+      227
+    ],
+    "console_errors": []
+  },
+  "screenshots": {
+    "Docs/assets/charcoal-dashboard-desktop.png": [
+      1274,
+      1087
+    ],
+    "Docs/assets/charcoal-dashboard-mobile.png": [
+      378,
+      1799
+    ],
+    "Docs/assets/charcoal-landing-desktop.png": [
+      1265,
+      889
+    ],
+    "Docs/assets/charcoal-landing-mobile.png": [
+      369,
+      788
+    ],
+    "Docs/assets/charcoal-wireframe.png": [
+      1265,
+      889
+    ]
+  },
+  "limits": [
+    "Dashboard reflects persisted owner data; screenshots use a disposable fixture.",
+    "Empty-library and partial-failure states are tested in the frontend harness.",
+    "No new provider-quality, deployment or distribution approval."
+  ],
+  "source_sha256": {
+    "src/vision_rag/api/main.py": "4443bc0bf4cb11f612eea3b4bda576d6a1450f99df53ad48304e17e2b74bdab6",
+    "src/vision_rag/static/app.js": "cf8f6ca33901ed8f2c111c9f070e5456ea5290acdae466a660bd28905cb59199",
+    "src/vision_rag/static/charcoal.css": "ea1072bd3073fa9274df8c1b9012cb26adbf9ccf1384dee02dbf1fee7b09b3f7",
+    "src/vision_rag/static/dashboard.js": "0b69ca96a6596461b86660985ddba9bc526c72a2b65da876dbca220e993d781a",
+    "src/vision_rag/static/documents.js": "cdf2d358db2ce58547e15997b76436e6381cc7cc7a1e78d9cb79fb70be5ec268",
+    "src/vision_rag/static/emerald.css": "51e815f31a66bff2a09f2aaf857944fa7d0113dcda1d98390039830db88c81c7",
+    "src/vision_rag/static/evidence.js": "0e914f0e6b983a8d6dc0818a3a8239c77e714f21e73beea34d8bdca29be187de",
+    "src/vision_rag/static/findings.js": "cb76ca359abec7c7ea3c5db648538b838fc0149e820bdbf76469a8a25bd80eab",
+    "src/vision_rag/static/index.html": "25734d48587fdfb8a8caae91589a0aa48329b602449f7b5a4630aeb54e481f27",
+    "src/vision_rag/static/landing.css": "d4fa1c749c02ad822c5695d7fb252c0f3dbd96c3756f50787eef6cb7a9c895aa",
+    "src/vision_rag/static/landing.html": "4d1449be3487052c5ed6d46a5a5d381f8c04e3ec8949ae90caeeb7a3a691f3d9",
+    "src/vision_rag/static/landing.js": "615f4130e51b268fffee106b415da664849a4a48ff58da3e46ea449da06cec38",
+    "src/vision_rag/static/session.js": "227b1960036f1e0610e3da5bc10de110e9849375cef596e6d327fa3d9525fc2b",
+    "src/vision_rag/static/styles.css": "c1b4bf23a7a8e927fa69d3a23b10cdebe96c7ece70be2d3d9c18eae6a303d907",
+    "src/vision_rag/static/wireframe.css": "7b7d2890d56fdae3a8a4f0c1fc43fd78c6a5878b2a225c5f84d80fb9f602662a",
+    "src/vision_rag/static/wireframe.js": "5e3547051dce9347bb58d42665f5d4b272f613f823639baeb3b7dd598c3c66d6",
+    "src/vision_rag/static/workspace.css": "45b5db4aba2c83ec0e42abdfcae70ea479ca5eb6e7d09bc98f094784cbff87a9",
+    "src/vision_rag/static/workspace.js": "efb50bdd2347563942dd651ec2c8c108e36d9cf218780d84bd6e3652a45e255c"
+  }
+}
