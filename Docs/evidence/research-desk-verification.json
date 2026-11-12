@@ -42,9 +42,10 @@
     "src/vision_rag/api/main.py": "b3cb2aa6a9c6eccb169559dea52e47992521b88ab5e6eb9dc4c7c0aff239e161",
     "src/vision_rag/static/index.html": "6bd6f70465b713331eb0841cc2d5ffa53b1f89b36c15614d178f05259689311a",
     "src/vision_rag/static/chat-studio.css": "f03864b0a54024c69cfe2a6836e45f519610f35b47dd94123e608c73728d899b",
-    "src/vision_rag/static/workspace.js": "cdcd661ed49dbdadafe823d665f1fe7ed5e07f8bdd53765071fb28832c3b9b17",
+    "src/vision_rag/static/workspace.js": "46b668aa1b30e7b9b97dbf21ad478e6e25c218f62bf0d50c1bed8401215819c3",
     "src/vision_rag/static/app.js": "f57f04f7c51931851629f0a89fd35822bcf40f606f490c3ec01bee8c49ccc8fb",
     "src/vision_rag/static/reader-layout.js": "d34574abf249cbcfdded940d1ddf31d4123e0efc0a911506e0a36486d4ff9b79",
     "src/vision_rag/static/hero-simulation.css": "d13c5ecb059b2e1cd0bdcf7ed31f01d5d40c50dcbce5625f0f8a3505a3767ac3"
-  }
+  },
+  "empty_composer_input_height_css_px": 30
 }
