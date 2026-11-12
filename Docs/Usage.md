@@ -4,6 +4,8 @@ Consolidated 9 November 2026. This guide replaces the separate GPU, workspace,
 data-controls and operational phase guides. See [upgrade history](Upgrade%20history.md)
 for the original version and phase-by-phase changes.
 
+Updated 12 November 2026 for the current landing, dashboard and research desk.
+
 ## Install and start
 
 The named verified environment is Windows/Python 3.14 with an RTX 4050 Laptop.
@@ -75,7 +77,11 @@ Double-click resets the width. This preference is saved in the current browser.
 The conversation keeps a minimum usable width, and its scrollbar is at the
 right edge of the message pane, separate from the PDF's own scrollbar.
 The composer starts as a single-line bar and grows with the draft, up to a
-112px input height. Clearing or sending the draft shrinks it again.
+112px input height. Clearing or sending the draft shrinks it again, including
+after resizing the reader or viewport. Pending, failed and completed turns share
+the same reading column, so an answer appearing does not shift the conversation.
+A server restart can still interrupt an active turn; reopen the chat to inspect
+its saved state before starting another question.
 On narrow screens the reader opens full screen. **Fit page** shows the whole
 page, while **Fit width** makes its content wider for reading. Zoom, page controls
 and the original PDF link remain available. Expand the retrieved-source summary
@@ -145,7 +151,7 @@ table scrolls inside its own panel, preserving readable columns and page width.
    uses a separate source sheet. Navigate, zoom or open the original PDF.
 6. Save a useful completed answer as a finding.
 
-![Earlier compact-header chat and cited page, before the charcoal palette](assets/header-workspace-desktop.png)
+![Current charcoal chat, permanent history and adjustable original-page reader](assets/resizable-research-desk.png)
 
 Every submitted turn retains its source set. Saved conversations and events are
 server-owned. Unsent drafts are saved per chat in browser-tab session storage;
