@@ -17,6 +17,9 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert "/static/hero-simulation.css?v=" in home.text
     assert "/static/hero-simulation.js?v=" in home.text
     assert 'id="hero-simulation"' in home.text
+    assert 'class="hero-orbit hero-orbit-left"' in home.text
+    assert 'class="hero-orbit hero-orbit-right"' in home.text
+    assert 'class="hero-sim-content"' not in home.text
     assert 'id="vision-wireframe"' in home.text
     assert (
         home.text.index('id="product"')
@@ -40,6 +43,8 @@ def test_project_page_is_separate_from_workspace_and_versions_its_assets(client)
     assert 'id="expand-evidence"' in workspace.text
     assert 'id="viewer-fit-page"' in workspace.text
     assert 'id="viewer-fit-width"' in workspace.text
+    assert 'class="chat-rail"' in workspace.text
+    assert 'class="chat-workbench"' in workspace.text
     assert home.headers["cache-control"] == "no-store"
     assert client.get("/static/landing.css").status_code == 200
     assert client.get("/static/landing.js").status_code == 200
