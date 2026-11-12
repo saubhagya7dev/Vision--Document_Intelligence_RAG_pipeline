@@ -230,7 +230,7 @@
             saveDraft(); evidence.reset(); closeEvidence();
             await selection.refresh();
             current = await api(`/conversations/${encode(id)}`);
-            el('chat-history').open = false;
+            el('chat-history').open = !window.matchMedia('(max-width: 700px)').matches;
             localStorage.setItem('vr_conversation', id);
             restoreDraft(); progress(''); scope(); render(); await list();
             sources(current.messages.filter(m => m.result).at(-1)?.result.sources || []);
@@ -249,7 +249,7 @@
         saveDraft(); busy(true); evidence.reset(); closeEvidence();
         const oldDraft = !current ? el('chat-input').value : '';
         current = await api('/conversations', 'POST', {title: 'New conversation', document_ids: []});
-        el('chat-history').open = false;
+        el('chat-history').open = !window.matchMedia('(max-width: 700px)').matches;
         el('chat-input').value = oldDraft; saveDraft(); progress('');
         localStorage.setItem('vr_conversation', current.id);
         scope(); render(); sources([]); await list(); status('Choose documents, then ask a question.');
@@ -419,6 +419,10 @@
         });
         window.addEventListener('offline', () => status('Offline. Your draft is kept; reconnect to reopen saved chats.'));
         window.addEventListener('online', () => { if (!active) open(); });
+        const compactHistory = window.matchMedia('(max-width: 700px)');
+        const syncHistory = () => { el('chat-history').open = !compactHistory.matches; };
+        compactHistory.addEventListener('change', syncHistory);
+        syncHistory();
         list().then(() => busy(false)).catch(report);
     }
     window.VisionWorkspace = {open, setup, async resume(id) {
