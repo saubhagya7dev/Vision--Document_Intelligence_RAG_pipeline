@@ -31,8 +31,8 @@ executable is normally `.venv/bin/python`.
 The root URL opens the public **About Project** landing page. Choose **Explore
 Vision** or **Launch Workspace** to enter `/workspace`. The project page explains
 features and architecture without requesting library or session data. The
-workspace retains owner sign-in when configured. The visible **Home** link beside
-the Vision logo returns to the project page, as does **Settings → About Vision**;
+workspace retains owner sign-in when configured. The visible **Home** link at
+the upper right returns to the project page, as does **Settings → About Vision**;
 existing root `#chat`/`#documents` bookmarks redirect
 to the equivalent workspace section.
 
@@ -59,11 +59,21 @@ offscreen and in background tabs, and respects reduced-motion preferences.
 
 ### Reading a conversation and its evidence
 
-Chat uses compact typography and square controls, with recent conversations in
-a left rail and selected documents above the anchored composer. The history rail
-becomes a disclosure on mobile. Click an answer citation or **Inspect evidence**
+Chat uses compact typography and square controls, with recent conversations always
+visible in a left rail (a compact list above chat on mobile) and selected documents
+above the anchored composer. Search chats by title, pin frequently used chats with
+the diamond control, or switch between **All chats** and **Pinned**. Pins are
+browser-local preferences. **Add PDF** and **Compare** are quick research links.
+Connection status and **Settings** sit below the library/finding links; on other
+workspace pages they remain accessible in the bottom utilities area.
+Click an answer citation or **Inspect evidence**
 to open the original, version-specific page. On desktop the reader is a narrower,
 full-height right column; **Expand reader** opens a larger reading surface.
+Drag the reader's left divider to adjust its width. With the divider focused,
+Left/Right changes width by 20px (Shift: 50px); Home/End selects its limits.
+Double-click resets the width. This preference is saved in the current browser.
+The conversation keeps a minimum usable width, and its scrollbar is at the
+right edge of the message pane, separate from the PDF's own scrollbar.
 The composer starts as a single-line bar and grows with the draft, up to a
 112px input height. Clearing or sending the draft shrinks it again.
 On narrow screens the reader opens full screen. **Fit page** shows the whole
