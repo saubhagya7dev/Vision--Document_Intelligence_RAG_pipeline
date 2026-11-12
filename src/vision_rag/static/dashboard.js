@@ -73,7 +73,8 @@
         else if (!data.conversations.length) empty(chats, 'Keep a conversation with your documents. Your chats will be waiting here when you return.', 'Start a conversation →', '#chat');
         else for (const chat of data.conversations.slice(0, 3)) {
             const row = node('div', '', 'desk-work-row'), copy = node('div');
-            const scope = chat.document_ids === null ? 'All documents when asked' : `${chat.document_ids?.length ?? 0} selected documents`;
+            const selected = chat.document_ids?.length ?? 0;
+            const scope = chat.document_ids === null ? 'All documents when asked' : `${selected} selected document${selected === 1 ? '' : 's'}`;
             copy.append(node('strong', chat.title), node('small', `${scope} · ${date(chat.updated_at)}`));
             const resume = action('Resume ↗', () => window.VisionWorkspace.resume(chat.id)); resume.setAttribute('aria-label', `Resume ${chat.title}`);
             row.append(node('span', '▱', 'desk-row-icon'), copy, resume); chats.append(row);
@@ -84,7 +85,8 @@
         else for (const doc of data.documents.slice(0, 5)) {
             const row = node('div', '', 'desk-work-row'), copy = node('div');
             const label = doc.deskState === 'ready' ? 'Ready to ask' : doc.deskState === 'attention' ? 'Needs attention' : 'Preparing';
-            copy.append(node('strong', doc.filename), node('small', `${doc.page_count ?? 0} pages · ${label}`));
+            const pages = doc.page_count ?? 0;
+            copy.append(node('strong', doc.filename), node('small', `${pages} page${pages === 1 ? '' : 's'} · ${label}`));
             const open = doc.deskState === 'ready' ? action('Ask ↗', () => window.VisionWorkspace.useDocument(doc.id)) : link('Review ↗', '#upload', 'desk-row-action');
             open.setAttribute('aria-label', doc.deskState === 'ready' ? `Ask about ${doc.filename}` : `Review preparation for ${doc.filename}`);
             row.append(node('span', 'PDF', 'desk-pdf'), copy, open);
