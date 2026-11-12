@@ -160,11 +160,11 @@
                         <label for="chat-input" class="sr-only">Ask about your documents</label>
                         <textarea id="chat-input" rows="1" maxlength="8000" autocomplete="off" placeholder="Ask a follow-up about your documents…" required></textarea>
                         <div class="composer-actions">
-                            <button class="btn-icon" id="attach-document" type="button" aria-label="Upload PDF">＋</button>
+                            <button class="btn-icon" id="attach-document" type="button" aria-label="Upload PDF" title="Upload PDF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
                             <label class="composer-mode" hidden><span class="sr-only">Question mode</span><select id="question-mode"><option value="answer">Ask documents</option><option value="pages">Find pages</option></select></label>
                             <button class="quiet-action" id="find-pages-btn" type="button" hidden>Find pages</button>
                             <span id="send-readiness" class="composer-hint"></span>
-                            <button class="btn btn-primary" id="send-btn" type="submit" aria-label="Send question">↑</button>
+                            <button class="btn btn-primary" id="send-btn" type="submit" aria-label="Send question" title="Send question (Enter)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true" focusable="false"><path d="m6 11 6-6 6 6M12 5v14"/></svg></button>
                             <button class="btn btn-primary" id="stop-answer" type="button" hidden>Stop</button>
                         </div>
                     </form>
