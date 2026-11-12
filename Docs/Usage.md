@@ -31,8 +31,9 @@ executable is normally `.venv/bin/python`.
 The root URL opens the public **About Project** landing page. Choose **Explore
 Vision** or **Launch Workspace** to enter `/workspace`. The project page explains
 features and architecture without requesting library or session data. The
-workspace retains owner sign-in when configured. **Settings → About Vision**
-returns to the project page; existing root `#chat`/`#documents` bookmarks redirect
+workspace retains owner sign-in when configured. The visible **Home** link beside
+the Vision logo returns to the project page, as does **Settings → About Vision**;
+existing root `#chat`/`#documents` bookmarks redirect
 to the equivalent workspace section.
 
 The landing page's **How it works** section is an interactive demonstration.
@@ -51,6 +52,21 @@ while visible; choose any stage to pause and read its explanation, or use
 inside its own panel, and selecting a stage brings that module into view.
 Panning pauses the tour. Reduced-motion preferences show a static, selectable
 diagram. This public illustration does not process documents or fetch owner data.
+
+The hero also illustrates a fictional report flowing through text and visual
+retrieval to a cited answer. **Pause simulation** stops its motion. It pauses
+offscreen and in background tabs, and respects reduced-motion preferences.
+
+### Reading a conversation and its evidence
+
+Chat provides a spacious conversation column and an anchored composer with the
+selected documents visible. Click an answer citation or **Inspect evidence** to
+open the original, version-specific page. On desktop the reader occupies more
+than half the available width; **Expand reader** opens a larger reading surface.
+On narrow screens the reader opens full screen. **Fit page** shows the whole
+page, while **Fit width** makes its content wider for reading. Zoom, page controls
+and the original PDF link remain available. Expand the retrieved-source summary
+to switch evidence. Close the reader or press Escape to return to the citation.
 
 ## Dashboard
 
