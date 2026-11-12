@@ -209,6 +209,7 @@
             if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
         });
 
+        document.getElementById(page === 'chat' ? 'chat-rail-footer' : 'workspace-utility-dock').append(document.getElementById('workspace-utilities'));
         document.body.dataset.findingsView = page === 'findings' ? 'saved' : 'compare';
         document.getElementById('analysis-title').textContent = page === 'findings' ? 'Saved findings' : 'Compare reports';
         window.dispatchEvent(new CustomEvent('vision-route-changed', {detail: page}));
@@ -222,13 +223,13 @@
     }
 
     function closeNavigation() {
-        document.querySelectorAll('#workspace-menu[open], #chat-history[open], .chat-actions[open]').forEach(menu => { menu.open = false; });
+        document.querySelectorAll('#workspace-menu[open], .chat-actions[open]').forEach(menu => { menu.open = false; });
     }
     function setupNavigation() {
         document.addEventListener('keydown', event => {
             if (event.key !== 'Escape' || document.querySelector('dialog[open]')) return;
             const menu = document.activeElement?.closest('details[open]');
-            if (menu && menu.matches('#workspace-menu, #chat-history, .chat-actions')) {
+            if (menu && menu.matches('#workspace-menu, .chat-actions')) {
                 menu.open = false; menu.querySelector('summary').focus();
             }
         });
@@ -236,7 +237,7 @@
             if (event.target.closest('a, #data-controls-btn, #sign-out')) closeNavigation();
         });
         document.addEventListener('click', event => {
-            document.querySelectorAll('#workspace-menu[open], #chat-history[open], .chat-actions[open]').forEach(menu => {
+            document.querySelectorAll('#workspace-menu[open], .chat-actions[open]').forEach(menu => {
                 if (!menu.contains(event.target)) menu.open = false;
             });
         });

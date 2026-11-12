@@ -24,7 +24,7 @@
 <body>
     <a class="skip-link" href="#app-main">Skip to main content</a>
     <header id="app-header" class="app-topbar" aria-label="Workspace navigation">
-        <div class="workspace-brand"><a href="#dashboard" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a><a href="/" class="workspace-home" aria-label="Home — About Vision">↖ Home</a></div>
+        <div class="workspace-brand"><a href="#dashboard" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a></div>
         <nav id="main-nav" class="header-nav" aria-label="Main navigation">
             <a href="#dashboard" class="nav-item" data-page="dashboard"><span aria-hidden="true">▦</span> Dashboard</a>
             <a href="#upload" class="nav-item" data-page="upload"><span aria-hidden="true">↥</span> Upload</a>
@@ -33,14 +33,7 @@
             <a href="#analysis" class="nav-item" data-page="analysis"><span aria-hidden="true">▥</span> Compare</a>
             <a href="#findings" class="nav-item" data-page="findings"><span aria-hidden="true">♧</span> Findings</a>
         </nav>
-        <div class="header-tools">
-            <div class="status-indicator" id="api-status"><span class="status-dot"></span><span class="status-text">Checking…</span></div>
-            <details id="workspace-menu" class="header-menu"><summary>Settings</summary><div>
-                <button class="quiet-action" id="data-controls-btn">Data &amp; history</button>
-                <a href="/" class="quiet-action">About Vision ↗</a>
-                <button class="quiet-action" id="sign-out" hidden>Sign out</button>
-            </div></details>
-        </div>
+        <a href="/" class="workspace-home" aria-label="Home — About Vision">↖ Home</a>
     </header>
 
     <!-- ===== TOAST CONTAINER ===== -->
@@ -132,8 +125,20 @@
         <section id="page-chat" class="page">
             <aside class="chat-rail" aria-label="Conversation history">
                 <button id="new-conversation" class="btn btn-secondary">＋ New chat</button>
-                <details id="chat-history" class="history-menu" open><summary>Recent conversations</summary><nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav></details>
-                <div class="chat-rail-footer"><span>YOUR RESEARCH SPACE</span><a href="#documents">Document library ↗</a><a href="#findings">Saved findings ↗</a></div>
+                <label class="history-search"><span class="sr-only">Search conversations</span><input id="history-search" type="search" placeholder="Search chats…" autocomplete="off"></label>
+                <div class="rail-quick-actions"><a href="#upload">＋ Add PDF</a><a href="#analysis">⇄ Compare</a></div>
+                <div class="history-heading"><span>Recent chats</span><span id="history-count">0</span></div>
+                <div class="history-filters" aria-label="Conversation filters"><button id="history-all" type="button" aria-pressed="true">All chats</button><button id="history-pinned" type="button" aria-pressed="false">Pinned</button></div>
+                <nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav>
+                <p id="history-empty" class="sidebar-empty" hidden>No chats match this search.</p>
+                <div class="chat-rail-footer" id="chat-rail-footer"><span>YOUR RESEARCH SPACE</span><a href="#documents">Document library ↗</a><a href="#findings">Saved findings ↗</a>        <div class="workspace-utilities" id="workspace-utilities">
+            <div class="status-indicator" id="api-status"><span class="status-dot"></span><span class="status-text">Checking…</span></div>
+            <details id="workspace-menu" class="header-menu"><summary>Settings</summary><div>
+                <button class="quiet-action" id="data-controls-btn">Data &amp; history</button>
+                <a href="/" class="quiet-action">About Vision ↗</a>
+                <button class="quiet-action" id="sign-out" hidden>Sign out</button>
+            </div></details>
+        </div></div>
             </aside>
             <div class="chat-workbench">
             <header class="workspace-toolbar">
@@ -172,6 +177,7 @@
                     <input type="file" id="chat-file-input" accept=".pdf,application/pdf" hidden>
                 </div>
                 <aside id="chat-evidence" class="source-panel evidence-panel" aria-label="Evidence viewer" hidden>
+                    <div id="reader-resize" role="separator" aria-label="Resize evidence sidebar" aria-orientation="vertical" aria-controls="chat-evidence" tabindex="0" title="Drag to resize · Arrow keys adjust · Double-click to reset"></div>
                     <div class="source-heading"><div><span class="reader-eyebrow">ORIGINAL DOCUMENT</span><h2>Evidence reader</h2></div><div class="reader-heading-actions"><button id="expand-evidence" type="button" class="quiet-action" aria-expanded="false">Expand reader ↗</button><button id="close-evidence" class="btn-icon" aria-label="Close source viewer">×</button></div></div>
                     <details class="reader-source-list"><summary id="source-count">Retrieved sources</summary><div id="source-list" class="workspace-sources"><p>No evidence selected. Ask a question or use Find pages.</p></div></details>
                     <p id="viewer-status" role="status" aria-live="polite"></p>
@@ -285,6 +291,7 @@ Operating margin</textarea>
             </div>
         </section>
 
+        <footer id="workspace-utility-dock" aria-label="Workspace utilities"></footer>
     </main>
 
     <!-- ===== DELETE CONFIRMATION MODAL ===== -->
@@ -397,6 +404,7 @@ Operating margin</textarea>
     <script src="/static/session.js"></script>
     <script src="/static/evidence.js"></script>
     <script src="/static/documents.js"></script>
+    <script src="/static/reader-layout.js"></script>
     <script src="/static/workspace.js"></script>
     <script src="/static/findings.js"></script>
     <script src="/static/dashboard.js"></script>
