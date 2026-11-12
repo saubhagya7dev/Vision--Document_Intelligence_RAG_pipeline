@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/static/workspace.css">
     <link rel="stylesheet" href="/static/emerald.css">
     <link rel="stylesheet" href="/static/charcoal.css">
+    <link rel="stylesheet" href="/static/chat-studio.css">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
 </head>
@@ -23,7 +24,7 @@
 <body>
     <a class="skip-link" href="#app-main">Skip to main content</a>
     <header id="app-header" class="app-topbar" aria-label="Workspace navigation">
-        <a href="#dashboard" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a>
+        <div class="workspace-brand"><a href="#dashboard" class="logo" id="logo-link"><span class="logo-icon" aria-hidden="true">✦</span><span class="logo-text">Vision</span></a><a href="/" class="workspace-home" aria-label="Home — About Vision">↖ Home</a></div>
         <nav id="main-nav" class="header-nav" aria-label="Main navigation">
             <a href="#dashboard" class="nav-item" data-page="dashboard"><span aria-hidden="true">▦</span> Dashboard</a>
             <a href="#upload" class="nav-item" data-page="upload"><span aria-hidden="true">↥</span> Upload</a>
@@ -130,7 +131,7 @@
         <!-- ========== CHAT PAGE ========== -->
         <section id="page-chat" class="page">
             <header class="workspace-toolbar">
-                <div><p class="eyebrow">Workspace / conversation</p><h1 class="page-title" id="conversation-title">New conversation</h1></div>
+                <div><p class="eyebrow">RESEARCH / CONVERSATION</p><h1 class="page-title" id="conversation-title">New conversation</h1></div>
                 <div class="chat-tools">
                     <button id="new-conversation" class="btn btn-secondary">＋ New chat</button>
                     <details id="chat-history" class="header-menu history-menu"><summary>Recent chats</summary><nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav></details>
@@ -163,12 +164,12 @@
                             <button class="btn btn-primary" id="stop-answer" type="button" hidden>Stop</button>
                         </div>
                     </form>
-                    <small class="composer-footnote">Answers use selected documents. Open citations to inspect original pages.</small>
+                    <small class="composer-footnote"><span>Grounded in your selected sources.</span><span>Enter to send · Shift + Enter for a new line</span></small>
                     <input type="file" id="chat-file-input" accept=".pdf,application/pdf" hidden>
                 </div>
                 <aside id="chat-evidence" class="source-panel evidence-panel" aria-label="Evidence viewer" hidden>
-                    <div class="source-heading"><h2>Source</h2><button id="close-evidence" class="btn-icon" aria-label="Close source viewer">×</button></div>
-                    <div id="source-list" class="workspace-sources"><p>No evidence selected. Ask a question or use Find pages.</p></div>
+                    <div class="source-heading"><div><span class="reader-eyebrow">ORIGINAL DOCUMENT</span><h2>Evidence reader</h2></div><div class="reader-heading-actions"><button id="expand-evidence" type="button" class="quiet-action" aria-expanded="false">Expand reader ↗</button><button id="close-evidence" class="btn-icon" aria-label="Close source viewer">×</button></div></div>
+                    <details class="reader-source-list"><summary id="source-count">Retrieved sources</summary><div id="source-list" class="workspace-sources"><p>No evidence selected. Ask a question or use Find pages.</p></div></details>
                     <p id="viewer-status" role="status" aria-live="polite"></p>
                     <div id="viewer-controls" hidden>
                         <p id="viewer-document"></p>
@@ -178,6 +179,8 @@
                             <span id="viewer-pages"></span>
                             <button id="viewer-next" class="job-action" aria-label="Next page">Next</button>
                             <label>Zoom <select id="viewer-zoom"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1" selected>100%</option><option value="1.5">150%</option><option value="2">200%</option><option value="3">300%</option></select></label>
+                            <button id="viewer-fit-page" type="button" class="job-action">Fit page</button>
+                            <button id="viewer-fit-width" type="button" class="job-action">Fit width</button>
                             <a id="viewer-original" class="job-action" target="_blank" rel="noopener">Open original PDF</a>
                         </div>
                         <div id="viewer-thumbnails" class="viewer-thumbnails" aria-label="Page thumbnails"></div>
@@ -187,6 +190,7 @@
                     </div>
                     <small class="source-note">Page references checked. Answer accuracy still needs review.</small>
                 </aside>
+                <div id="reader-backdrop" aria-hidden="true" hidden></div>
             </div>
         </section>
 
@@ -235,6 +239,8 @@ Operating margin</textarea>
                             <span id="finding-viewer-pages"></span>
                             <button id="finding-viewer-next" class="job-action" aria-label="Next finding evidence page">Next</button>
                             <label>Zoom <select id="finding-viewer-zoom"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1" selected>100%</option><option value="1.5">150%</option><option value="2">200%</option><option value="3">300%</option></select></label>
+                            <button id="finding-viewer-fit-page" type="button" class="job-action">Fit page</button>
+                            <button id="finding-viewer-fit-width" type="button" class="job-action">Fit width</button>
                             <a id="finding-viewer-original" class="job-action" target="_blank" rel="noopener">Open cited original PDF</a>
                         </div>
                         <div id="finding-viewer-thumbnails" class="viewer-thumbnails" aria-label="Finding page thumbnails"></div>
