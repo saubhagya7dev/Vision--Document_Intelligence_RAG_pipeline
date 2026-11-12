@@ -582,3 +582,20 @@ width, navigate pages and return with Escape; mobile uses a full-screen reader.
 
 See [recorded checks](Validation.md#recorded-checks) for the 163 Python and
 26 frontend test results and isolated browser verification.
+
+## 16. Flanking hero graphics and compact research desk — 12 November
+
+Replaced the extra below-hero simulation with small document-scanning and
+retrieval wireframes to the left and right of the headline. Architecture remains
+the next section. Motion controls and reduced-motion support are retained.
+
+Rebuilt chat as a compact three-column desk: recent conversations, the central
+conversation and a narrower, full-height evidence reader. Response text is 13px,
+controls use square corners, and the composer takes less space. Mobile history
+collapses into a disclosure; original-page inspection still opens full screen.
+The supplied layout sketch and [Craft Wiki](https://craft.wiki/) informed the
+navigation and restrained document-oriented layout.
+
+![Small simulations beside the hero](assets/balanced-hero-desktop.png)
+
+![Compact chat with history and a balanced evidence reader](assets/balanced-chat-desktop.png)
