@@ -13,6 +13,16 @@ research versions were merged on 9 November 2026; the old files were removed.
 
 ## Current status
 
+Updated **12 November 2026**. The current project includes the charcoal public
+landing and animated architecture map, a dashboard backed by saved library data,
+and a compact research desk with permanent searchable history, browser-local pins,
+a resizable evidence reader and stable pending/completed turn alignment. Answers
+use full responses by default with bounded automatic provider recovery.
+
+[Upgrade history](Upgrade%20history.md) shows old/current screenshots and the
+latest implementation milestones. [Validation](Validation.md#recorded-checks)
+distinguishes the last recorded full Python suite from later targeted checks.
+
 The local phases and later chat-first workspace are implemented. The verified
 profile is one owner/process with SQLite and persistent embedded Qdrant. Learned
 routing remains experimental/off by default; optional calculations, region QA,
