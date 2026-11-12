@@ -60,8 +60,12 @@ Do not turn that hypothesis into a measured product claim.
 The assistant should expose selected documents and original evidence, not require
 users to understand embeddings, index profiles or model routing. Chat became the
 default entry point; detailed processing controls remain available when needed.
-The final visual direction uses ink black, cream and burnt orange, square corners,
-restrained type and quiet dividers. Current readiness text reflects real work.
+The initial November workspace direction used ink black, cream and burnt orange,
+square corners, restrained type and quiet dividers. By 12 November the interface
+uses charcoal and cream, a separate public landing, a saved-data dashboard,
+permanent searchable chat history and an adjustable original-page reader.
+Current readiness text reflects real work. These are implementation updates,
+not new research findings; see [Usage](Usage.md#reading-a-conversation-and-its-evidence).
 
 Explicit source chips, safe empty scope, persistent recent chats, an inspectable
 source drawer and a mobile sheet took priority over promotional dashboard art.
