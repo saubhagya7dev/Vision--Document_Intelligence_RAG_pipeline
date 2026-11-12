@@ -130,11 +130,15 @@
 
         <!-- ========== CHAT PAGE ========== -->
         <section id="page-chat" class="page">
+            <aside class="chat-rail" aria-label="Conversation history">
+                <button id="new-conversation" class="btn btn-secondary">＋ New chat</button>
+                <details id="chat-history" class="history-menu" open><summary>Recent conversations</summary><nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav></details>
+                <div class="chat-rail-footer"><span>YOUR RESEARCH SPACE</span><a href="#documents">Document library ↗</a><a href="#findings">Saved findings ↗</a></div>
+            </aside>
+            <div class="chat-workbench">
             <header class="workspace-toolbar">
                 <div><p class="eyebrow">RESEARCH / CONVERSATION</p><h1 class="page-title" id="conversation-title">New conversation</h1></div>
                 <div class="chat-tools">
-                    <button id="new-conversation" class="btn btn-secondary">＋ New chat</button>
-                    <details id="chat-history" class="header-menu history-menu"><summary>Recent chats</summary><nav id="recent-conversations" aria-label="Recent chats"><p class="sidebar-empty">Your chats will appear here.</p></nav></details>
                 <details class="chat-actions"><summary>Chat actions</summary><div>
                     <button id="rename-conversation" class="quiet-action">Rename chat</button>
                     <button id="delete-conversation" class="quiet-action">Delete chat</button>
@@ -191,6 +195,7 @@
                     <small class="source-note">Page references checked. Answer accuracy still needs review.</small>
                 </aside>
                 <div id="reader-backdrop" aria-hidden="true" hidden></div>
+            </div>
             </div>
         </section>
 
