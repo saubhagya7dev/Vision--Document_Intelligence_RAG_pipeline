@@ -596,6 +596,24 @@ collapses into a disclosure; original-page inspection still opens full screen.
 The supplied layout sketch and [Craft Wiki](https://craft.wiki/) informed the
 navigation and restrained document-oriented layout.
 
+## 17. Adjustable reader and persistent conversation navigation — 12 November
+
+Added a draggable, keyboard-accessible evidence divider with browser-local width
+persistence and bounds that preserve the conversation. Message scrolling now
+belongs to the full conversation pane, with its scrollbar at the pane boundary.
+Reduced the workspace header and message spacing, and moderated hero/title scale.
+
+History is now a permanent list rather than a details menu that ordinary clicks
+could close. It includes title search, browser-local pins, All/Pinned filters,
+counts and quick Add PDF/Compare links. Home moved to the upper right; Settings
+and connection status moved beside the sidebar's library and findings links.
+Other workspace routes retain these utilities at the bottom of the page.
+
+![Adjustable evidence reader and permanent searchable history](assets/resizable-research-desk.png)
+
+See [validation](Validation.md#recorded-checks) for the 29 frontend checks and
+isolated desktop/mobile verification.
+
 ![Small simulations beside the hero](assets/balanced-hero-desktop.png)
 
 ![Compact chat with history and a balanced evidence reader](assets/balanced-chat-desktop.png)
