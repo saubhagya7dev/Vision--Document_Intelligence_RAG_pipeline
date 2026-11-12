@@ -40,6 +40,18 @@ This is not a guarantee against external outages or an ability to bypass quotas.
 
 ## Recorded checks
 
+Latest documentation snapshot: **12 November 2026**. Results below belong to
+specific recorded revisions; this documentation refresh did not rerun the suites.
+
+| Recorded scope | Result | What it establishes |
+| --- | --- | --- |
+| 12 November studio update | 163 Python tests, 26 frontend tests | Last recorded full Python suite; see [studio record](evidence/studio-verification.json) |
+| Later adjustable research desk | 2 affected API/landing tests, 29 frontend tests | Targeted Python and expanded frontend checks; [record](evidence/research-desk-verification.json) explicitly says no full Python rerun |
+| Later turn alignment correction | 2 conversation storage/restart tests and delayed-answer browser measurements | Layout consistency and existing restart behavior; details below |
+
+Browser screenshots use disposable fictional PDFs and simulated inference. These
+checks do not add real-provider reliability, answer-quality or hardware results.
+
 The **12 November turn alignment correction** explicitly gives every turn the
 same available width (up to 700px) and prevents vertical flex shrinking. Previously,
 auto horizontal margins let short pending/error text produce a narrower turn
@@ -279,6 +291,8 @@ Payloads are keyed by original filename so dates and details are not silently re
 | Original-token MaxSim, rank fusion, coarse reranking | Implemented | Exact scoring checks and measured retrieval subsets |
 | Learned starting-tier router | Experimental, off by default | Synthetic training; cross-domain smoke; no proven cost win |
 | Grounded claims, citation reference checks, abstention contract | Implemented | References checked; independent semantic support unverified |
+| Charcoal landing, architecture animation and saved-data dashboard | Implemented | Isolated desktop/mobile checks; dashboard reflects persisted data |
+| Permanent searchable history, local pins and adjustable reader | Implemented | 29 frontend checks plus browser resize/persistence checks; preferences are browser-local |
 | Conversations, ordered answer events, evidence pane | Implemented | Browser fixtures plus one real streaming-adapter check |
 | Comparison, findings, JSON/CSV/Markdown exports | Implemented | Workflow/browser tests and fictional provider checks |
 | Owner sessions and fixed workspace authorization | Implemented | HTTP tests and isolated browser sign-in/logout |
