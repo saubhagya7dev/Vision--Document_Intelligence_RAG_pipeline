@@ -564,3 +564,21 @@ the visible dashboard and explicit actions.
 
 See [Dashboard usage](Usage.md#dashboard) and
 [Validation](Validation.md#recorded-checks) for full-suite and browser evidence.
+
+## 15. Hero simulation and conversation reader — 12 November
+
+Added an original document-to-citation simulation to the hero, retaining charcoal
+surfaces and cream typography. The fictional example combines a scanned-page
+effect, text/visual signal paths, an embedding wireframe and an answer with its
+source. Motion supports pause, reduced motion and visibility suspension.
+
+Workspace now has a visible Home link. Chat has a larger reading canvas, a
+focused composer and a broad evidence split. Readers can expand, fit the page or
+width, navigate pages and return with Escape; mobile uses a full-screen reader.
+
+![Hero with document retrieval simulation](assets/studio-hero-desktop.png)
+
+![Conversation and broad original-page reader](assets/studio-chat-desktop.png)
+
+See [recorded checks](Validation.md#recorded-checks) for the 163 Python and
+26 frontend test results and isolated browser verification.
