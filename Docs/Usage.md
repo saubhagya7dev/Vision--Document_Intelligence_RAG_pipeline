@@ -64,6 +64,8 @@ a left rail and selected documents above the anchored composer. The history rail
 becomes a disclosure on mobile. Click an answer citation or **Inspect evidence**
 to open the original, version-specific page. On desktop the reader is a narrower,
 full-height right column; **Expand reader** opens a larger reading surface.
+The composer starts as a single-line bar and grows with the draft, up to a
+112px input height. Clearing or sending the draft shrinks it again.
 On narrow screens the reader opens full screen. **Fit page** shows the whole
 page, while **Fit width** makes its content wider for reading. Zoom, page controls
 and the original PDF link remain available. Expand the retrieved-source summary
